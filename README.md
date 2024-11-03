@@ -21,8 +21,9 @@
  
  - การเปิด **Debezium connect** เพื่อเชื่อมต่อกับ **Kafka** และ **postgreSQL** สามารถใช้คำสั่ง 
 `docker run -d --rm --name connect -p 8083:8083 -e GROUP_ID=1 -e CONFIG_STORAGE_TOPIC=my_connect_configs -e OFFSET_STORAGE_TOPIC=my_connect_offsets -e STATUS_STORAGE_TOPIC=my_connect_statuses -e KAFKA_BOOTSTRAP_SERVERS=host.docker.internal:9092 -e POSTGRES_HOST=172.25.208.1 -e POSTGRES_PORT=5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=user1234 --link kafka:kafka quay.io/debezium/connect:2.7`
-เปลี่ยนเป็น **IP** เครื่องตัวเอง**POSTGRES_HOST=**
-ให้ใช้คำสั่งนี้เพื่อทำการสร้าง **topic** และ **group id** ของ **kafka** ที่ต้องการจะรับ **Event message**
+เปลี่ยนเป็น **POSTGRES_HOST=** **IP** เครื่องตัวเอง
+
+	ให้ใช้คำสั่งนี้เพื่อทำการสร้าง **topic** และ **group id** ของ **kafka** ที่ต้องการจะรับ **Event message**
 `curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/ -d "{ \"name\": \"inventory-connector\", \"config\": { \"connector.class\": \"io.debezium.connector.postgresql.PostgresConnector\", \"tasks.max\": \"1\", \"database.hostname\": \"host.docker.internal\", \"database.port\": \"5432\", \"database.user\": \"postgres\", \"database.password\": \"user1234\", \"database.dbname\": \"InventoryManagement\", \"database.server.name\": \"dbserver1\", \"plugin.name\": \"pgoutput\", \"slot.name\": \"inventory_slot\", \"topic.prefix\": \"dbserver1\", \"schema.include.list\": \"public\", \"schema.history.internal.kafka.bootstrap.servers\": \"kafka:9092\", \"schema.history.internal.kafka.topic\": \"schemahistory.inventory\" } }"`
 
  - **UI** สำหรับดู **Event** ที่มีการเปลี่ยนแปลง
