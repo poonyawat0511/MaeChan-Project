@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import com.example.workflow.Line.LineMessageService;
+import com.example.workflow.service.LineMessageService;
 
 @Service
 public class KafkaMessageListener {
@@ -26,7 +26,8 @@ public class KafkaMessageListener {
         runtimeService.startProcessInstanceByKey("Meachan-process", Variables.createVariables()
                 .putValue("tenantId", "meachan"));
 
-                String userId = "U7c7b26b975ad0730d8b1db6ef91c5753";  // แทน USER_LINE_ID ด้วย user ID ที่ต้องการส่ง
+                // String userId = "U7c7b26b975ad0730d8b1db6ef91c5753";  // แทน USER_LINE_ID ด้วย user ID ที่ต้องการส่ง
+                String userId =  "U7c7b26b975ad0730d8b1db6ef91c5753";
                 lineMessageService.pushMessage(userId, "Received Kafka message: " + message);
     }
 }
