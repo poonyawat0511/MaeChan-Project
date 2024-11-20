@@ -152,3 +152,14 @@ org.h2.jdbc.JdbcSQLNonTransientConnectionException: Database is already closed (
 	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
 	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:114)
 	at java.base/java.lang.Thread.run(Thread.java:1583)
+2024-11-20 14:34:04.045774+07:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "ACT_RU_METER_LOG" not found (this database is empty); SQL statement:
+insert into ACT_RU_METER_LOG (ID_, NAME_, REPORTER_, VALUE_, TIMESTAMP_, MILLISECONDS_)
+    values (
+    ?,
+    ?,
+    ?,
+    ?,
+    ?,
+    ?
+    ) [42104-224]
