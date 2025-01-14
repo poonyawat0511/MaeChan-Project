@@ -4,43 +4,51 @@
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_1j540dz</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="UT_Getinput" name="Get Input" camunda:formRef="formTest" camunda:formRefBinding="latest">
+    <bpmn:userTask id="UT_Getinput" name="Get Input" camunda:formRef="UpdateForm" camunda:formRefBinding="latest">
       <bpmn:extensionElements />
       <bpmn:incoming>Flow_15xp1x9</bpmn:incoming>
-      <bpmn:outgoing>Flow_0z6pyqi</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1qkvb8y</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="Flow_0z6pyqi" sourceRef="UT_Getinput" targetRef="ST_createMessage" />
     <bpmn:endEvent id="Event_1ti5u9n">
-      <bpmn:incoming>Flow_10u28z3</bpmn:incoming>
+      <bpmn:incoming>Flow_02q5q1m</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_10u28z3" sourceRef="ST_createMessage" targetRef="Event_1ti5u9n" />
     <bpmn:serviceTask id="ST_createMessage" name="Create Message">
       <bpmn:extensionElements>
         <camunda:connector>
           <camunda:inputOutput>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://localhost:8081/workflow/start</camunda:inputParameter>
+            <camunda:inputParameter name="payload">{
+          "purchaseRequestId": "${purchaseRequestId}"
+        }</camunda:inputParameter>
             <camunda:inputParameter name="header">
               <camunda:map>
                 <camunda:entry key="Content-Type">application/json</camunda:entry>
               </camunda:map>
             </camunda:inputParameter>
-            <camunda:inputParameter name="payload">{
-"message":"${message}",
-"name":"${name}"
-}</camunda:inputParameter>
-            <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="url">http://localhost:8081/message</camunda:inputParameter>
           </camunda:inputOutput>
           <camunda:connectorId>http-connector</camunda:connectorId>
         </camunda:connector>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0z6pyqi</bpmn:incoming>
-      <bpmn:outgoing>Flow_10u28z3</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1j540dz" sourceRef="StartEvent_1" targetRef="serviceTaskSendMessage" />
     <bpmn:sequenceFlow id="Flow_15xp1x9" sourceRef="serviceTaskSendMessage" targetRef="UT_Getinput" />
     <bpmn:serviceTask id="serviceTaskSendMessage" name="Send Message to LINE" camunda:class="com.example.workflow.delegate.SendMessageDelegate">
       <bpmn:incoming>Flow_1j540dz</bpmn:incoming>
       <bpmn:outgoing>Flow_15xp1x9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_0ubvjz0" name="decision" camunda:asyncBefore="true">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_17i64pf</bpmn:incoming>
+      <bpmn:outgoing>Flow_13qr12e</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_02q5q1m" sourceRef="ST_createMessage" targetRef="Event_1ti5u9n" />
+    <bpmn:sequenceFlow id="Flow_13qr12e" sourceRef="Gateway_0ubvjz0" targetRef="ST_createMessage" />
+    <bpmn:sequenceFlow id="Flow_1qkvb8y" sourceRef="UT_Getinput" targetRef="serviceTaskUpdatePurchaseRequest" />
+    <bpmn:sequenceFlow id="Flow_17i64pf" sourceRef="serviceTaskUpdatePurchaseRequest" targetRef="Gateway_0ubvjz0" />
+    <bpmn:serviceTask id="serviceTaskUpdatePurchaseRequest" name="Update Purchase Request" camunda:class="com.example.workflow.delegate.UpdatePurchaseRequestHandler">
+      <bpmn:incoming>Flow_1qkvb8y</bpmn:incoming>
+      <bpmn:outgoing>Flow_17i64pf</bpmn:outgoing>
     </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -53,24 +61,26 @@
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1ti5u9n_di" bpmnElement="Event_1ti5u9n">
-        <dc:Bounds x="742" y="99" width="36" height="36" />
+        <dc:Bounds x="912" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1kif3m2_di" bpmnElement="ST_createMessage">
-        <dc:Bounds x="550" y="77" width="100" height="80" />
+        <dc:Bounds x="770" y="77" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ekor8x_di" bpmnElement="serviceTaskSendMessage">
         <dc:Bounds x="240" y="77" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_0z6pyqi_di" bpmnElement="Flow_0z6pyqi">
-        <di:waypoint x="500" y="117" />
-        <di:waypoint x="550" y="117" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_10u28z3_di" bpmnElement="Flow_10u28z3">
-        <di:waypoint x="650" y="117" />
-        <di:waypoint x="742" y="117" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Gateway_0ubvjz0_di" bpmnElement="Gateway_0ubvjz0" isMarkerVisible="true">
+        <dc:Bounds x="685" y="92" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="692" y="62" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1g80mqx_di" bpmnElement="serviceTaskUpdatePurchaseRequest">
+        <dc:Bounds x="550" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1j540dz_di" bpmnElement="Flow_1j540dz">
         <di:waypoint x="188" y="117" />
         <di:waypoint x="240" y="117" />
@@ -78,6 +88,22 @@
       <bpmndi:BPMNEdge id="Flow_15xp1x9_di" bpmnElement="Flow_15xp1x9">
         <di:waypoint x="340" y="117" />
         <di:waypoint x="400" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02q5q1m_di" bpmnElement="Flow_02q5q1m">
+        <di:waypoint x="870" y="117" />
+        <di:waypoint x="912" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13qr12e_di" bpmnElement="Flow_13qr12e">
+        <di:waypoint x="735" y="117" />
+        <di:waypoint x="770" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qkvb8y_di" bpmnElement="Flow_1qkvb8y">
+        <di:waypoint x="500" y="117" />
+        <di:waypoint x="550" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17i64pf_di" bpmnElement="Flow_17i64pf">
+        <di:waypoint x="650" y="117" />
+        <di:waypoint x="685" y="117" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
