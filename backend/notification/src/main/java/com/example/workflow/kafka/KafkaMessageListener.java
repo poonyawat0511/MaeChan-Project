@@ -26,36 +26,41 @@ public class KafkaMessageListener {
             // ตรวจสอบประเภทของการดำเนินการ
             if ("d".equals(operation)) {
                 System.out.println("Detected delete operation, skipping process initiation.");
-                return; // ออกจาก method
+                return; // ข้ามการเริ่มกระบวนการถ้าเป็นการลบ
             }
 
             if ("u".equals(operation)) {
                 System.out.println("Detected update operation, skipping process initiation.");
-                return; // ออกจาก method
+                return; // ข้ามการเริ่มกระบวนการถ้าเป็นการอัพเดต
             }
 
-            // ตรวจสอบว่า "documentNumber" มีอยู่ใน payload หรือไม่
+            // ตรวจสอบว่า "documentNumber" และ "purchaseId" มีอยู่ใน payload หรือไม่
             JSONObject payload = jsonMessage.getJSONObject("payload");
-            String documentNumber = payload.has("after") ? payload.getJSONObject("after").optString("document_number", "N/A") : "N/A";
+            JSONObject after = payload.has("after") ? payload.getJSONObject("after") : null;
+
+            // ตรวจสอบค่า purchaseId และ documentNumber
+            String purchaseId = after != null ? after.optString("id", "N/A") : "N/A";  // เพิ่มการดึง purchaseId
+            String documentNumber = after != null ? after.optString("document_number", "N/A") : "N/A";
 
             // ตรวจสอบคีย์อื่น ๆ ที่อาจจะเป็นค่าว่าง
-            String requester = payload.has("after") ? payload.getJSONObject("after").optString("requester", "") : "";
-            String inspector = payload.has("after") ? payload.getJSONObject("after").optString("inspector", "") : "";
+            String requester = after != null ? after.optString("requester", "Unknown Requester") : "Unknown Requester";
+            String inspector = after != null ? after.optString("inspector", "Unknown Inspector") : "Unknown Inspector";
 
             // หากข้อความ requester หรือ inspector เป็นค่าว่าง ให้ใช้ค่าปริยาย
             requester = requester.isEmpty() ? "Unknown Requester" : requester.substring(0, Math.min(requester.length(), 50));
             inspector = inspector.isEmpty() ? "Unknown Inspector" : inspector.substring(0, Math.min(inspector.length(), 50));
 
             // กรณีข้อมูลยาวเกินไป ให้ย่อข้อมูล
-            String item = payload.has("after") ? payload.getJSONObject("after").optString("item", "Unknown Item") : "Unknown Item";
-            int itemCount = payload.has("after") ? payload.getJSONObject("after").optInt("item_count", 0) : 0;
-            double sumPrice = payload.has("after") ? payload.getJSONObject("after").optDouble("sum_price", 0.0) : 0.0;
+            String item = after != null ? after.optString("item", "Unknown Item") : "Unknown Item";
+            int itemCount = after != null ? after.optInt("item_count", 0) : 0;
+            double sumPrice = after != null ? after.optDouble("sum_price", 0.0) : 0.0;
 
             // ส่งข้อความไปยัง LINE (ถ้ามี)
             String userId = "U7c7b26b975ad0730d8b1db6ef91c5753";
 
             // เริ่มต้นกระบวนการ Camunda โดยใช้ RuntimeService
             runtimeService.startProcessInstanceByKey("Meachan-process", Variables.createVariables()
+                    .putValue("purchaseId", purchaseId) // เพิ่มการส่ง purchaseId
                     .putValue("tenantId", "meachan")
                     .putValue("message", "Received Kafka message: eiei")
                     .putValue("documentNumber", documentNumber)
@@ -70,4 +75,5 @@ public class KafkaMessageListener {
             System.err.println("Error processing Kafka message: " + e.getMessage());
         }
     }
+
 }
