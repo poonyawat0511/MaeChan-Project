@@ -31,7 +31,7 @@ public class SecurityConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")  // Allow all paths
             .allowedOrigins("http://localhost:3000", "http://localhost:8081" ,"http://192.168.0.109:3000")  // Allowed origins
-            .allowedMethods("GET", "POST", "PUT", "DELETE")  // Allowed HTTP methods
+            .allowedMethods("GET", "POST", "PUT","PATCH","DELETE")  // Allowed HTTP methods
             .allowedHeaders("*")  // Allow all headers
             .allowCredentials(true);  // Allow credentials (cookies)
     }
