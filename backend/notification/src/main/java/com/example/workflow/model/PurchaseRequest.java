@@ -57,4 +57,7 @@ public class PurchaseRequest {
 
     private String buyingDocStatus; // สถานะใบขอซื้อหลังอนุมัติแล้ว
     private String buyingDocNumber; // เลขใบขอซื้อ
+    
+    @Column(name = "camunda_task_id")
+    private String camundaTaskId; // เพิ่มฟิลด์ camundaTaskId
 }
