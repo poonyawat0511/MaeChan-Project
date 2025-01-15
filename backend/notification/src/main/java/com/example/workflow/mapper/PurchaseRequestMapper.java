@@ -38,6 +38,9 @@ public class PurchaseRequestMapper {
         dto.setApprovedDate(purchaseRequest.getApprovedDate());
         dto.setBuyingDocStatus(purchaseRequest.getBuyingDocStatus());
         dto.setBuyingDocNumber(purchaseRequest.getBuyingDocNumber());
+        
+        // Mapping the new camundaTaskId field
+        dto.setCamundaTaskId(purchaseRequest.getCamundaTaskId()); // Add this line
 
         return dto;
     }
@@ -73,6 +76,9 @@ public class PurchaseRequestMapper {
         purchaseRequest.setApprovedDate(purchaseRequestDto.getApprovedDate());
         purchaseRequest.setBuyingDocStatus(purchaseRequestDto.getBuyingDocStatus());
         purchaseRequest.setBuyingDocNumber(purchaseRequestDto.getBuyingDocNumber());
+        
+        // Mapping the new camundaTaskId field
+        purchaseRequest.setCamundaTaskId(purchaseRequestDto.getCamundaTaskId()); // Add this line
 
         return purchaseRequest;
     }

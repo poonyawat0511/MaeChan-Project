@@ -36,4 +36,5 @@ public class PurchaseRequestDto {
     private LocalDate approvedDate;
     private String buyingDocStatus;
     private String buyingDocNumber;
+    private String camundaTaskId;
 }
