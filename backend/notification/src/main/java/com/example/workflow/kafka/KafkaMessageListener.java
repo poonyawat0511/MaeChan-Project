@@ -56,6 +56,7 @@ public class KafkaMessageListener {
             // เริ่มต้นกระบวนการ Camunda โดยใช้ RuntimeService
             ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("Meachan-process", Variables.createVariables()
                     .putValue("purchaseId", purchaseId) // ส่ง purchaseId
+                    .putValue("purchaseRequestId", purchaseId)
                     .putValue("tenantId", "meachan")
                     .putValue("message", "Received Kafka message: eiei")
                     .putValue("documentNumber", documentNumber)

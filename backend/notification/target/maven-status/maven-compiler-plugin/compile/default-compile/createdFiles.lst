@@ -1,4 +1,4 @@
-com/example/workflow/delegate/UpdatePurchaseRequestHandler.class
+com/example/workflow/delegate/UpdateInspectorHandler.class
 com/example/workflow/Application.class
 com/example/workflow/controller/LineController.class
 com/example/workflow/kafka/KafkaMessageListener.class
@@ -11,6 +11,7 @@ com/example/workflow/controller/PurchaseRequestController.class
 com/example/workflow/controller/WorkflowController.class
 com/example/workflow/delegate/SendMessageDelegate.class
 com/example/workflow/controller/controller.class
+com/example/workflow/delegate/UpdateApprovalHandler.class
 com/example/workflow/model/PurchaseRequest.class
 com/example/workflow/model/model.class
 com/example/workflow/service/PurchaseRequestservice.class
