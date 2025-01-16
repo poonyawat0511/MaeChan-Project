@@ -63,4 +63,10 @@ public class PurchaseRequestservice {
         purchaseRequestRepository.deleteById(purchaseId);
         return "PurchaseRequest id:" + purchaseId + " has been deleted";
     }
+
+    public PurchaseRequest findPurchaseRequestByCamundaTaskId(String taskId) {
+        Optional<PurchaseRequest> purchaseRequest = purchaseRequestRepository.findPurchaseRequestByCamundaTaskId(taskId);
+        return purchaseRequest.orElse(null);
+    }
+
 }
