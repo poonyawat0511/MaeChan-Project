@@ -62,4 +62,14 @@ public class PurchaseRequestController {
         String result = purchaseRequestservice.deletePurchaseRequestById(purchaseId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @GetMapping("/task/{taskId}")
+    public ResponseEntity<PurchaseRequest> getPurchaseRequestByCamundaTaskId(@PathVariable String taskId) {
+        PurchaseRequest purchaseRequest = purchaseRequestservice.findPurchaseRequestByCamundaTaskId(taskId);
+        if (purchaseRequest != null) {
+            return new ResponseEntity<>(purchaseRequest, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
