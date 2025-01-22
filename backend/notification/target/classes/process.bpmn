@@ -4,7 +4,7 @@
     <bpmn:startEvent id="StartEvent_1">
       <bpmn:outgoing>Flow_1j540dz</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="UT_Getinput" name="Get Input Form Inspector" camunda:formRef="UpdateInspectorForm" camunda:formRefBinding="latest" camunda:candidateGroups="Inspector">
+    <bpmn:userTask id="AP_Getinput" name="Get Input Form Approver" camunda:formRef="UpdateApproverForm" camunda:formRefBinding="latest" camunda:candidateGroups="Approver">
       <bpmn:extensionElements />
       <bpmn:incoming>Flow_15xp1x9</bpmn:incoming>
       <bpmn:outgoing>Flow_1qkvb8y</bpmn:outgoing>
@@ -19,7 +19,7 @@
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
             <camunda:inputParameter name="url">http://localhost:8081/workflow/start</camunda:inputParameter>
             <camunda:inputParameter name="payload">{
-          "purchaseRequestId": "${purchaseRequestId}"
+          "RequestId": "${requestId}"
         }</camunda:inputParameter>
             <camunda:inputParameter name="header">
               <camunda:map>
@@ -33,7 +33,7 @@
       <bpmn:incoming>Flow_0x6rmmk</bpmn:incoming>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1j540dz" sourceRef="StartEvent_1" targetRef="serviceTaskSendMessage" />
-    <bpmn:sequenceFlow id="Flow_15xp1x9" sourceRef="serviceTaskSendMessage" targetRef="UT_Getinput" />
+    <bpmn:sequenceFlow id="Flow_15xp1x9" sourceRef="serviceTaskSendMessage" targetRef="AP_Getinput" />
     <bpmn:serviceTask id="serviceTaskSendMessage" name="Send Message to LINE" camunda:class="com.example.workflow.delegate.SendMessageDelegate">
       <bpmn:incoming>Flow_1j540dz</bpmn:incoming>
       <bpmn:outgoing>Flow_15xp1x9</bpmn:outgoing>
@@ -45,9 +45,9 @@
       <bpmn:outgoing>Flow_0a8t67i</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_02q5q1m" sourceRef="ST_createMessage" targetRef="Event_1ti5u9n" />
-    <bpmn:sequenceFlow id="Flow_13qr12e" sourceRef="Gateway_0ubvjz0" targetRef="AP_Getinput" />
-    <bpmn:sequenceFlow id="Flow_17i64pf" sourceRef="serviceTaskUpdateInspector" targetRef="Gateway_0ubvjz0" />
-    <bpmn:serviceTask id="serviceTaskUpdateInspector" name="Update Inspector" camunda:class="com.example.workflow.delegate.UpdateInspectorHandler">
+    <bpmn:sequenceFlow id="Flow_13qr12e" sourceRef="Gateway_0ubvjz0" targetRef="DR_Getinput" />
+    <bpmn:sequenceFlow id="Flow_17i64pf" sourceRef="serviceTaskUpdateApprover" targetRef="Gateway_0ubvjz0" />
+    <bpmn:serviceTask id="serviceTaskUpdateApprover" name="Update Approver" camunda:class="com.example.workflow.delegate.UpdateApprovalHandler">
       <bpmn:incoming>Flow_1qkvb8y</bpmn:incoming>
       <bpmn:outgoing>Flow_17i64pf</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -55,16 +55,16 @@
       <bpmn:incoming>Flow_0a8t67i</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0a8t67i" sourceRef="Gateway_0ubvjz0" targetRef="Event_17cfzs1">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${approvedStatus == 'false'}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${approve == 'false'}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1qkvb8y" sourceRef="UT_Getinput" targetRef="serviceTaskUpdateInspector" />
-    <bpmn:sequenceFlow id="Flow_0l85c0w" sourceRef="AP_Getinput" targetRef="serviceTaskUpdateApprover" />
-    <bpmn:userTask id="AP_Getinput" name="Get Input Form Approver" camunda:formRef="UpdateApprovalForm" camunda:formRefBinding="latest" camunda:candidateGroups="Approver">
+    <bpmn:sequenceFlow id="Flow_1qkvb8y" sourceRef="AP_Getinput" targetRef="serviceTaskUpdateApprover" />
+    <bpmn:sequenceFlow id="Flow_0l85c0w" sourceRef="DR_Getinput" targetRef="serviceTaskUpdateDirector" />
+    <bpmn:userTask id="DR_Getinput" name="Get Input Form Director" camunda:formRef="UpdateDirectorForm" camunda:formRefBinding="latest" camunda:candidateGroups="Director">
       <bpmn:incoming>Flow_13qr12e</bpmn:incoming>
       <bpmn:outgoing>Flow_0l85c0w</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="Flow_0x6rmmk" sourceRef="serviceTaskUpdateApprover" targetRef="ST_createMessage" />
-    <bpmn:serviceTask id="serviceTaskUpdateApprover" name="Update Approver" camunda:class="com.example.workflow.delegate.UpdateApprovalHandler">
+    <bpmn:sequenceFlow id="Flow_0x6rmmk" sourceRef="serviceTaskUpdateDirector" targetRef="ST_createMessage" />
+    <bpmn:serviceTask id="serviceTaskUpdateDirector" name="Update Director" camunda:class="com.example.workflow.delegate.UpdateDirectorHandler">
       <bpmn:incoming>Flow_0l85c0w</bpmn:incoming>
       <bpmn:outgoing>Flow_0x6rmmk</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -74,7 +74,7 @@
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="152" y="99" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1n2tb8n_di" bpmnElement="UT_Getinput">
+      <bpmndi:BPMNShape id="Activity_1n2tb8n_di" bpmnElement="AP_Getinput">
         <dc:Bounds x="400" y="77" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
@@ -98,7 +98,7 @@
           <dc:Bounds x="662" y="62" width="41" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1g80mqx_di" bpmnElement="serviceTaskUpdateInspector">
+      <bpmndi:BPMNShape id="Activity_1g80mqx_di" bpmnElement="serviceTaskUpdateApprover">
         <dc:Bounds x="530" y="77" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
@@ -108,12 +108,13 @@
           <dc:Bounds x="1179" y="255" width="44" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1vidtyy_di" bpmnElement="AP_Getinput">
+      <bpmndi:BPMNShape id="Activity_1vidtyy_di" bpmnElement="DR_Getinput">
         <dc:Bounds x="740" y="77" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0544myo_di" bpmnElement="serviceTaskUpdateApprover">
+      <bpmndi:BPMNShape id="Activity_0544myo_di" bpmnElement="serviceTaskUpdateDirector">
         <dc:Bounds x="880" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1j540dz_di" bpmnElement="Flow_1j540dz">
         <di:waypoint x="188" y="117" />
