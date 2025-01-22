@@ -21,14 +21,14 @@ public class WorkflowController {
     private RuntimeService runtimeService;
 
     @PostMapping("/start")
-    public ResponseEntity<Map<String, Object>> startWorkflow(@RequestParam Long purchaseId) {
-        if (purchaseId == null || purchaseId <= 0) {
-            throw new IllegalArgumentException("Invalid purchaseId: must be a positive number.");
+    public ResponseEntity<Map<String, Object>> startWorkflow(@RequestParam Long requestId) {
+        if (requestId == null || requestId <= 0) {
+            throw new IllegalArgumentException("Invalid requestId: must be a positive number.");
         }
 
         // Add variables for the process instance
         Map<String, Object> variables = new HashMap<>();
-        variables.put("purchaseId", purchaseId);
+        variables.put("requestId", requestId);
 
         // Start the process instance
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("purchaseRequestWorkflow", variables);

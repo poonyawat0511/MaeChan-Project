@@ -6,39 +6,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.workflow.model.StockRequest;
-import com.example.workflow.model.StockUserApprove;
-import com.example.workflow.repository.StockUserApproveRepository;
 import com.example.workflow.service.StockRequestService;
 
-@Service("updateApprovalHandler")
-public class UpdateApprovalHandler implements JavaDelegate {
+@Service("updateDirectorHandler")
+public class UpdateDirectorHandler implements JavaDelegate {
 
     @Autowired
     private StockRequestService stockRequestService;
-    @Autowired
-    private StockUserApproveRepository stockUserApproveRepository;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
         // ดึง Workflow Variables
         String requestIdStr = (String) execution.getVariable("requestId");
-        String stockUserApproveId = (String) execution.getVariable("stockUserApprove");
+        String stockSubjectPerson = (String) execution.getVariable("stockSubjectPerson");
+        Boolean approve = (Boolean) execution.getVariable("approve");
 
         // ตรวจสอบและแปลง purchaseId
         Long requestId = validateAndParseRequestId(requestIdStr);
 
-        // ค้นหา StockRequest
+        // ค้นหา PurchaseRequest
         StockRequest stockRequest = stockRequestService.findStockRequestById(requestId);
         if (stockRequest == null) {
             throw new RuntimeException("StockRequest not found with id: " + requestId);
         }
 
-        // ค้นหา StockUserApprove ตาม stockUserApproveId
-        StockUserApprove stockUserApprove = stockUserApproveRepository.findById(Long.parseLong(stockUserApproveId))
-                .orElseThrow(() -> new RuntimeException("StockUserApprove not found with id: " + stockUserApproveId));
-
         // อัปเดตข้อมูล
-        stockRequest.setStockUserApprove(stockUserApprove);
+        stockRequest.setStockSubjectPerson(stockSubjectPerson);;
+        stockRequest.setApprove(approve);
 
         // บันทึก
         stockRequestService.updateStockRequest(stockRequest);
