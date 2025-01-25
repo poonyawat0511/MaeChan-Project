@@ -1,38 +1,82 @@
 package com.example.workflow.config;
 
+import java.beans.BeanProperty;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.example.workflow.model.Role;
+import com.example.workflow.service.UserService;
+
+import lombok.RequiredArgsConstructor;
+
 @Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig implements WebMvcConfigurer {
 
-    // Configuring HTTP security with a SecurityFilterChain
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final UserService userService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors() // Enable CORS
-            .and()
-            .authorizeHttpRequests() // Updated to use 'authorizeHttpRequests'
-                .requestMatchers("/engine-rest/**").permitAll() // Allow access to Camunda REST API without authentication
-                .requestMatchers("/camunda/**").permitAll() // Allow access to Camunda UI without authentication
-                .anyRequest().permitAll() // Allow all other requests without authentication
-            .and()
-            .csrf().disable(); // Disable CSRF protection if needed (for non-browser clients)
+                .cors()
+                .and()
+                .authorizeHttpRequests()
+                .requestMatchers("/engine-rest/**").permitAll()
+                .requestMatchers("/camunda/**").permitAll()
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/admin/**").hasAuthority(Role.ADMIN.name())
+                .requestMatchers("/user/**").hasAuthority(Role.USER.name())
+                .anyRequest().authenticated()
+                .and()
+                .csrf().disable()
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // Configure CORS mappings
+// Use the passwordEncoder bean directly in the authenticationProvider method:
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userService.userDetailsService());
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")  // Allow all paths
-            .allowedOrigins("http://localhost:3000", "http://localhost:8081" ,"http://192.168.0.109:3000")  // Allowed origins
-            .allowedMethods("GET", "POST", "PUT","PATCH","DELETE")  // Allowed HTTP methods
-            .allowedHeaders("*")  // Allow all headers
-            .allowCredentials(true);  // Allow credentials (cookies)
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:3000", "http://localhost:8081", "http://192.168.0.109:3000")
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }
