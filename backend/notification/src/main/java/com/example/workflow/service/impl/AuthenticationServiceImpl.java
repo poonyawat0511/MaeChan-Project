@@ -34,10 +34,11 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     public StockUser signup(SignUpRequest signUpRequest){
         StockUser stockUser = new StockUser();
 
+        stockUser.setStockUserName(signUpRequest.getStockUser());
         stockUser.setEmail(signUpRequest.getEmail());
         stockUser.setFirstName(signUpRequest.getFirstName());
         stockUser.setLastName(signUpRequest.getLastName());
-        stockUser.setRole(Role.USER);
+        stockUser.setRole(signUpRequest.getRole() != null ? signUpRequest.getRole() : Role.USER);
         stockUser.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
 
         return stockUserRepository.save(stockUser);

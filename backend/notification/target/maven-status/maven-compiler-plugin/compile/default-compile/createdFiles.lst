@@ -26,6 +26,7 @@ com/example/workflow/mapper/StockUserMapper.class
 com/example/workflow/Application.class
 com/example/workflow/model/Role.class
 com/example/workflow/model/StockUserApprove.class
+com/example/workflow/config/CandidateGroupFilter.class
 com/example/workflow/service/JWTService.class
 com/example/workflow/kafka/KafkaMessageListener.class
 com/example/workflow/config/SecurityConfig.class

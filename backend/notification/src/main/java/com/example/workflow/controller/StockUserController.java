@@ -19,7 +19,7 @@ import com.example.workflow.service.StockUserService;
 
 
 @RestController
-@RequestMapping("/admin/stock-user")
+@RequestMapping("/stock-user")
 public class StockUserController {
     @Autowired
     private StockUserService stockUserService;

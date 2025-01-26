@@ -32,16 +32,16 @@ public class SecurityConfig implements WebMvcConfigurer {
     private final UserService userService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,CandidateGroupFilter candidateGroupFilter) throws Exception {
         http
                 .cors()
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/engine-rest/**").permitAll()
                 .requestMatchers("/camunda/**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/admin/**").hasAuthority(Role.ADMIN.name())
                 .requestMatchers("/user/**").hasAuthority(Role.USER.name())
+                .requestMatchers("/engine-rest/**").authenticated() 
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
