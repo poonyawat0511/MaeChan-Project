@@ -13,4 +13,9 @@ public class StockUserDto {
 
     private Long stockUserId;  // Primary key
     private String stockUserName;  // ชื่อผู้ใช้
-}
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
+    private String role;
+}   

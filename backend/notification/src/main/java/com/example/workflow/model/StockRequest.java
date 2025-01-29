@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -100,8 +101,8 @@ public class StockRequest {
     @Column(name = "stock_approve_date")
     private LocalDate stockApproveDate;
 
-    @ManyToOne
-    @JoinColumn(name = "stock_user_id" , referencedColumnName="stockUserId")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "stock_user_id", referencedColumnName = "stockUserId")
     private StockUser stockUser;
 
     @Column(name = "stock_request_document_id")

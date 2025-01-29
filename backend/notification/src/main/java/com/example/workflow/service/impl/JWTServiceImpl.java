@@ -8,6 +8,7 @@ import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.example.workflow.model.StockUser;
 import com.example.workflow.service.JWTService;
 
 import io.jsonwebtoken.Claims;
@@ -19,9 +20,11 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JWTServiceImpl implements JWTService {
 
-    private Key getSiginKey() {
-        byte[] key = Decoders.BASE64.decode("aVeryLongSecureBase64EncodedSecretKeyHere12345");
-        return Keys.hmacShaKeyFor(key);
+    private static final String SECRET_KEY = "aVeryLongSecureBase64EncodedSecretKeyHere12345";
+
+    private Key getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     @Override
@@ -31,21 +34,30 @@ public class JWTServiceImpl implements JWTService {
 
     @Override
     public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // 24 minutes
-                .signWith(getSiginKey(), SignatureAlgorithm.HS256)
-                .compact();
+        StockUser user = (StockUser) userDetails;
+
+        Map<String, Object> claims = Map.of(
+            "stockUserId", user.getStockUserId(),
+            "firstName", user.getFirstName(),
+            "lastName", user.getLastName(),
+            "role", user.getRole().name()
+        );
+
+        return generateTokenWithClaims(claims, user);
     }
 
     @Override
-    public String generateRefreshToken(Map<String , Object> extraClaim ,UserDetails userDetails) {
-        return Jwts.builder().setClaims(extraClaim).setSubject(userDetails.getUsername())
+    public String generateRefreshToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        return generateTokenWithClaims(extraClaims, userDetails);
+    }
+
+    private String generateTokenWithClaims(Map<String, Object> claims, UserDetails userDetails) {
+        return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 604800000)) // 24 minutes
-                .signWith(getSiginKey(), SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // 24 ชั่วโมง
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -66,9 +78,25 @@ public class JWTServiceImpl implements JWTService {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(getSiginKey())
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public Long extractStockUserId(String token) {
+        return extractClaim(token, claims -> claims.get("stockUserId", Long.class));
+    }
+
+    public String extractFirstName(String token) {
+        return extractClaim(token, claims -> claims.get("firstName", String.class));
+    }
+
+    public String extractLastName(String token) {
+        return extractClaim(token, claims -> claims.get("lastName", String.class));
+    }
+
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 }
