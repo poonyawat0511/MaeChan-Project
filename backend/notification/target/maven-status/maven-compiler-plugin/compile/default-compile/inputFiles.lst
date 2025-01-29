@@ -37,6 +37,7 @@
 /Users/poonyawatkhomlek/Desktop/MeaChan-Project/backend/notification/src/main/java/com/example/workflow/service/StockUserService.java
 /Users/poonyawatkhomlek/Desktop/MeaChan-Project/backend/notification/src/main/java/com/example/workflow/dto/SignUpRequest.java
 /Users/poonyawatkhomlek/Desktop/MeaChan-Project/backend/notification/src/main/java/com/example/workflow/kafka/KafkaMessageListener.java
+/Users/poonyawatkhomlek/Desktop/MeaChan-Project/backend/notification/src/main/java/com/example/workflow/config/CandidateGroupFilter.java
 /Users/poonyawatkhomlek/Desktop/MeaChan-Project/backend/notification/src/main/java/com/example/workflow/model/model.java
 /Users/poonyawatkhomlek/Desktop/MeaChan-Project/backend/notification/src/main/java/com/example/workflow/service/impl/UserServiceimpl.java
 /Users/poonyawatkhomlek/Desktop/MeaChan-Project/backend/notification/src/main/java/com/example/workflow/dto/JwtAuthenticationResponse.java
