@@ -10,7 +10,11 @@ import com.example.workflow.model.Role;
 import com.example.workflow.model.StockUser;
 import com.example.workflow.repository.StockUserRepository;
 
+import org.springframework.scheduling.annotation.EnableScheduling;
+
+
 @SpringBootApplication
+@EnableScheduling
 public class Application implements CommandLineRunner{
   @Autowired
   private StockUserRepository stockUserRepository;
