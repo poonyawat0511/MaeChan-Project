@@ -41,7 +41,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/admin/**").hasAuthority(Role.ADMIN.name())
                 .requestMatchers("/user/**").hasAuthority(Role.USER.name())
-                .requestMatchers("/engine-rest/**").authenticated() 
+                .requestMatchers("/engine-rest/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
