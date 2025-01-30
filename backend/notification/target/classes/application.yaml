@@ -14,7 +14,9 @@ spring:
   kafka:
     consumer:
       group-id: console-consumer-5182
-      bootstrap-servers: 172.27.131.172:9092
+
+      bootstrap-servers: 172.27.109.202:9092
+
 
 line:
   bot:

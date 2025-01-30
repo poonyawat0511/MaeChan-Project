@@ -1,0 +1,48 @@
+{
+  "components": [
+    {
+      "label": "Request ID",
+      "type": "textfield",
+      "key": "requestId",
+      "description": "หมายเลขคำขอซื้อ",
+      "validate": {
+        "required": true
+      },
+      "id": "Field_purchaseId",
+      "layout": {
+        "row": "Row_02bwe9v"
+      }
+    },
+    {
+      "label": "Approver",
+      "type": "textfield",
+      "key": "stockUserApprove",
+      "description": "ชื่อผู้ตรวจสอบ",
+      "validate": {
+        "required": true
+      },
+      "id": "Field_0mfpu0t",
+      "layout": {
+        "row": "Row_1kthzys"
+      }
+    },
+    {
+      "label": "Submit",
+      "action": "submit",
+      "type": "button",
+      "id": "Field_1u13qxk",
+      "layout": {
+        "row": "Row_023a2hr"
+      }
+    }
+  ],
+  "type": "default",
+  "id": "UpdateApproverForm",
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.22.0",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.30.0"
+  },
+  "schemaVersion": 17
+}
