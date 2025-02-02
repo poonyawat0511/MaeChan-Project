@@ -1,7 +1,5 @@
 package com.example.workflow.config;
 
-import java.beans.BeanProperty;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -52,7 +50,6 @@ public class SecurityConfig implements WebMvcConfigurer {
         return http.build();
     }
 
-// Use the passwordEncoder bean directly in the authenticationProvider method:
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();

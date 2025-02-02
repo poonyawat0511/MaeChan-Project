@@ -16,6 +16,7 @@ import com.example.workflow.service.UserService;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +35,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
-        if (StringUtils.isEmpty(authHeader) || !authHeader.startsWith("Bearer ")) {
+        // Check for JWT in the Authorization header
+        if (StringUtils.isNotEmpty(authHeader) && authHeader.startsWith("Bearer ")) {
+            jwt = authHeader.substring(7); // Get the token part
+        } else {
+            // Check for JWT in the cookie
+            jwt = getJwtFromCookie(request);
+        }
+
+        // If no JWT is found, continue the filter chain
+        if (StringUtils.isEmpty(jwt)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        jwt = authHeader.substring(7); // Get the token part
+        // Extract user email from the JWT
         userEmail = jwtService.extractUserName(jwt);
 
         // If email is not empty and no user is already authenticated
@@ -61,5 +71,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    /**
+     * Extracts the JWT token from the "jwt" cookie.
+     */
+    private String getJwtFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("jwt")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }
