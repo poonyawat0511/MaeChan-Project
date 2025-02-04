@@ -1,5 +1,4 @@
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/impl/AuthenticationServiceImpl.java
-/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/dto/SpringRequestDTO.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/dto/SigninRequest.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/impl/JWTServiceImpl.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/SpringRequestService.java
@@ -7,6 +6,7 @@
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/mapper/StockUserApproveMapper.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/dto/StockRequestDto.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/controller/StockUserApproveController.java
+/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/dto/SpringRequestDto.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/controller/SpringRequestController.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/mapper/StockRequestMapper.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/impl/UserServiceimpl.java

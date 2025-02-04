@@ -1,6 +1,6 @@
 package com.example.workflow.service;
 
-import com.example.workflow.dto.SpringRequestDTO;
+import com.example.workflow.dto.SpringRequestDto;
 import com.example.workflow.mapper.SpringRequestMapper;
 import com.example.workflow.model.SpringRequest;
 import com.example.workflow.repository.SpringRequestRepository;
@@ -19,24 +19,24 @@ public class SpringRequestService {
     @Autowired
     private SpringRequestMapper springRequestMapper;
 
-    public List<SpringRequestDTO> getAllSpringRequests() {
+    public List<SpringRequestDto> getAllSpringRequests() {
         return springRequestRepository.findAll().stream()
                 .map(springRequestMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public SpringRequestDTO getSpringRequestById(Long id) {
+    public SpringRequestDto getSpringRequestById(Long id) {
         SpringRequest springRequest = springRequestRepository.findById(id).orElseThrow(() -> new RuntimeException("SpringRequest not found"));
         return springRequestMapper.toDTO(springRequest);
     }
 
-    public SpringRequestDTO createSpringRequest(SpringRequestDTO springRequestDTO) {
+    public SpringRequestDto createSpringRequest(SpringRequestDto springRequestDTO) {
         SpringRequest springRequest = springRequestMapper.toEntity(springRequestDTO);
         springRequest = springRequestRepository.save(springRequest);
         return springRequestMapper.toDTO(springRequest);
     }
 
-    public SpringRequestDTO updateSpringRequest(Long id, SpringRequestDTO springRequestDTO) {
+    public SpringRequestDto updateSpringRequest(Long id, SpringRequestDto springRequestDTO) {
         SpringRequest existingSpringRequest = springRequestRepository.findById(id).orElseThrow(() -> new RuntimeException("SpringRequest not found"));
         SpringRequest updatedSpringRequest = springRequestMapper.toEntity(springRequestDTO);
         updatedSpringRequest.setId(existingSpringRequest.getId());
