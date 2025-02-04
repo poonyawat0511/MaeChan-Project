@@ -70,8 +70,16 @@ public class KafkaMessageListener {
             // หลังจากที่กระบวนการ Camunda เริ่มต้นแล้ว
             String taskId = processInstance.getId();  // หรือใช้ taskService เพื่อดึง taskId
 
+            // TODO : แก้เป็น springRequest
+            // สร้าง SpringRequest ใหม่ แล้วอัพเดท camundaTaskId 
+            // 
+            // SpringRequest springRequest = new SpringRequest();
+            // springRequest.setCamundaTaskId(taskId);
+            // springRequestRepository.save(springRequest);
+
             // อัปเดตฐานข้อมูล stock_request ให้มี camunda_task_id
             stockRequestRepository.updateCamundaTaskId(Long.valueOf(requestId), taskId);
+            
 
         } catch (Exception e) {
             System.err.println("Error processing Kafka message: " + e.getMessage());
