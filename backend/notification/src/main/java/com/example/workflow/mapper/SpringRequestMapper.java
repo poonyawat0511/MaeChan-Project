@@ -1,14 +1,19 @@
 package com.example.workflow.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.example.workflow.dto.SpringRequestDto;
 import com.example.workflow.model.SpringRequest;
-import com.example.workflow.model.StockUser;
-import org.springframework.stereotype.Component;
 
 @Component
 public class SpringRequestMapper {
 
     public SpringRequestDto toDTO(SpringRequest springRequest) {
+
+        if (springRequest == null){ 
+            return null;
+        }
+
         SpringRequestDto dto = new SpringRequestDto();
         dto.setId(springRequest.getId());
         dto.setStockRequest(springRequest.getStockRequest());
@@ -22,17 +27,22 @@ public class SpringRequestMapper {
         return dto;
     }
 
-    public SpringRequest toEntity(SpringRequestDto dto) {
+    public SpringRequest toEntity(SpringRequestDto springRequestDto) {
+
+        if (springRequestDto == null) {
+            return null;
+        }
+
         SpringRequest springRequest = new SpringRequest();
-        springRequest.setId(dto.getId());
-        springRequest.setStockRequest(dto.getStockRequest());
-        springRequest.setCamundaTaskId(dto.getCamundaTaskId());
-        springRequest.setUserApprove(dto.getUserApprove());
-        springRequest.setApproverApproveStatus(dto.getApproverApproveStatus());
-        springRequest.setUserDirector(dto.getUserDirector());
-        springRequest.setDirectorApproveStatus(dto.getDirectorApproveStatus());
-        springRequest.setDirectorApproveDate(dto.getDirectorApproveDate());
-        springRequest.setAllCompleteStatus(dto.getAllCompleteStatus());
+        springRequest.setId(springRequestDto.getId());
+        springRequest.setStockRequest(springRequestDto.getStockRequest());
+        springRequest.setCamundaTaskId(springRequestDto.getCamundaTaskId());
+        springRequest.setUserApprove(springRequestDto.getUserApprove());
+        springRequest.setApproverApproveStatus(springRequestDto.getApproverApproveStatus());
+        springRequest.setUserDirector(springRequestDto.getUserDirector());
+        springRequest.setDirectorApproveStatus(springRequestDto.getDirectorApproveStatus());
+        springRequest.setDirectorApproveDate(springRequestDto.getDirectorApproveDate());
+        springRequest.setAllCompleteStatus(springRequestDto.getAllCompleteStatus());
         return springRequest;
     }
 
