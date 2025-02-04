@@ -6,7 +6,6 @@ import com.example.workflow.model.StockUser;
 
 public class StockUserMapper {
 
-    // Method for mapping from StockUser to StockUserDto
     public static StockUserDto mapToStockUserDto(StockUser stockUser) {
         if (stockUser == null) {
             return null;
@@ -14,16 +13,17 @@ public class StockUserMapper {
 
         StockUserDto dto = new StockUserDto();
         dto.setStockUserId(stockUser.getStockUserId());
-        dto.setStockUserName(stockUser.getStockUserName());
+        dto.setSignature(stockUser.getSignaturePath());
+        dto.setUserHospitalId(stockUser.getUserHospitalId());
+        dto.setLineId(stockUser.getLineId());
         dto.setFirstName(stockUser.getFirstName());
         dto.setLastName(stockUser.getLastName());
         dto.setEmail(stockUser.getEmail());
         dto.setPassword(stockUser.getPassword());
-        dto.setRole(stockUser.getRole() != null ? stockUser.getRole().name() : null); // Convert Role enum to String
+        dto.setRole(stockUser.getRole() != null ? stockUser.getRole().name() : null);
         return dto;
     }
 
-    // Method for mapping from StockUserDto to StockUser
     public static StockUser mapToStockUser(StockUserDto stockUserDto) {
         if (stockUserDto == null) {
             return null;
@@ -31,12 +31,14 @@ public class StockUserMapper {
 
         StockUser stockUser = new StockUser();
         stockUser.setStockUserId(stockUserDto.getStockUserId());
-        stockUser.setStockUserName(stockUserDto.getStockUserName());
+        stockUser.setLineId(stockUserDto.getLineId());
+        stockUser.setSignaturePath(stockUserDto.getSignature());
+        stockUser.setUserHospitalId(stockUserDto.getUserHospitalId());
         stockUser.setFirstName(stockUserDto.getFirstName());
         stockUser.setLastName(stockUserDto.getLastName());
         stockUser.setEmail(stockUserDto.getEmail());
         stockUser.setPassword(stockUserDto.getPassword());
-        stockUser.setRole(stockUserDto.getRole() != null ? Role.valueOf(stockUserDto.getRole()) : null); // Convert String to Role enum
+        stockUser.setRole(stockUserDto.getRole() != null ? Role.valueOf(stockUserDto.getRole()) : null);
         return stockUser;
     }
 }
