@@ -19,9 +19,9 @@ public class SpringRequestDto {
     private StockRequest stockRequest;
     private String camundaTaskId;
     private StockUser userApprove;
-    private String approverApproveStatus;
+    private Boolean approverApproveStatus;
     private StockUser userDirector;
-    private String directorApproveStatus;
+    private Boolean directorApproveStatus;
     private LocalDate directorApproveDate;
     private Boolean allCompleteStatus;
 
