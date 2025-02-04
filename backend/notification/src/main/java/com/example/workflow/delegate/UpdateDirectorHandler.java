@@ -24,12 +24,14 @@ public class UpdateDirectorHandler implements JavaDelegate {
         // ตรวจสอบและแปลง purchaseId
         Long requestId = validateAndParseRequestId(requestIdStr);
 
+        //TODO change to springRequest
         // ค้นหา PurchaseRequest
         StockRequest stockRequest = stockRequestService.findStockRequestById(requestId);
         if (stockRequest == null) {
             throw new RuntimeException("StockRequest not found with id: " + requestId);
         }
 
+        //TODO update springRequest and stockRequest
         // อัปเดตข้อมูล
         stockRequest.setStockSubjectPerson(stockSubjectPerson);;
         stockRequest.setApprove(approve);
