@@ -1,6 +1,6 @@
 package com.example.workflow.controller;
 
-import com.example.workflow.dto.SpringRequestDTO;
+import com.example.workflow.dto.SpringRequestDto;
 import com.example.workflow.service.SpringRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,24 +16,24 @@ public class SpringRequestController {
     private SpringRequestService springRequestService;
 
     @GetMapping
-    public List<SpringRequestDTO> getAllSpringRequests() {
+    public List<SpringRequestDto> getAllSpringRequests() {
         return springRequestService.getAllSpringRequests();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SpringRequestDTO> getSpringRequestById(@PathVariable Long id) {
-        SpringRequestDTO springRequestDTO = springRequestService.getSpringRequestById(id);
+    public ResponseEntity<SpringRequestDto> getSpringRequestById(@PathVariable Long id) {
+        SpringRequestDto springRequestDTO = springRequestService.getSpringRequestById(id);
         return ResponseEntity.ok(springRequestDTO);
     }
 
     @PostMapping
-    public SpringRequestDTO createSpringRequest(@RequestBody SpringRequestDTO springRequestDTO) {
+    public SpringRequestDto createSpringRequest(@RequestBody SpringRequestDto springRequestDTO) {
         return springRequestService.createSpringRequest(springRequestDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SpringRequestDTO> updateSpringRequest(@PathVariable Long id, @RequestBody SpringRequestDTO springRequestDTO) {
-        SpringRequestDTO updatedSpringRequest = springRequestService.updateSpringRequest(id, springRequestDTO);
+    public ResponseEntity<SpringRequestDto> updateSpringRequest(@PathVariable Long id, @RequestBody SpringRequestDto springRequestDTO) {
+        SpringRequestDto updatedSpringRequest = springRequestService.updateSpringRequest(id, springRequestDTO);
         return ResponseEntity.ok(updatedSpringRequest);
     }
 
