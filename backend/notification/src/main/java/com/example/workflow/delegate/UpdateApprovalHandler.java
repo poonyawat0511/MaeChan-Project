@@ -15,6 +15,7 @@ public class UpdateApprovalHandler implements JavaDelegate {
 
     @Autowired
     private StockRequestService stockRequestService;
+
     @Autowired
     private StockUserApproveRepository stockUserApproveRepository;
 
@@ -27,15 +28,20 @@ public class UpdateApprovalHandler implements JavaDelegate {
         // ตรวจสอบและแปลง purchaseId
         Long requestId = validateAndParseRequestId(requestIdStr);
 
+        // TODO change to springRequest
         // ค้นหา StockRequest
         StockRequest stockRequest = stockRequestService.findStockRequestById(requestId);
         if (stockRequest == null) {
             throw new RuntimeException("StockRequest not found with id: " + requestId);
         }
 
+        // TODO change to stockUser
         // ค้นหา StockUserApprove ตาม stockUserApproveId
         StockUserApprove stockUserApprove = stockUserApproveRepository.findById(Long.parseLong(stockUserApproveId))
                 .orElseThrow(() -> new RuntimeException("StockUserApprove not found with id: " + stockUserApproveId));
+
+        // TODO เขียนลง springRequest กับ stockRequest
+        // 
 
         // อัปเดตข้อมูล
         stockRequest.setStockUserApprove(stockUserApprove);
