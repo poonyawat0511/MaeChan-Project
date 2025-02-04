@@ -37,7 +37,6 @@ com/example/workflow/Application.class
 com/example/workflow/model/Role.class
 com/example/workflow/model/StockUserApprove.class
 com/example/workflow/model/UserHospital.class
-com/example/workflow/kafka/KafkaMessageListener.class
 com/example/workflow/mapper/UserHospitalMapper.class
 com/example/workflow/controller/UserHospitalController.class
 com/example/workflow/config/SecurityConfig.class
