@@ -11,6 +11,7 @@ public class SpringRequestMapper {
     public SpringRequestDto toDTO(SpringRequest springRequest) {
         SpringRequestDto dto = new SpringRequestDto();
         dto.setId(springRequest.getId());
+        dto.setStockRequest(springRequest.getStockRequest());
         dto.setCamundaTaskId(springRequest.getCamundaTaskId());
         dto.setUserApprove(springRequest.getUserApprove());
         dto.setApproverApproveStatus(springRequest.getApproverApproveStatus());
@@ -24,6 +25,7 @@ public class SpringRequestMapper {
     public SpringRequest toEntity(SpringRequestDto dto) {
         SpringRequest springRequest = new SpringRequest();
         springRequest.setId(dto.getId());
+        springRequest.setStockRequest(dto.getStockRequest());
         springRequest.setCamundaTaskId(dto.getCamundaTaskId());
         springRequest.setUserApprove(dto.getUserApprove());
         springRequest.setApproverApproveStatus(dto.getApproverApproveStatus());

@@ -19,6 +19,10 @@ public class SpringRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "stock_request_id", referencedColumnName = "id")
+    private StockRequest stockRequest;
+
     @Column(name = "camunda_task_id")
     private String camundaTaskId;
 
@@ -49,6 +53,14 @@ public class SpringRequest {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public StockRequest getStockRequest() {
+        return stockRequest;
+    }
+
+    public void setStockRequest(StockRequest stockRequest) {
+        this.stockRequest = stockRequest;
     }
 
     public String getCamundaTaskId() {
