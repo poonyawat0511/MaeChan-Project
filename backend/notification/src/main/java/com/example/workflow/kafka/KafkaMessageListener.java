@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import com.example.workflow.model.SpringRequest;
+import com.example.workflow.repository.SpringRequestRepository;
 import com.example.workflow.repository.StockRequestRepository;
 
 @Service
@@ -18,6 +20,9 @@ public class KafkaMessageListener {
 
     @Autowired
     private StockRequestRepository stockRequestRepository;  // Repository สำหรับการอัปเดตข้อมูลในฐานข้อมูล
+
+    @Autowired
+    private SpringRequestRepository springRequestRepository;
 
     @KafkaListener(topics = "dbserver1.public.stock_request", groupId = "console-consumer-5182")
     public void handleMessage(String message) {
@@ -70,15 +75,14 @@ public class KafkaMessageListener {
             // หลังจากที่กระบวนการ Camunda เริ่มต้นแล้ว
             String taskId = processInstance.getId();  // หรือใช้ taskService เพื่อดึง taskId
 
-            // TODO : แก้เป็น springRequest
             // สร้าง SpringRequest ใหม่ แล้วอัพเดท camundaTaskId 
-            // 
-            // SpringRequest springRequest = new SpringRequest();
-            // springRequest.setCamundaTaskId(taskId);
-            // springRequestRepository.save(springRequest);
+            SpringRequest springRequest = new SpringRequest();
+            springRequest.setCamundaTaskId(taskId);
+            springRequestRepository.save(springRequest);
 
+            //old code
             // อัปเดตฐานข้อมูล stock_request ให้มี camunda_task_id
-            stockRequestRepository.updateCamundaTaskId(Long.valueOf(requestId), taskId);
+            //stockRequestRepository.updateCamundaTaskId(Long.valueOf(requestId), taskId);
             
 
         } catch (Exception e) {
