@@ -24,4 +24,5 @@ public class SpringRequestDto {
     private String directorApproveStatus;
     private LocalDate directorApproveDate;
     private Boolean allCompleteStatus;
+
 }
