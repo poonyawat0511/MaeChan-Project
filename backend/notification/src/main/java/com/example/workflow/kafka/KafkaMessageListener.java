@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import com.example.workflow.model.SpringRequest;
+import com.example.workflow.repository.SpringRequestRepository;
 import com.example.workflow.repository.StockRequestRepository;
 
 @Service
@@ -19,9 +21,12 @@ public class KafkaMessageListener {
     @Autowired
     private StockRequestRepository stockRequestRepository;  // Repository สำหรับการอัปเดตข้อมูลในฐานข้อมูล
 
+    @Autowired
+    private SpringRequestRepository springRequestRepository;
+
     @KafkaListener(topics = "dbserver1.public.stock_request", groupId = "console-consumer-5182")
     public void handleMessage(String message) {
-        System.out.println("Received message: " + message);
+        System.out.println("ดีบัค Received kafka message: " + message);
         try {
             // แปลงข้อความ JSON เป็น JSONObject
             JSONObject jsonMessage = new JSONObject(message);
@@ -69,16 +74,13 @@ public class KafkaMessageListener {
 
             // หลังจากที่กระบวนการ Camunda เริ่มต้นแล้ว
             String taskId = processInstance.getId();  // หรือใช้ taskService เพื่อดึง taskId
+            //System.out.println("ดีบัค Camunda process started with taskId: " + taskId);
 
-            // TODO : แก้เป็น springRequest
-            // สร้าง SpringRequest ใหม่ แล้วอัพเดท camundaTaskId 
-            // 
-            // SpringRequest springRequest = new SpringRequest();
-            // springRequest.setCamundaTaskId(taskId);
-            // springRequestRepository.save(springRequest);
-
-            // อัปเดตฐานข้อมูล stock_request ให้มี camunda_task_id
-            stockRequestRepository.updateCamundaTaskId(Long.valueOf(requestId), taskId);
+            // สร้าง SpringRequest ใหม่ แล้วอัพเดท camundaTaskId, StockRequestId
+            SpringRequest springRequest = new SpringRequest();
+            springRequest.setCamundaTaskId(taskId);
+            springRequest.setStockRequest(stockRequestRepository.findById(Long.valueOf(requestId)).get());
+            springRequestRepository.save(springRequest);
             
 
         } catch (Exception e) {

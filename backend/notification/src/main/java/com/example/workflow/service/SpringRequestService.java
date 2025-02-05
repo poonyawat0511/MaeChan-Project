@@ -19,29 +19,22 @@ public class SpringRequestService {
     @Autowired
     private SpringRequestMapper springRequestMapper;
 
-    public List<SpringRequestDto> getAllSpringRequests() {
-        return springRequestRepository.findAll().stream()
-                .map(springRequestMapper::toDTO)
-                .collect(Collectors.toList());
+    public List<SpringRequest> getAllSpringRequests() {
+        return springRequestRepository.findAll();
     }
 
-    public SpringRequestDto getSpringRequestById(Long id) {
-        SpringRequest springRequest = springRequestRepository.findById(id).orElseThrow(() -> new RuntimeException("SpringRequest not found"));
-        return springRequestMapper.toDTO(springRequest);
+    public SpringRequest getSpringRequestById(Long id) {
+        return springRequestRepository.findById(id).orElseThrow(() -> new RuntimeException("SpringRequest not found"));
     }
 
-    public SpringRequestDto createSpringRequest(SpringRequestDto springRequestDTO) {
-        SpringRequest springRequest = springRequestMapper.toEntity(springRequestDTO);
-        springRequest = springRequestRepository.save(springRequest);
-        return springRequestMapper.toDTO(springRequest);
+    public SpringRequest createSpringRequest(SpringRequest springRequest) {
+        return springRequestRepository.save(springRequest);
     }
 
-    public SpringRequestDto updateSpringRequest(Long id, SpringRequestDto springRequestDTO) {
+    public SpringRequest updateSpringRequest(Long id, SpringRequest springRequest) {
         SpringRequest existingSpringRequest = springRequestRepository.findById(id).orElseThrow(() -> new RuntimeException("SpringRequest not found"));
-        SpringRequest updatedSpringRequest = springRequestMapper.toEntity(springRequestDTO);
-        updatedSpringRequest.setId(existingSpringRequest.getId());
-        updatedSpringRequest = springRequestRepository.save(updatedSpringRequest);
-        return springRequestMapper.toDTO(updatedSpringRequest);
+        springRequest.setId(existingSpringRequest.getId());
+        return springRequestRepository.save(springRequest);
     }
 
     public void deleteSpringRequest(Long id) {
