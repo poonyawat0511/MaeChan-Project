@@ -10,8 +10,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class SpringRequest {
 
@@ -31,14 +39,14 @@ public class SpringRequest {
     private StockUser userApprove;
 
     @Column(name = "approver_approve_status")
-    private String approverApproveStatus;
+    private Boolean approverApproveStatus;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_director_id", referencedColumnName = "stockUserId")
     private StockUser userDirector;
 
     @Column(name = "director_approve_status")
-    private String directorApproveStatus;
+    private Boolean directorApproveStatus;
 
     @Column(name = "director_approve_date")
     private LocalDate directorApproveDate;
@@ -46,76 +54,5 @@ public class SpringRequest {
     @Column(name = "all_complete_status")
     private Boolean allCompleteStatus;
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public StockRequest getStockRequest() {
-        return stockRequest;
-    }
-
-    public void setStockRequest(StockRequest stockRequest) {
-        this.stockRequest = stockRequest;
-    }
-
-    public String getCamundaTaskId() {
-        return camundaTaskId;
-    }
-
-    public void setCamundaTaskId(String camundaTaskId) {
-        this.camundaTaskId = camundaTaskId;
-    }
-
-    public StockUser getUserApprove() {
-        return userApprove;
-    }
-
-    public void setUserApprove(StockUser userApprove) {
-        this.userApprove = userApprove;
-    }
-
-    public String getApproverApproveStatus() {
-        return approverApproveStatus;
-    }
-
-    public void setApproverApproveStatus(String approverApproveStatus) {
-        this.approverApproveStatus = approverApproveStatus;
-    }
-
-    public StockUser getUserDirector() {
-        return userDirector;
-    }
-
-    public void setUserDirector(StockUser userDirector) {
-        this.userDirector = userDirector;
-    }
-
-    public String getDirectorApproveStatus() {
-        return directorApproveStatus;
-    }
-
-    public void setDirectorApproveStatus(String directorApproveStatus) {
-        this.directorApproveStatus = directorApproveStatus;
-    }
-
-    public LocalDate getDirectorApproveDate() {
-        return directorApproveDate;
-    }
-
-    public void setDirectorApproveDate(LocalDate directorApproveDate) {
-        this.directorApproveDate = directorApproveDate;
-    }
-
-    public Boolean getAllCompleteStatus() {
-        return allCompleteStatus;
-    }
-
-    public void setAllCompleteStatus(Boolean allCompleteStatus) {
-        this.allCompleteStatus = allCompleteStatus;
-    }
+ 
 }

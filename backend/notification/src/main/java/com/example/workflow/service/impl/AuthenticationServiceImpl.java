@@ -22,6 +22,8 @@ import com.example.workflow.model.StockUser;
 import com.example.workflow.repository.StockUserRepository;
 import com.example.workflow.service.AuthenticationService;
 import com.example.workflow.service.JWTService;
+import com.example.workflow.repository.UserHospitalRepository;
+import com.example.workflow.model.UserHospital;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +35,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
+    private final UserHospitalRepository userHospitalRepository;
 
     private static final String UPLOAD_DIR = "uploads/signatures/";
 
@@ -53,7 +56,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             stockUser.setSignaturePath(filePath);
         }
 
-        return stockUserRepository.save(stockUser);
+        //get hospitalId from firstName and lastName
+        //and update to StockUser
+        UserHospital user = userHospitalRepository.findByFirstNameAndLastName(signUpRequest.getFirstName(), signUpRequest.getLastName())
+                .orElse(null);
+        if(user == null){
+            //หาไอดีไม่เจอ
+            System.out.println("หาไอดีโรงบาลไม่เจอ");
+            return null;
+        }else{
+            stockUser.setUserHospitalId(user.getHospitalId());
+            System.out.println("แมช " + stockUser.getFirstName() + " "+ stockUser.getLastName() + "กับ UserHospitalId : " + stockUser.getUserHospitalId());
+            return stockUserRepository.save(stockUser);
+        }
     }
 
     public JwtAuthenticationResponse signin(SigninRequest signinRequest) {

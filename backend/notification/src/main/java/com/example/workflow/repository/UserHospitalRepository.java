@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.workflow.model.UserHospital;
 
-public interface UserHospitalRepository extends JpaRepository<UserHospital, Long> {
+import java.util.Optional;
 
+public interface UserHospitalRepository extends JpaRepository<UserHospital, Long> {
+    Optional<UserHospital> findByFirstNameAndLastName(String firstName, String lastName);
 }
