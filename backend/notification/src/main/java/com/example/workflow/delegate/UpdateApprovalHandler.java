@@ -1,13 +1,17 @@
 package com.example.workflow.delegate;
 
+import java.util.Optional;
+
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.workflow.model.SpringRequest;
 import com.example.workflow.model.StockRequest;
-import com.example.workflow.model.StockUserApprove;
-import com.example.workflow.repository.StockUserApproveRepository;
+import com.example.workflow.model.StockUser;
+import com.example.workflow.repository.StockUserRepository;
+import com.example.workflow.service.SpringRequestService;
 import com.example.workflow.service.StockRequestService;
 
 @Service("updateApprovalHandler")
@@ -17,7 +21,10 @@ public class UpdateApprovalHandler implements JavaDelegate {
     private StockRequestService stockRequestService;
 
     @Autowired
-    private StockUserApproveRepository stockUserApproveRepository;
+    private SpringRequestService springRequestService;
+
+    @Autowired
+    private StockUserRepository stockUserRepository;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -28,25 +35,27 @@ public class UpdateApprovalHandler implements JavaDelegate {
         // ตรวจสอบและแปลง purchaseId
         Long requestId = validateAndParseRequestId(requestIdStr);
 
-        // TODO change to springRequest
-        // ค้นหา StockRequest
-        StockRequest stockRequest = stockRequestService.findStockRequestById(requestId);
-        if (stockRequest == null) {
+        // ค้นหา springRequest
+        SpringRequest springRequest = springRequestService.getSpringRequestById(requestId);
+        if (springRequest == null) {
             throw new RuntimeException("StockRequest not found with id: " + requestId);
         }
 
-        // TODO change to stockUser
-        // ค้นหา StockUserApprove ตาม stockUserApproveId
-        StockUserApprove stockUserApprove = stockUserApproveRepository.findById(Long.parseLong(stockUserApproveId))
-                .orElseThrow(() -> new RuntimeException("StockUserApprove not found with id: " + stockUserApproveId));
+        // ค้นหา StockUser 
+        Optional<StockUser> stockUser = stockUserRepository.findById(Long.parseLong(stockUserApproveId));
+        if (stockUser == null) {
+            throw new RuntimeException("StockUser not found with id: " + stockUserApproveId);
+        }
 
-        // TODO เขียนลง springRequest กับ stockRequest
-        // 
+        //update springRequest
+        springRequest.setUserApprove(stockUser.get());
+        springRequest.setApproverApproveStatus(true);
+        springRequestService.updateSpringRequest(requestId, springRequest);
 
-        // อัปเดตข้อมูล
-        stockRequest.setStockUserApprove(stockUserApprove);
-
-        // บันทึก
+        //update stockRequest
+        StockRequest stockRequest = stockRequestService.findStockRequestById(springRequest.getStockRequest().getId());
+        //ตอนนี้เซฟเป็น String
+        stockRequest.setStockUserApprove(stockUser.get().getUserHospitalId());
         stockRequestService.updateStockRequest(stockRequest);
     }
 

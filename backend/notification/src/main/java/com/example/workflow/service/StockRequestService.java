@@ -79,7 +79,6 @@ public class StockRequestService {
             existingStockRequest.setStockPoNoList(updatedStockRequest.getStockPoNoList());
             existingStockRequest.setStockBudgetTypeId(updatedStockRequest.getStockBudgetTypeId());
             existingStockRequest.setDepRequestNoList(updatedStockRequest.getDepRequestNoList());
-            existingStockRequest.setCamundaTaskId(updatedStockRequest.getCamundaTaskId());
     
             return stockRequestRepository.save(existingStockRequest);
         }).orElseThrow(() -> new RuntimeException("StockRequest not found with id: " + updatedStockRequest.getId()));
@@ -89,11 +88,6 @@ public class StockRequestService {
     public String deleteStockRequestById(Long requestId) {
         stockRequestRepository.deleteById(requestId);
         return "StockRequest id:" + requestId + " has been deleted";
-    }
-
-    public StockRequest findStockRequestByCamundaTaskId(String taskId) {
-        Optional<StockRequest> purchaseRequest = stockRequestRepository.findStockRequestByCamundaTaskId(taskId);
-        return purchaseRequest.orElse(null);
     }
 
 }
