@@ -59,11 +59,12 @@ public class UpdateDirectorHandler implements JavaDelegate {
         springRequest.setAllCompleteStatus(requestComplete);
         springRequestService.updateSpringRequest(requestId, springRequest);
 
-        // update stockRequest       
+        // update stockRequest
+        if(requestComplete){
         stockRequest.setStockSubjectPerson("ผู้อำนวยการโรงพยาบาลแม่จัน");;
         stockRequest.setStockApproveDate(date);
-        stockRequest.setApprove(approve);
         stockRequest.setRequestComplete(requestComplete);
+        } 
         stockRequestService.updateStockRequest(stockRequest);
 
 

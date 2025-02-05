@@ -56,6 +56,7 @@ public class UpdateApprovalHandler implements JavaDelegate {
         StockRequest stockRequest = stockRequestService.findStockRequestById(springRequest.getStockRequest().getId());
         //ตอนนี้เซฟเป็น String
         stockRequest.setStockUserApprove(stockUser.get().getUserHospitalId());
+        stockRequest.setApprove(true);
         stockRequestService.updateStockRequest(stockRequest);
     }
 
