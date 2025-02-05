@@ -26,7 +26,7 @@ public class KafkaMessageListener {
 
     @KafkaListener(topics = "dbserver1.public.stock_request", groupId = "console-consumer-5182")
     public void handleMessage(String message) {
-        System.out.println("Received message: " + message);
+        System.out.println("ดีบัค Received kafka message: " + message);
         try {
             // แปลงข้อความ JSON เป็น JSONObject
             JSONObject jsonMessage = new JSONObject(message);
@@ -74,15 +74,13 @@ public class KafkaMessageListener {
 
             // หลังจากที่กระบวนการ Camunda เริ่มต้นแล้ว
             String taskId = processInstance.getId();  // หรือใช้ taskService เพื่อดึง taskId
+            //System.out.println("ดีบัค Camunda process started with taskId: " + taskId);
 
-            // สร้าง SpringRequest ใหม่ แล้วอัพเดท camundaTaskId 
+            // สร้าง SpringRequest ใหม่ แล้วอัพเดท camundaTaskId, StockRequestId
             SpringRequest springRequest = new SpringRequest();
             springRequest.setCamundaTaskId(taskId);
+            springRequest.setStockRequest(stockRequestRepository.findById(Long.valueOf(requestId)).get());
             springRequestRepository.save(springRequest);
-
-            //old code
-            // อัปเดตฐานข้อมูล stock_request ให้มี camunda_task_id
-            //stockRequestRepository.updateCamundaTaskId(Long.valueOf(requestId), taskId);
             
 
         } catch (Exception e) {

@@ -62,7 +62,6 @@ public class StockRequestMapper {
         dto.setStockPoNoList(stockRequest.getStockPoNoList());
         dto.setStockBudgetTypeId(stockRequest.getStockBudgetTypeId());
         dto.setDepRequestNoList(stockRequest.getDepRequestNoList());
-        dto.setCamundaTaskId(stockRequest.getCamundaTaskId());
 
         return dto;
     }
@@ -122,7 +121,6 @@ public class StockRequestMapper {
         stockRequest.setStockPoNoList(stockRequestDto.getStockPoNoList());
         stockRequest.setStockBudgetTypeId(stockRequestDto.getStockBudgetTypeId());
         stockRequest.setDepRequestNoList(stockRequestDto.getDepRequestNoList());
-        stockRequest.setCamundaTaskId(stockRequestDto.getCamundaTaskId());
 
         return stockRequest;
     }

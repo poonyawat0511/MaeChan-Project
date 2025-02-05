@@ -1,6 +1,6 @@
 package com.example.workflow.controller;
 
-import com.example.workflow.dto.SpringRequestDto;
+import com.example.workflow.model.SpringRequest;
 import com.example.workflow.service.SpringRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,24 +16,24 @@ public class SpringRequestController {
     private SpringRequestService springRequestService;
 
     @GetMapping
-    public List<SpringRequestDto> getAllSpringRequests() {
+    public List<SpringRequest> getAllSpringRequests() {
         return springRequestService.getAllSpringRequests();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SpringRequestDto> getSpringRequestById(@PathVariable Long id) {
-        SpringRequestDto springRequestDTO = springRequestService.getSpringRequestById(id);
-        return ResponseEntity.ok(springRequestDTO);
+    public ResponseEntity<SpringRequest> getSpringRequestById(@PathVariable Long id) {
+        SpringRequest springRequest = springRequestService.getSpringRequestById(id);
+        return ResponseEntity.ok(springRequest);
     }
 
     @PostMapping
-    public SpringRequestDto createSpringRequest(@RequestBody SpringRequestDto springRequestDTO) {
-        return springRequestService.createSpringRequest(springRequestDTO);
+    public SpringRequest createSpringRequest(@RequestBody SpringRequest springRequest) {
+        return springRequestService.createSpringRequest(springRequest);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SpringRequestDto> updateSpringRequest(@PathVariable Long id, @RequestBody SpringRequestDto springRequestDTO) {
-        SpringRequestDto updatedSpringRequest = springRequestService.updateSpringRequest(id, springRequestDTO);
+    public ResponseEntity<SpringRequest> updateSpringRequest(@PathVariable Long id, @RequestBody SpringRequest springRequest) {
+        SpringRequest updatedSpringRequest = springRequestService.updateSpringRequest(id, springRequest);
         return ResponseEntity.ok(updatedSpringRequest);
     }
 
