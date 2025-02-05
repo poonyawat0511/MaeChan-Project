@@ -26,18 +26,12 @@ export default function DirectorPage() {
   useEffect(() => {
     const fetchCamundaApiDirector = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("You must be logged in to view the requests.");
-          return;
-        }
-
         const response = await fetch(camundaTaksApiDirector, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
+          credentials: "include",
         });
 
         if (!response.ok) {
@@ -58,18 +52,12 @@ export default function DirectorPage() {
 
   const fetchStockRequestByTaskId = async (processInstanceId: string) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("You must be logged in to view the requests.");
-        return;
-      }
-
       const response = await fetch(stockRequestByTaskApi(processInstanceId), {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -87,7 +75,12 @@ export default function DirectorPage() {
 
   const handleSubmit = async (task: Task) => {
     try {
-      const token = localStorage.getItem("token");
+      // Extract token from cookies
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token="))
+        ?.split("=")[1];
+
       if (!token) {
         setError("You must be logged in to approve this task.");
         return;
@@ -102,17 +95,12 @@ export default function DirectorPage() {
       }
 
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
-      const stockUserId = decodedToken.stockUserId;
-
-      if (!stockUserId) {
-        setError("Stock user ID not found.");
-        return;
-      }
+      const stockUserId = decodedToken.stockUserId || "unknown";
 
       const requestBody = {
         variables: {
           requestId: { value: stockRequest.id, type: "String" },
-          stockSubjectPerson: { value: "", type: "String" },
+          stockSubjectPerson: { value: stockUserId, type: "String" },
         },
       };
 
@@ -122,8 +110,9 @@ export default function DirectorPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // Send token in Authorization header
           },
+          credentials: "include",
           body: JSON.stringify(requestBody),
         }
       );

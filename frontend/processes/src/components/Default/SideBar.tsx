@@ -42,9 +42,17 @@ const buttons2 = [
   },
 ];
 
-const handleLogout = () => {
-  localStorage.removeItem("token");
-  window.location.href = "/signin";
+const handleSignout = async () => {
+  try {
+    await fetch("http://localhost:8081/auth/signout", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    window.location.href = "/signin";
+  } catch (error) {
+    console.error("sign out failed:", error);
+  }
 };
 
 const SideBar = () => {
@@ -180,7 +188,7 @@ const SideBar = () => {
           className="w-full text-start text-red-600 hover:bg-red-100 gap-2"
           variant="text"
           color="error"
-          onClick={handleLogout}
+          onClick={handleSignout}
         >
           <Person2Icon className="mr-2" />
           Sign Out

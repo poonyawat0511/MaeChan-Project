@@ -27,18 +27,12 @@ export default function ApproverPage() {
   useEffect(() => {
     const fetchCamundaApiApprover = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("You must be logged in to view the requests.");
-          return;
-        }
-
         const response = await fetch(camundaTaksApiApprover, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
+          credentials: "include",
         });
 
         if (!response.ok) {
@@ -59,18 +53,12 @@ export default function ApproverPage() {
 
   const fetchStockRequestByTaskId = async (processInstanceId: string) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("You must be logged in to view the requests.");
-        return;
-      }
-
       const response = await fetch(stockRequestByTaskApi(processInstanceId), {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -88,7 +76,12 @@ export default function ApproverPage() {
 
   const handleSubmit = async (task: Task) => {
     try {
-      const token = localStorage.getItem("token");
+      // Extract token from cookies
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("token="))
+        ?.split("=")[1];
+
       if (!token) {
         setError("You must be logged in to approve this task.");
         return;
@@ -103,17 +96,12 @@ export default function ApproverPage() {
       }
 
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
-      const stockUserId = decodedToken.stockUserId;
-
-      if (!stockUserId) {
-        setError("Stock user ID not found.");
-        return;
-      }
+      const stockUserId = decodedToken.stockUserId || "unknown";
 
       const requestBody = {
         variables: {
           requestId: { value: stockRequest.id, type: "String" },
-          stockUserApprove: { value: stockUserId, type: "String" },
+          stockSubjectPerson: { value: stockUserId, type: "String" },
         },
       };
 
@@ -123,8 +111,8 @@ export default function ApproverPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
+          credentials: "include",
           body: JSON.stringify(requestBody),
         }
       );

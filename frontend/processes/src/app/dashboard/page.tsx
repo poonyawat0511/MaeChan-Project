@@ -65,19 +65,12 @@ export default function DashBorad() {
   useEffect(() => {
     const fetchStockRequests = async () => {
       try {
-        if (typeof window === "undefined") return;
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("You must be logged in to view the requests.");
-          return;
-        }
-
         const response = await fetch(requestApi, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
+          credentials: "include",
         });
 
         if (!response.ok) {
