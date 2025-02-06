@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signUpResponse } from "@/utils/types/signUpResponese";
+import styles from './styles.module.css';
+import { Input } from "@heroui/input";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<Partial<signUpResponse>>({
@@ -37,7 +39,7 @@ export default function SignUpPage() {
       Object.entries(formData).forEach(([key, value]) => {
         if (value) data.append(key, value.toString());
       });
-      
+
       if (signatureFile) {
         data.append("signature", signatureFile);
       }
@@ -60,88 +62,94 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="flex h-full justify-center items-center bg-gray-100">
-      <form
-        className="bg-white p-8 rounded-lg shadow-md max-w-sm w-full"
-        onSubmit={handleSubmit}
-      >
-        <h1 className="text-2xl font-bold mb-4 text-center">Sign Up</h1>
-        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-        <input
-          type="text"
-          name="firstName"
-          placeholder="First Name"
-          className="w-full p-2 border rounded-md mb-2"
-          value={formData.firstName}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="lastName"
-          placeholder="Last Name"
-          className="w-full p-2 border rounded-md mb-2"
-          value={formData.lastName}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          className="w-full p-2 border rounded-md mb-2"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          className="w-full p-2 border rounded-md mb-2"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="file"
-          name="signature"
-          accept="image/*"
-          className="w-full p-2 border rounded-md mb-2"
-          onChange={handleFileChange}
-          required
-        />
-        <input
-          type="text"
-          name="userHospitalId"
-          placeholder="User Hospital ID"
-          className="w-full p-2 border rounded-md mb-2"
-          value={formData.userHospitalId}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="lineId"
-          placeholder="Line ID"
-          className="w-full p-2 border rounded-md mb-2"
-          value={formData.lineId}
-          onChange={handleChange}
-        />
-        <input
-          type="text"
-          name="role"
-          placeholder="Role"
-          className="w-full p-2 border rounded-md mb-2"
-          value={formData.role}
-          onChange={handleChange}
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded-md w-full"
+    <div className={styles.container}>
+      <div className={styles.card}>
+        <form
+          className={styles.form}
+          onSubmit={handleSubmit}
         >
-          Sign Up
-        </button>
-      </form>
+          <h1 className="text-2xl font-bold mb-4 text-center">Sign Up</h1>
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+          <div className="flex space-x-4">
+            <Input
+              type="text"
+              labelPlacement="outside"
+              name="firstName"
+              label="FirstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+            />
+            <Input
+              type="text"
+              labelPlacement="outside"
+              name="lastName"
+              label="LastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            className="w-full p-2 border rounded-md mb-2"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            className="w-full p-2 border rounded-md mb-2"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="file"
+            name="signature"
+            accept="image/*"
+            className="w-full p-2 border rounded-md mb-2"
+            onChange={handleFileChange}
+            required
+          />
+          <input
+            type="text"
+            name="userHospitalId"
+            placeholder="User Hospital ID"
+            className="w-full p-2 border rounded-md mb-2"
+            value={formData.userHospitalId}
+            onChange={handleChange}
+          />
+          <input
+            type="text"
+            name="lineId"
+            placeholder="Line ID"
+            className="w-full p-2 border rounded-md mb-2"
+            value={formData.lineId}
+            onChange={handleChange}
+          />
+          <input
+            type="text"
+            name="role"
+            placeholder="Role"
+            className="w-full p-2 border rounded-md mb-2"
+            value={formData.role}
+            onChange={handleChange}
+          />
+          <button
+            type="submit"
+            className="bg-blue-500 text-white py-2 px-4 rounded-md w-full"
+          >
+            Sign Up
+          </button>
+        </form>
+      </div>
     </div>
+
   );
 }
