@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { signUpResponse } from "@/utils/types/signUpResponese";
 
 export default function SignUpPage() {
@@ -38,40 +37,36 @@ export default function SignUpPage() {
       Object.entries(formData).forEach(([key, value]) => {
         if (value) data.append(key, value.toString());
       });
-
+      
       if (signatureFile) {
         data.append("signature", signatureFile);
       }
 
-      const response = await axios.post(
-        "http://localhost:8081/auth/signup",
-        data,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      const response = await fetch("http://localhost:8081/auth/signup", {
+        method: "POST",
+        body: data,
+      });
 
-      console.log("Signup Successful:", response.data);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "An error occurred");
+      }
+
+      console.log("Signup Successful:", await response.json());
       router.push("/signin");
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || "An error occurred");
-      } else {
-        setError("An unexpected error occurred");
-      }
+      setError(err instanceof Error ? err.message : "An unexpected error occurred");
     }
   };
 
   return (
-    <div className="flex h-screen justify-center items-center bg-gray-100">
+    <div className="flex h-full justify-center items-center bg-gray-100">
       <form
         className="bg-white p-8 rounded-lg shadow-md max-w-sm w-full"
         onSubmit={handleSubmit}
       >
         <h1 className="text-2xl font-bold mb-4 text-center">Sign Up</h1>
-
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-
         <input
           type="text"
           name="firstName"
@@ -108,7 +103,6 @@ export default function SignUpPage() {
           onChange={handleChange}
           required
         />
-        {/* File Upload for Signature */}
         <input
           type="file"
           name="signature"

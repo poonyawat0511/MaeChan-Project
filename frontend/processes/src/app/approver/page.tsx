@@ -13,8 +13,8 @@ import HorizontalLinearAlternativeLabelStepper from "@/share/stepper";
 
 const camundaTaksApiApprover = `http://localhost:8081/engine-rest/task?candidateGroup=Approver`;
 const camundaTaskSubmit = `http://localhost:8081/engine-rest/task`;
-const stockRequestByTaskApi = (processInstanceId: string) =>
-  `http://localhost:8081/stock-requests/task/${processInstanceId}`;
+const springRequestByTaskApi = (processInstanceId: string) =>
+  `http://localhost:8081/spring-requests/task/${processInstanceId}`;
 
 export default function ApproverPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -53,7 +53,7 @@ export default function ApproverPage() {
 
   const fetchStockRequestByTaskId = async (processInstanceId: string) => {
     try {
-      const response = await fetch(stockRequestByTaskApi(processInstanceId), {
+      const response = await fetch(springRequestByTaskApi(processInstanceId), {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -183,7 +183,7 @@ export default function ApproverPage() {
         </div>
 
         <div className="px-2 py-2 flex">
-          <div className="drop-shadow-xl p-5 bg-gray-300 rounded-xl flex-1 max-h-[32rem] max-w-[100%] overflow-auto scrollbar-hidden">
+          <div className="drop-shadow-xl p-5 bg-gray-300 rounded-xl flex-1 max-h-[32rem] max-w-[30%] overflow-auto scrollbar-hidden">
             <div className="mb-2">
               <h2 className="text-xl font-bold text-gray-600">
                 Total Tasks:
