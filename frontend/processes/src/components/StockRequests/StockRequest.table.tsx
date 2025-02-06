@@ -119,7 +119,7 @@ export default function StockRequestTable({
                   {stockRequest.stockRequestDocId || "-"}
                 </TableCell>
                 <TableCell align="center">
-                  {stockRequest.stockUser.stockUserName || "-"}
+                  {stockRequest.stockUser.hospitalId || "-"}
                 </TableCell>
                 <TableCell align="center">
                   {stockRequest.requestDate || "-"}
@@ -156,7 +156,7 @@ export default function StockRequestTable({
                   />
                 </TableCell>
                 <TableCell align="center">
-                  {stockRequest.stockUserApprove.stockUserApproveName || "-"}
+                  {stockRequest.stockUserApprove || "-"}
                 </TableCell>
                 <TableCell align="center">
                   <Button

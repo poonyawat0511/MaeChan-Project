@@ -6,7 +6,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Button, Dialog, DialogContent } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import generatePDF from "@/utils/pdf/generatePDF";
-import "./style.css";
+import "./style.module.css";
 import { StockRequest } from "@/utils/types/stock-request";
 import StockRequestTable from "@/components/StockRequests/StockRequest.table";
 import PdfPreview from "@/components/StockRequests/PdfPreview";

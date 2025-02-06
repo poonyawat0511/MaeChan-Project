@@ -48,7 +48,8 @@ const handleSignout = async () => {
       method: "POST",
       credentials: "include",
     });
-
+    document.cookie = "jwt=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    localStorage.removeItem("jwt");
     window.location.href = "/signin";
   } catch (error) {
     console.error("sign out failed:", error);

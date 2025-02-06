@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SignInResponse } from "@/utils/types/signInResponse";
-import axios from "axios";
 
 const SignInPage = () => {
   const [email, setEmail] = useState("");
@@ -13,26 +12,31 @@ const SignInPage = () => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
+  
     try {
-      await axios.post<SignInResponse>(
-        "http://localhost:8081/auth/signin",
-        { email, password },
-        {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        }
-      );
-
-      router.push("/");
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || "An error occurred");
-      } else {
-        setError("An unexpected error occurred");
+      const response = await fetch("http://localhost:8081/auth/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      });
+  
+      if (!response.ok) {
+        throw new Error("An error occurred");
       }
+
+      const data: SignInResponse = await response.json();
+  
+      localStorage.setItem("jwt", data.token);
+  
+      router.push("/dashboard");
+    } catch (err) {
+      setError(err.message || "An unexpected error occurred");
     }
   };
+  
 
   return (
     <div className="flex h-full justify-center items-center">

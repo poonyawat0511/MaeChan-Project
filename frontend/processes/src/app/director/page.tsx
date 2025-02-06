@@ -10,12 +10,12 @@ import PdfPreview from "@/components/Pdf/PdfPreview";
 import { ArrowForward } from "@mui/icons-material";
 import HorizontalLinearAlternativeLabelStepper from "@/share/stepper";
 
-const camundaTaksApiDirector = `http://localhost:8081/engine-rest/task?candidateGroup=Director`;
+const camundaTaksApiApprover = `http://localhost:8081/engine-rest/task?candidateGroup=Director`;
 const camundaTaskSubmit = `http://localhost:8081/engine-rest/task`;
-const stockRequestByTaskApi = (processInstanceId: string) =>
-  `http://localhost:8081/stock-requests/task/${processInstanceId}`;
+const springRequestByTaskApi = (processInstanceId: string) =>
+  `http://localhost:8081/spring-requests/task/${processInstanceId}`;
 
-export default function DirectorPage() {
+export default function ApproverPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -24,9 +24,9 @@ export default function DirectorPage() {
   const [stockRequest, setStockRequest] = useState<StockRequest | null>(null);
 
   useEffect(() => {
-    const fetchCamundaApiDirector = async () => {
+    const fetchCamundaApiApprover = async () => {
       try {
-        const response = await fetch(camundaTaksApiDirector, {
+        const response = await fetch(camundaTaksApiApprover, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -47,12 +47,12 @@ export default function DirectorPage() {
       }
     };
 
-    fetchCamundaApiDirector();
+    fetchCamundaApiApprover();
   }, []);
 
   const fetchStockRequestByTaskId = async (processInstanceId: string) => {
     try {
-      const response = await fetch(stockRequestByTaskApi(processInstanceId), {
+      const response = await fetch(springRequestByTaskApi(processInstanceId), {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -75,11 +75,7 @@ export default function DirectorPage() {
 
   const handleSubmit = async (task: Task) => {
     try {
-      // Extract token from cookies
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
+      const token = localStorage.getItem("jwt");
 
       if (!token) {
         setError("You must be logged in to approve this task.");
@@ -99,8 +95,9 @@ export default function DirectorPage() {
 
       const requestBody = {
         variables: {
-          requestId: { value: stockRequest.id, type: "String" },
-          stockSubjectPerson: { value: stockUserId, type: "String" },
+          requestId: { value: stockRequest.id.toString(), type: "String" },
+          stockSubjectPerson: { value: stockUserId.toString(), type: "String" },
+          approve: { value: true, type: "Boolean" },
         },
       };
 
@@ -110,9 +107,8 @@ export default function DirectorPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Send token in Authorization header
+            Authorization: `Bearer ${token}`,
           },
-          credentials: "include",
           body: JSON.stringify(requestBody),
         }
       );
@@ -165,7 +161,7 @@ export default function DirectorPage() {
   }
 
   return (
-    <div className="drop-shadow-2xl py-5">
+    <div className="flex-1 py-1">
       <div className="mx-5 py-10 px-5 rounded-md">
         <div className="flex items-center gap-4 mb-6 justify-between">
           <h1 className="text-3xl font-bold text-gray-800 ml-5">
@@ -182,8 +178,8 @@ export default function DirectorPage() {
           </IconButton>
         </div>
 
-        <div className="px-2 py-2 flex">
-          <div className="drop-shadow-xl p-5 bg-gray-300 rounded-xl flex-1 max-h-[32rem] max-w-[100%] overflow-auto scrollbar-hidden">
+        <div className="pt-20 flex justify-between gap-10 pb-20 flex-grow">
+          <div className="drop-shadow-xl p-5 bg-gray-300 rounded-xl flex-1 max-h-[35rem] max-w-[30%] overflow-auto scrollbar-hidden">
             <div className="mb-2">
               <h2 className="text-xl font-bold text-gray-600">
                 Total Tasks:
