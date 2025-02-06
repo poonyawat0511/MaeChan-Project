@@ -76,11 +76,7 @@ export default function ApproverPage() {
 
   const handleSubmit = async (task: Task) => {
     try {
-      // Extract token from cookies
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
+      const token = localStorage.getItem("jwt");
 
       if (!token) {
         setError("You must be logged in to approve this task.");
@@ -100,8 +96,8 @@ export default function ApproverPage() {
 
       const requestBody = {
         variables: {
-          requestId: { value: stockRequest.id, type: "String" },
-          stockSubjectPerson: { value: stockUserId, type: "String" },
+          requestId: { value: stockRequest.id.toString(), type: "String" },
+          stockUserApprove: { value: stockUserId.toString(), type: "String" },
         },
       };
 
@@ -111,8 +107,8 @@ export default function ApproverPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-          credentials: "include",
           body: JSON.stringify(requestBody),
         }
       );
@@ -182,8 +178,8 @@ export default function ApproverPage() {
           </IconButton>
         </div>
 
-        <div className="px-2 py-2 flex">
-          <div className="drop-shadow-xl p-5 bg-gray-300 rounded-xl flex-1 max-h-[32rem] max-w-[30%] overflow-auto scrollbar-hidden">
+        <div className="pt-20 flex justify-between gap-10 pb-20 flex-grow">
+          <div className="drop-shadow-xl p-5 bg-gray-300 rounded-xl flex-1 max-h-[35rem] max-w-[30%] overflow-auto scrollbar-hidden">
             <div className="mb-2">
               <h2 className="text-xl font-bold text-gray-600">
                 Total Tasks:
