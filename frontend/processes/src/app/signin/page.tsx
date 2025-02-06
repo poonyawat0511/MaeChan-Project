@@ -23,7 +23,7 @@ const SignInPage = () => {
           withCredentials: true,
         }
       );
-      
+
       router.push("/");
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -35,7 +35,7 @@ const SignInPage = () => {
   };
 
   return (
-    <div className="flex h-screen justify-center items-center">
+    <div className="flex h-full justify-center items-center">
       <form
         className="bg-white p-8 rounded-lg shadow-md max-w-sm w-full"
         onSubmit={handleSignIn}

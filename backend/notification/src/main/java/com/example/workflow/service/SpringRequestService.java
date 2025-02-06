@@ -1,14 +1,14 @@
 package com.example.workflow.service;
 
-import com.example.workflow.dto.SpringRequestDto;
-import com.example.workflow.mapper.SpringRequestMapper;
-import com.example.workflow.model.SpringRequest;
-import com.example.workflow.repository.SpringRequestRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import com.example.workflow.mapper.SpringRequestMapper;
+import com.example.workflow.model.SpringRequest;
+import com.example.workflow.repository.SpringRequestRepository;
 
 @Service
 public class SpringRequestService {
@@ -39,5 +39,9 @@ public class SpringRequestService {
 
     public void deleteSpringRequest(Long id) {
         springRequestRepository.deleteById(id);
+    }
+
+    public Optional<SpringRequest> getByCamundaTaskId(String camundaTaskId) {
+        return springRequestRepository.findByCamundaTaskId(camundaTaskId);
     }
 }
