@@ -1,0 +1,26 @@
+.container {
+    @apply w-full h-full flex justify-center items-center;
+    background: radial-gradient(circle, #0085FF, #003465) no-repeat center center fixed;
+    background-size: cover;
+}
+
+.card {
+    @apply w-[90%] h-[80%] bg-white rounded-2xl shadow-lg p-8 flex items-center justify-center shadow-lg;
+    background: radial-gradient(circle, #7CBDF8, #003465) no-repeat center center fixed;
+    background-size: cover;
+}
+
+.form {
+    @apply h-full flex flex-col justify-center px-20 space-y-4;
+    background-color: #5882c143;
+    border: linear-gradient(180deg, #5882c1 49%, #5882c1 11%);
+    backdrop-filter: blur(17.79px);
+}
+
+.input_label{
+    @apply block text-white text-sm mb-2;
+}
+
+.textfield{
+    @apply w-full pl-2 pr-12 py-1 border rounded-md;
+}
