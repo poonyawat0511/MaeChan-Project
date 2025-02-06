@@ -5,12 +5,12 @@
 }
 
 .card {
-    @apply w-[90%] h-[90%] bg-white rounded-2xl shadow-xl flex items-center justify-center shadow-lg;
+    @apply w-full h-full md:w-[90%] md:h-[90%] bg-white rounded-2xl shadow-xl flex items-center justify-center shadow-lg;
     background: radial-gradient(circle, #7CBDF8, #003465) no-repeat center center fixed;
     background-image: url('../../../public/auth/1.svg'), url('../../../public/auth/2.svg'), url('../../../public/auth/3.svg'), url('../../../public/auth/4.svg'), url('../../../public/auth/5.svg'), url('../../../public/auth/6.svg'), url('../../../public/auth/7.svg'), url('../../../public/auth/8.svg');
     background-size: 20dvh, 30dvh, 50dvh, 40dvh, 20dvh, 40dvh, 25dvh,35dvh;
-    background-position-x: 85dvw, 25dvw, 0dvw, 60dvw, 20dvw, 80dvw, 0dvw, 5dvw;
-    background-position-y: 10dvh, 45dvh, 0dvh, 10dvh, 10dvh, 80dvh, 50dvh, 65dvh;
+    background-position-x: 85dvw, 25dvw, 0dvw, 60dvw, 20dvw, 80dvw, 0dvw, 0dvw;
+    background-position-y: 10dvh, 45dvh, 0dvh, 10dvh, 10dvh, 80dvh, 50dvh, 70dvh;
     background-repeat: no-repeat;
     
     display: flex;
@@ -21,7 +21,7 @@
 }
 
 .form {
-    @apply h-[90%] lg:w-[40%] flex flex-col justify-center px-8 lg:px-20 space-y-4;
+    @apply flex flex-col justify-center w-full max-w-[450px] h-full max-h-[600px] p-4 m-4 space-y-4;
     background-color: #5882c134;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px;
