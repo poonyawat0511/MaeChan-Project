@@ -1,14 +1,19 @@
 "use client";
-import Image from 'next/image'
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SignInResponse } from "@/utils/types/signInResponse";
-import styles from './styles.module.css';
-import logo from '../../../public/logo66.png';
-import { Input } from '@heroui/input';
-import { EnvelopeIcon, EyeIcon, EyeSlashIcon, KeyIcon } from '@heroicons/react/24/outline';
-import React from 'react';
-import { Button } from '@heroui/button';
+import styles from "./styles.module.css";
+import logo from "../../../public/logo66.png";
+import { Input } from "@heroui/input";
+import {
+  EnvelopeIcon,
+  EyeIcon,
+  EyeSlashIcon,
+  KeyIcon,
+} from "@heroicons/react/24/outline";
+import React from "react";
+import { Button } from "@heroui/button";
 
 const SignInPage = () => {
   const [email, setEmail] = useState("");
@@ -21,7 +26,7 @@ const SignInPage = () => {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-  
+
     try {
       const response = await fetch("http://localhost:8081/auth/signin", {
         method: "POST",
@@ -31,34 +36,32 @@ const SignInPage = () => {
         body: JSON.stringify({ email, password }),
         credentials: "include",
       });
-  
+
       if (!response.ok) {
         throw new Error("An error occurred");
       }
 
       const data: SignInResponse = await response.json();
-  
+
       localStorage.setItem("jwt", data.token);
-  
+
       router.push("/dashboard");
     } catch (err) {
       setError(err.message || "An unexpected error occurred");
     }
   };
-  
-
-
-
 
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <form
-          className={styles.form}
-          onSubmit={handleSignIn}
-        >
-          <div className='flex w-full items-center justify-center'>
-            <Image src={logo} alt="Logo" height={100} className='flex items-center' />
+        <form className={styles.form} onSubmit={handleSignIn}>
+          <div className="flex w-full items-center justify-center">
+            <Image
+              src={logo}
+              alt="Logo"
+              height={100}
+              className="flex items-center"
+            />
           </div>
 
           <h1 className="text-2xl font-bold text-left mb-4">Sign In</h1>
@@ -69,24 +72,19 @@ const SignInPage = () => {
               label="Email"
               labelPlacement="outside"
               placeholder="you@example.com"
-              startContent={
-                <EnvelopeIcon className="icon" />
-              }
+              startContent={<EnvelopeIcon className="icon" />}
               onChange={(e) => setEmail(e.target.value)}
               type="email"
             />
 
             <Input
               type={isVisible ? "text" : "password"}
-              labelPlacement='outside'
+              labelPlacement="outside"
               label="Password"
               placeholder="********"
-
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              startContent={
-                <KeyIcon className="icon" />
-              }
+              startContent={<KeyIcon className="icon" />}
               endContent={
                 <button
                   aria-label="toggle password visibility"
@@ -105,15 +103,11 @@ const SignInPage = () => {
             />
           </div>
 
-          <Button
-            type="submit"
-            className="bg-[#003465] text-white w-full"
-          >
+          <Button type="submit" className="bg-[#003465] text-white w-full">
             Sign In
           </Button>
         </form>
       </div>
-
     </div>
   );
 };
