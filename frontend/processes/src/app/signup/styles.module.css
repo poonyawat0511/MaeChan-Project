@@ -1,0 +1,37 @@
+.container {
+    @apply w-full h-full flex justify-center items-center;
+    background: radial-gradient(circle, #0085FF 0%, #003465 100%) no-repeat center center;
+    background-size: cover;
+}
+
+.card {
+    @apply w-[90%] h-[90%] bg-white rounded-2xl shadow-xl flex items-center justify-center shadow-lg;
+    background: radial-gradient(circle, #7CBDF8, #003465) no-repeat center center fixed;
+    background-image: url('../../../public/auth/1.svg'), url('../../../public/auth/2.svg'), url('../../../public/auth/3.svg'), url('../../../public/auth/4.svg'), url('../../../public/auth/5.svg'), url('../../../public/auth/6.svg'), url('../../../public/auth/7.svg'), url('../../../public/auth/8.svg');
+    background-size: 20dvh, 30dvh, 50dvh, 40dvh, 20dvh, 40dvh, 25dvh,35dvh;
+    background-position-x: 85dvw, 25dvw, 0dvw, 60dvw, 20dvw, 80dvw, 0dvw, 5dvw;
+    background-position-y: 10dvh, 45dvh, 0dvh, 10dvh, 10dvh, 80dvh, 50dvh, 65dvh;
+    background-repeat: no-repeat;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.form {
+    @apply h-[90%] lg:w-[40%] flex flex-col justify-center px-8 lg:px-20 space-y-4;
+    background-color: #5882c134;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    backdrop-filter: blur(17.79px);
+}
+
+.input_label {
+    @apply text-gray-100 text-sm mb-2;
+}
+
+.textfield {
+    @apply bg-gray-100 appearance-none border-2 border-gray-200 rounded rounded-xl w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-blue-700;
+}
