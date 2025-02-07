@@ -47,7 +47,11 @@ const SignInPage = () => {
 
       router.push("/dashboard");
     } catch (err) {
-      setError(err.message || "An unexpected error occurred");
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred");
+      }
     }
   };
 
@@ -64,12 +68,12 @@ const SignInPage = () => {
             />
           </div>
 
-          <h1 className="text-2xl font-bold text-left mb-4">Sign In</h1>
+          <h1 className="text-2xl font-bold text-left mb-4">เข้าสู่ระบบ</h1>
 
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
           <div className="space-y-8">
             <Input
-              label="Email"
+              label="อีเมล"
               labelPlacement="outside"
               placeholder="you@example.com"
               startContent={<EnvelopeIcon className="icon" />}
@@ -80,7 +84,7 @@ const SignInPage = () => {
             <Input
               type={isVisible ? "text" : "password"}
               labelPlacement="outside"
-              label="Password"
+              label="รหัสผ่าน"
               placeholder="********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -104,7 +108,7 @@ const SignInPage = () => {
           </div>
 
           <Button type="submit" className="bg-[#003465] text-white w-full">
-            Sign In
+            ลงชื่อเข้าใช้
           </Button>
         </form>
       </div>

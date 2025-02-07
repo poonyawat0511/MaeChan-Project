@@ -36,6 +36,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/camunda/**").permitAll()
+                .requestMatchers("/user/**").permitAll()
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/admin/**").hasAuthority(Role.ADMIN.name())
                 .requestMatchers("/user/**").hasAuthority(Role.USER.name())

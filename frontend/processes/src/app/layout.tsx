@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Roboto } from 'next/font/google'
+import { Noto_Sans_Thai } from 'next/font/google'
 import "./globals.css";
 import RootLayoutClient from "./RootLayoutClient";
 import { Providers } from "./providers";
 
-const robotoSans = Roboto({
+const Noto_Sans_ThaiSans = Noto_Sans_Thai({
   variable: "--font-geist-sans",
   subsets: ["latin"],
   weight: ["100", "300", "400", "500", "700", "900"],
@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${robotoSans.variable} antialiased`}
+        className={`${Noto_Sans_ThaiSans.variable} antialiased`}
       >
         <Providers>
           <RootLayoutClient>{children}</RootLayoutClient>
