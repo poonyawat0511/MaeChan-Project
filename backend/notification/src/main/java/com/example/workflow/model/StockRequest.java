@@ -95,13 +95,13 @@ public class StockRequest {
     private String projectId;
 
     @Column(name = "stock_user_approve_id")
-    private String stockUserApprove;
+    private Long stockUserApprove;
 
     @Column(name = "stock_approve_date")
     private LocalDate stockApproveDate;
 
     @Column(name = "stock_user_id")
-    private String stockUser;
+    private Long stockUser;
 
     @Column(name = "stock_request_document_id")
     private String stockRequestDocumentId;

@@ -61,7 +61,6 @@ public class UpdateDirectorHandler implements JavaDelegate {
 
         // update stockRequest
         if(requestComplete){
-        stockRequest.setStockSubjectPerson("ผู้อำนวยการโรงพยาบาลแม่จัน");;
         stockRequest.setStockApproveDate(date);
         stockRequest.setRequestComplete(requestComplete);
         } 
