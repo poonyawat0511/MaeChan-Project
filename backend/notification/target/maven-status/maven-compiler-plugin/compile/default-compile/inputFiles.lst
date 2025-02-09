@@ -4,9 +4,7 @@
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/repository/UserHospitalRepository.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/SpringRequestService.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/controller/AuthenticationController.java
-/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/mapper/StockUserApproveMapper.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/dto/StockRequestDto.java
-/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/controller/StockUserApproveController.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/dto/SpringRequestDto.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/controller/SpringRequestController.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/mapper/StockRequestMapper.java
@@ -17,13 +15,10 @@
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/delegate/SendMessageDelegate.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/repository/StockRequestRepository.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/model/StockUser.java
-/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/model/StockUserApprove.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/model/model.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/delegate/UpdateApprovalHandler.java
-/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/repository/StockUserApproveRepository.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/dto/JwtAuthenticationResponse.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/repository/StockUserRepository.java
-/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/StockUserApproveService.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/controller/StockUserController.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/LineMessageService.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/UserService.java
@@ -31,7 +26,6 @@
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/config/SecurityConfig.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/delegate/UpdateDirectorHandler.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/JWTService.java
-/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/dto/StockUserApproveDto.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/dto/UserHospitalDto.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/model/Role.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/model/UserHospital.java
