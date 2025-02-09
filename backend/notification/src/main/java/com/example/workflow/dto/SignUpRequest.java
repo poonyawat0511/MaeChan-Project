@@ -15,6 +15,6 @@ public class SignUpRequest {
     private String password;
     private String lineId;
     private MultipartFile signature;
-    private String userHospitalId;
+    private Long userHospitalId;
     private Role role;
 }
