@@ -1,0 +1,17 @@
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-bar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scroll-bar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -49,5 +49,4 @@ export interface StockRequest {
   stockPoNoList: string; // รายการหมายเลขใบสั่งซื้อ
   stockBudgetTypeId: number; // รหัสประเภทงบประมาณ
   depRequestNoList: string; // รายการหมายเลขคำขอแผนก
-  camundaTaskId: string | null; // รหัสงานใน Camunda
 }

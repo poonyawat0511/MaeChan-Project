@@ -14,7 +14,6 @@ import com.example.workflow.dto.SignUpRequest;
 import com.example.workflow.dto.SigninRequest;
 import com.example.workflow.model.Role;
 import com.example.workflow.model.StockUser;
-import com.example.workflow.model.UserHospital;
 import com.example.workflow.service.AuthenticationService;
 
 import jakarta.servlet.http.Cookie;

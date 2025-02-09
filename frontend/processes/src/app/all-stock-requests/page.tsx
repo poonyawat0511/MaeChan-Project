@@ -1,60 +1,19 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { styled, alpha } from "@mui/material/styles";
-import InputBase from "@mui/material/InputBase";
-import SearchIcon from "@mui/icons-material/Search";
-import { Button, Dialog, DialogContent } from "@mui/material";
-import DownloadIcon from "@mui/icons-material/Download";
 import generatePDF from "@/utils/pdf/generatePDF";
 import "./style.module.css";
 import { StockRequest } from "@/utils/types/stock-request";
 import StockRequestTable from "@/components/StockRequests/StockRequest.table";
 import PdfPreview from "@/components/StockRequests/PdfPreview";
+import { Input } from "@heroui/input";
+import DownloadIcon from "@/components/global/icons/download.icon";
+import SearchIcon from "@/components/global/icons/search.icon";
+import { Button } from "@heroui/button";
+import BlurModal from "@/components/global/modals/BlurModal";
 
 const requestApi = `http://localhost:8081/stock-requests`;
 
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(1),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  width: "100%",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    [theme.breakpoints.up("sm")]: {
-      width: "12ch",
-      "&:focus": {
-        width: "20ch",
-      },
-    },
-  },
-}));
-
-export default function DashBorad() {
+export default function AllStockRequest() {
   const [requests, setRequests] = useState<StockRequest[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
@@ -121,62 +80,57 @@ export default function DashBorad() {
   }
 
   return (
-    <div className="drop-shadow-2xl mt-10">
-      <div className="rounded-md bg-white shadow-md p-4 flex flex-col flex-1 min-h-full">
+    <div className="drop-shadow-2xl mt-10 flex justify-center flex-1 w-full">
+      <div className="rounded-md bg-white shadow-lg p-4 max-w-6xl w-full max-h-[80vh] flex flex-col">
         <div className="flex items-center gap-4 justify-between">
           <h1 className="text-3xl font-bold text-gray-800 border-r-2 border-gray-500 pr-4">
             Purchase Request List
           </h1>
-          <Search className="flex items-center">
-            <SearchIconWrapper className="flex items-center"></SearchIconWrapper>
-            <SearchIcon />
-            <StyledInputBase
-              className="ml-2 bg-gray-100 rounded-md"
-              placeholder="Search…"
-              inputProps={{ "aria-label": "search" }}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </Search>
-          <Button
-            variant="outlined"
-            sx={{
-              backgroundColor: "inherit",
-              color: "black",
-              borderColor: "gray",
+          <Input
+            classNames={{
+              base: "max-w-full sm:max-w-[30rem] h-10",
+              mainWrapper: "h-full",
+              input: "text-small",
+              inputWrapper:
+                "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
             }}
+            placeholder="Search..."
+            size="md"
+            endContent={<SearchIcon size={20} />}
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+
+          <Button
+            color="default"
+            startContent={<DownloadIcon />}
+            variant="bordered"
           >
-            <DownloadIcon />
             Download
           </Button>
         </div>
 
-        <div className="grid">
+        {/* Table Container */}
+        <div className="flex-1 overflow-auto max-h-[screen] mt-4 scroll-bar-hide">
           {filteredRequests.length === 0 ? (
             <p>No tasks available.</p>
           ) : (
-            <StockRequestTable
-              stockRequests={filteredRequests}
-              onRequestClick={handleTaskClick}
-            />
+            <div className="w-full h-full">
+              <StockRequestTable
+                stockRequests={filteredRequests}
+                onRequestClick={handleTaskClick}
+              />
+            </div>
           )}
         </div>
-
-        <Dialog
-          open={openPdfModal}
-          onClose={handleClosePreview}
-          maxWidth="md"
-          fullWidth
-          sx={{
-            "& .MuiDialog-paper": {
-              minHeight: "20vh",
-            },
-          }}
-        >
-          <DialogContent>
-            {selectedPdfUrl && <PdfPreview pdfUrl={selectedPdfUrl} />}
-          </DialogContent>
-        </Dialog>
+        <BlurModal isOpen={openPdfModal} onClose={handleClosePreview}>
+          {selectedPdfUrl && (
+            <div className="h-[70vh]">
+              <PdfPreview pdfUrl={selectedPdfUrl} />
+            </div>
+          )}
+        </BlurModal>
       </div>
     </div>
   );

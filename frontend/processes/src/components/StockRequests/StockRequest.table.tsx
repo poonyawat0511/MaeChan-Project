@@ -1,17 +1,16 @@
-import React from "react";
-import {
-  Button,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  TableContainer,
-  Pagination,
-  Chip,
-} from "@mui/material";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import React, { useState } from "react";
 import { StockRequest } from "@/utils/types/stock-request";
+import {
+  getKeyValue,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  Pagination,
+  Button,
+} from "@heroui/react";
 
 interface StockRequestTableProps {
   stockRequests: StockRequest[];
@@ -22,175 +21,126 @@ export default function StockRequestTable({
   stockRequests,
   onRequestClick,
 }: StockRequestTableProps) {
-  const [page, setPage] = React.useState(1);
-  const rowsPerPage = 10;
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    newPage: number
-  ) => {
-    setPage(newPage);
-  };
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const paginatedRows = stockRequests.slice(
-    (page - 1) * rowsPerPage,
-    page * rowsPerPage
+  const totalPages = Math.ceil(stockRequests.length / itemsPerPage);
+  const paginatedData = stockRequests.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
-  return (
-    <div className="overflow-x-auto w-full scrollbar-hidden">
-      <TableContainer
-        sx={{
-          height: "500px",
-          borderRadius: "8px",
-          overflowY: "auto",
-        }}
-        className="rounded-xl overflow-y-auto scrollbar-hidden"
-      >
-        <Table className="min-w-full bg-white rounded-lg shadow-md">
-          <TableHead sx={{ backgroundColor: "white" }}>
-            <TableRow>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Request ID
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Approval Status
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Document Number
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Requester Name
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Request Date
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Due Date
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Approval Date
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Approver
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Buying Document
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Main Inventory
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Item Count
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Total Price
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Request All Complete
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Inspector
-              </TableCell>
-              <TableCell align="center" sx={{ color: "black" }}>
-                Actions
-              </TableCell>
-            </TableRow>
-          </TableHead>
+  const columns = [
+    { key: "requestId", label: "Request ID" },
+    { key: "requestNo", label: "Document Number" },
+    { key: "requestDate", label: "Request Date" },
+    { key: "requestReceiveDate", label: "Due Date" },
+    { key: "stockApproveDate", label: "Approval Date" },
+    { key: "stockUserApprove", label: "Approver" },
+    { key: "stockPoId", label: "Buying Document" },
+    { key: "requestWarehouseId", label: "Main Inventory" },
+    { key: "requestItemCount", label: "Item Count" },
+    { key: "requestTotalPrice", label: "Total Price" },
+    { key: "requestAllComplete", label: "Request All Complete" },
+    { key: "officerList", label: "Inspector" },
+    { key: "actions", label: "Actions" },
+  ];
 
-          <TableBody>
-            {paginatedRows.map((stockRequest, index) => (
-              <TableRow
-                key={stockRequest.id}
-                className={`border-b hover:bg-gray-20 ${
-                  index % 2 === 0 ? "bg-purple-50" : "bg-white"
-                }`}
+  return (
+    <div className="w-full h-full flex flex-col overflow-hidden  shadow-md">
+      <div className="flex-1 overflow-auto max-h-[60vh] scrollbar-hide">
+        <Table aria-label="Stock Requests Table" className="w-full min-w-max">
+          <TableHeader columns={columns}>
+            {(column) => (
+              <TableColumn
+                key={column.key}
+                className="sticky top-0 bg-white z-10 shadow-md !rounded-none"
               >
-                <TableCell align="center">
-                  {stockRequest.requestId || "-"}
-                </TableCell>
-                <TableCell align="center">
-                  {stockRequest.approve !== undefined
-                    ? stockRequest.approve
-                      ? "Approved"
-                      : "Not Approved"
-                    : "-"}
-                </TableCell>
-                <TableCell align="center">
-                  {stockRequest.stockRequestDocId || "-"}
-                </TableCell>
-                <TableCell align="center">
-                  {stockRequest.stockUser.hospitalId || "-"}
-                </TableCell>
-                <TableCell align="center">
-                  {stockRequest.requestDate || "-"}
-                </TableCell>
-                <TableCell align="center">
-                  {stockRequest.useDate || "-"}
-                </TableCell>
-                <TableCell align="center">
-                  {stockRequest.stockApproveDate || "-"}
-                </TableCell>
-                <TableCell align="center">
-                  {stockRequest.stockSubjectPerson || "-"}
-                </TableCell>
-                <TableCell align="center">
-                  {stockRequest.requestNo || "-"}
-                </TableCell>
-                <TableCell align="center">
-                  {stockRequest.departmentId || "-"}
-                </TableCell>
-                <TableCell align="center">
-                  {stockRequest.requestItemCount || "-"}
-                </TableCell>
-                <TableCell align="center">
-                  {stockRequest.requestTotalPrice || "-"}
-                </TableCell>
-                <TableCell align="center">
-                  <Chip
-                    label={
-                      stockRequest.requestAllComplete ? "Completed" : "Pending"
-                    }
-                    color={
-                      stockRequest.requestAllComplete ? "success" : "warning"
-                    }
-                  />
-                </TableCell>
-                <TableCell align="center">
-                  {stockRequest.stockUserApprove || "-"}
-                </TableCell>
-                <TableCell align="center">
-                  <Button
-                    onClick={() => onRequestClick(stockRequest)}
-                    sx={{
-                      justifyContent: "center",
-                      textAlign: "center",
-                      width: "100%",
-                      textTransform: "none",
-                      color: "black",
-                      backgroundColor: "transparent",
-                      "&:hover": {
-                        backgroundColor: "rgba(0, 0, 0, 0.1)",
-                      },
-                      border: "none",
-                    }}
-                  >
-                    <ArrowForwardIcon />
-                  </Button>
-                </TableCell>
+                {column.label}
+              </TableColumn>
+            )}
+          </TableHeader>
+
+          <TableBody
+            items={paginatedData.map((item, index) => ({
+              ...item,
+              _index: index,
+            }))}
+          >
+            {(item) => (
+              <TableRow
+                key={item.id}
+                className={item._index % 2 === 0 ? "bg-white" : "bg-[#F7F6FE]"}
+              >
+                {(columnKey) => (
+                  <TableCell>
+                    {columnKey === "actions" ? (
+                      <button
+                        className="px-3 py-1 rounded hover:bg-gray-300"
+                        onClick={() => onRequestClick(item)}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="size-6"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+                          />
+                        </svg>
+                      </button>
+                    ) : (
+                      getKeyValue(item, columnKey)
+                    )}
+                  </TableCell>
+                )}
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
-      </TableContainer>
-      <Pagination
-        count={Math.ceil(stockRequests.length / rowsPerPage)}
-        variant="outlined"
-        shape="rounded"
-        color="secondary"
-        page={page}
-        onChange={handlePageChange}
-        className="flex justify-center mt-20"
-      />
+      </div>
+
+      <div className="flex justify-center items-center p-2">
+        <Button
+          size="sm"
+          style={{
+            background: "transparent",
+            border: "none",
+            boxShadow: "none",
+            color: currentPage === 1 ? "gray" : "black",
+          }}
+          onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <Pagination
+          color="secondary"
+          page={currentPage}
+          total={totalPages}
+          onChange={setCurrentPage}
+        />
+        <Button
+          size="sm"
+          style={{
+            background: "transparent",
+            border: "none",
+            boxShadow: "none",
+            color: currentPage === 1 ? "gray" : "black",
+          }}
+          onPress={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 }

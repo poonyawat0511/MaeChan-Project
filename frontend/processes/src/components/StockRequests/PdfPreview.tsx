@@ -4,7 +4,7 @@ interface PdfPreviewProps {
 
 export default function PdfPreview({ pdfUrl }: PdfPreviewProps) {
   return (
-    <div className="flex h-screen border-none rounded-lg">
+    <div className="h-full">
       <iframe className="w-full h-full border-none rounded-xl" src={pdfUrl} />
     </div>
   );
