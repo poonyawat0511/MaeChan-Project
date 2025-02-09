@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import SideBar from "@/components/global/SideBar";
+import SideBar from "@/components/global/ui/SideBar";
 
 export default function RootLayoutClient({
   children,

@@ -11,7 +11,7 @@ import PublishedWithChangesRoundedIcon from "@mui/icons-material/PublishedWithCh
 import ManageSearchRoundedIcon from "@mui/icons-material/ManageSearchRounded";
 
 const buttons = [
-  { label: "Dashboard", icon: <HomeRoundedIcon />, link: "/dashboard" },
+  { label: "All Stock Requests", icon: <HomeRoundedIcon />, link: "/all-stock-requests" },
   {
     label: "Approver",
     icon: <ManageSearchRoundedIcon />,
