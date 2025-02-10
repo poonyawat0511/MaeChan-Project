@@ -1,5 +1,4 @@
 import { StockUser } from "./stock-user";
-import { StockUserApprove } from "./stock-user-approve";
 
 export interface StockRequest {
   id: string; // หรือเปลี่ยนเป็น number หาก backend ส่ง id เป็น number
@@ -25,7 +24,7 @@ export interface StockRequest {
   numberMonth: number; // เดือนที่เริ่มดำเนินการ
   stockRequestDocId: string; // รหัสเอกสารคำขอ
   projectId: string; // รหัสโครงการ
-  stockUserApprove: StockUserApprove; // ผู้อนุมัติคำขอ (เชื่อมโยงกับ StockUserApprove)
+  stockUserApprove: string; // ผู้อนุมัติคำขอ (เชื่อมโยงกับ StockUserApprove)
   stockApproveDate: string; // วันที่อนุมัติคำขอ (ส่งมาเป็น ISO string จาก backend)
   stockUser: StockUser; // ผู้ขอ (เชื่อมโยงกับ StockUser)
   stockRequestDocumentId: string; // รหัสเอกสารคำขอ

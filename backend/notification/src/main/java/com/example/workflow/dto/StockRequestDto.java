@@ -2,9 +2,6 @@ package com.example.workflow.dto;
 
 import java.time.LocalDate;
 
-import com.example.workflow.model.StockUser;
-import com.example.workflow.model.StockUserApprove;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,9 +35,9 @@ public class StockRequestDto {
     private Integer numberMonth;
     private String stockRequestDocId;
     private String projectId;
-    private StockUserApprove stockUserApprove; // Refers to StockUserApprove entity
+    private String stockUserApprove; // StockUserApprove
     private LocalDate stockApproveDate;
-    private StockUser stockUser;
+    private String stockUser; // StockUser
     private String stockRequestDocumentId;
     private String projectPlanId;
     private Boolean requestAllComplete;
@@ -63,5 +60,4 @@ public class StockRequestDto {
     private String stockPoNoList;
     private Integer stockBudgetTypeId;
     private String depRequestNoList;
-    private String camundaTaskId;
 }

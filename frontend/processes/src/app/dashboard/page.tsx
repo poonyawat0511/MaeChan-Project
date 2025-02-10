@@ -6,7 +6,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Button, Dialog, DialogContent } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import generatePDF from "@/utils/pdf/generatePDF";
-import "./style.css";
+import "./style.module.css";
 import { StockRequest } from "@/utils/types/stock-request";
 import StockRequestTable from "@/components/StockRequests/StockRequest.table";
 import PdfPreview from "@/components/StockRequests/PdfPreview";
@@ -65,19 +65,12 @@ export default function DashBorad() {
   useEffect(() => {
     const fetchStockRequests = async () => {
       try {
-        if (typeof window === "undefined") return;
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("You must be logged in to view the requests.");
-          return;
-        }
-
         const response = await fetch(requestApi, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
+          credentials: "include",
         });
 
         if (!response.ok) {

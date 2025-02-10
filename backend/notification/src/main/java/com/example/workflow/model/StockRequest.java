@@ -94,16 +94,14 @@ public class StockRequest {
     @Column(name = "project_id")
     private String projectId;
 
-    @ManyToOne
-    @JoinColumn(name = "stock_user_approve_id", referencedColumnName = "stockUserApproveId")
-    private StockUserApprove stockUserApprove;
+    @Column(name = "stock_user_approve_id")
+    private String stockUserApprove;
 
     @Column(name = "stock_approve_date")
     private LocalDate stockApproveDate;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "stock_user_id", referencedColumnName = "stockUserId")
-    private StockUser stockUser;
+    @Column(name = "stock_user_id")
+    private String stockUser;
 
     @Column(name = "stock_request_document_id")
     private String stockRequestDocumentId;
@@ -168,7 +166,4 @@ public class StockRequest {
 
     @Column(name = "dep_request_no_list")
     private String depRequestNoList;
-
-    @Column(name = "camunda_task_id")
-    private String camundaTaskId;
 }

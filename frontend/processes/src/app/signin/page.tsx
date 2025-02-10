@@ -1,47 +1,45 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SignInResponse } from "@/utils/types/signInResponse";
-import axios from "axios";
 
 const SignInPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); // Clear previous errors
-
+    setError("");
+  
     try {
-      const response = await axios.post<SignInResponse>(
-        "http://localhost:8081/auth/signin",
-        { email, password },
-        { headers: { "Content-Type": "application/json" } }
-      );
+      const response = await fetch("http://localhost:8081/auth/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      });
+  
+      if (!response.ok) {
+        throw new Error("An error occurred");
+      }
 
-      const { token } = response.data;
-      if (isClient) {
-        localStorage.setItem("token", token);
-      }
-      router.push("/"); // Redirect to the home page after successful sign-in
+      const data: SignInResponse = await response.json();
+  
+      localStorage.setItem("jwt", data.token);
+  
+      router.push("/dashboard");
     } catch (err) {
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || "An error occurred");
-      } else {
-        setError("An unexpected error occurred");
-      }
+      setError(err.message || "An unexpected error occurred");
     }
   };
+  
 
   return (
-    <div className="flex h-screen justify-center items-center bg-gray-100">
+    <div className="flex h-full justify-center items-center">
       <form
         className="bg-white p-8 rounded-lg shadow-md max-w-sm w-full"
         onSubmit={handleSignIn}

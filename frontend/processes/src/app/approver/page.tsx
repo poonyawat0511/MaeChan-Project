@@ -13,8 +13,8 @@ import HorizontalLinearAlternativeLabelStepper from "@/share/stepper";
 
 const camundaTaksApiApprover = `http://localhost:8081/engine-rest/task?candidateGroup=Approver`;
 const camundaTaskSubmit = `http://localhost:8081/engine-rest/task`;
-const stockRequestByTaskApi = (processInstanceId: string) =>
-  `http://localhost:8081/stock-requests/task/${processInstanceId}`;
+const springRequestByTaskApi = (processInstanceId: string) =>
+  `http://localhost:8081/spring-requests/task/${processInstanceId}`;
 
 export default function ApproverPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -27,18 +27,12 @@ export default function ApproverPage() {
   useEffect(() => {
     const fetchCamundaApiApprover = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setError("You must be logged in to view the requests.");
-          return;
-        }
-
         const response = await fetch(camundaTaksApiApprover, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
+          credentials: "include",
         });
 
         if (!response.ok) {
@@ -59,18 +53,12 @@ export default function ApproverPage() {
 
   const fetchStockRequestByTaskId = async (processInstanceId: string) => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError("You must be logged in to view the requests.");
-        return;
-      }
-
-      const response = await fetch(stockRequestByTaskApi(processInstanceId), {
+      const response = await fetch(springRequestByTaskApi(processInstanceId), {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -88,7 +76,8 @@ export default function ApproverPage() {
 
   const handleSubmit = async (task: Task) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("jwt");
+
       if (!token) {
         setError("You must be logged in to approve this task.");
         return;
@@ -103,17 +92,12 @@ export default function ApproverPage() {
       }
 
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
-      const stockUserId = decodedToken.stockUserId;
-
-      if (!stockUserId) {
-        setError("Stock user ID not found.");
-        return;
-      }
+      const stockUserId = decodedToken.stockUserId || "unknown";
 
       const requestBody = {
         variables: {
-          requestId: { value: stockRequest.id, type: "String" },
-          stockUserApprove: { value: stockUserId, type: "String" },
+          requestId: { value: stockRequest.id.toString(), type: "String" },
+          stockUserApprove: { value: stockUserId.toString(), type: "String" },
         },
       };
 
@@ -194,8 +178,8 @@ export default function ApproverPage() {
           </IconButton>
         </div>
 
-        <div className="px-2 py-2 flex">
-          <div className="drop-shadow-xl p-5 bg-gray-300 rounded-xl flex-1 max-h-[32rem] max-w-[100%] overflow-auto scrollbar-hidden">
+        <div className="pt-20 flex justify-between gap-10 pb-20 flex-grow">
+          <div className="drop-shadow-xl p-5 bg-gray-300 rounded-xl flex-1 max-h-[35rem] max-w-[30%] overflow-auto scrollbar-hidden">
             <div className="mb-2">
               <h2 className="text-xl font-bold text-gray-600">
                 Total Tasks:

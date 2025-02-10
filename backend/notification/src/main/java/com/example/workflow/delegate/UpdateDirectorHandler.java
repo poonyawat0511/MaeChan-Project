@@ -1,18 +1,29 @@
 package com.example.workflow.delegate;
 
+import java.time.LocalDate;
+
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.workflow.model.SpringRequest;
 import com.example.workflow.model.StockRequest;
+import com.example.workflow.repository.StockUserRepository;
+import com.example.workflow.service.SpringRequestService;
 import com.example.workflow.service.StockRequestService;
 
 @Service("updateDirectorHandler")
 public class UpdateDirectorHandler implements JavaDelegate {
 
-    @Autowired
+        @Autowired
     private StockRequestService stockRequestService;
+
+    @Autowired
+    private SpringRequestService springRequestService;
+
+    @Autowired
+    private StockUserRepository stockUserRepository;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -23,19 +34,40 @@ public class UpdateDirectorHandler implements JavaDelegate {
 
         // ตรวจสอบและแปลง purchaseId
         Long requestId = validateAndParseRequestId(requestIdStr);
+        Long directorId = validateAndParseRequestId(stockSubjectPerson);
+        //Date
+        LocalDate date = LocalDate.now();
 
-        // ค้นหา PurchaseRequest
-        StockRequest stockRequest = stockRequestService.findStockRequestById(requestId);
-        if (stockRequest == null) {
+        //get springRequest
+        SpringRequest springRequest = springRequestService.getSpringRequestById(requestId);
+        if (springRequest == null) {
             throw new RuntimeException("StockRequest not found with id: " + requestId);
         }
+        //get stockRequest
+        StockRequest stockRequest = springRequest.getStockRequest();
 
-        // อัปเดตข้อมูล
-        stockRequest.setStockSubjectPerson(stockSubjectPerson);;
-        stockRequest.setApprove(approve);
+        //check request_complete 
+        boolean requestComplete = false;
+        if(springRequest.getApproverApproveStatus() && approve){
+            requestComplete = true;
+        }
 
-        // บันทึก
+        // update springRequest       
+        springRequest.setUserDirector(stockUserRepository.findById(directorId).get());
+        springRequest.setDirectorApproveStatus(approve);
+        springRequest.setDirectorApproveDate(date);
+        springRequest.setAllCompleteStatus(requestComplete);
+        springRequestService.updateSpringRequest(requestId, springRequest);
+
+        // update stockRequest
+        if(requestComplete){
+        stockRequest.setStockSubjectPerson("ผู้อำนวยการโรงพยาบาลแม่จัน");;
+        stockRequest.setStockApproveDate(date);
+        stockRequest.setRequestComplete(requestComplete);
+        } 
         stockRequestService.updateStockRequest(stockRequest);
+
+
     }
 
     private Long validateAndParseRequestId(String requestIdStr) {
