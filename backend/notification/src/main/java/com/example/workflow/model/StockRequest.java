@@ -51,7 +51,7 @@ public class StockRequest {
     private LocalDate useDate;
 
     @Column(name = "stock_po_id")
-    private String stockPoId;
+    private Long stockPoId;
 
     @Column(name = "hos_guid")
     private String hosGuid;
@@ -162,7 +162,7 @@ public class StockRequest {
     private String stockPoNoList;
 
     @Column(name = "stock_budget_type_id")
-    private Integer stockBudgetTypeId;
+    private Long stockBudgetTypeId;
 
     @Column(name = "dep_request_no_list")
     private String depRequestNoList;
