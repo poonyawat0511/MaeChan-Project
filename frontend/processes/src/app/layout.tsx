@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Noto_Sans_Thai } from 'next/font/google'
 import "./globals.css";
 import RootLayoutClient from "./RootLayoutClient";
+import { Providers } from "./providers";
 
-const geistSans = Geist({
+const Noto_Sans_ThaiSans = Noto_Sans_Thai({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700", "900"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,9 +28,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${Noto_Sans_ThaiSans.variable} antialiased`}
       >
-        <RootLayoutClient>{children}</RootLayoutClient>
+        <Providers>
+          <RootLayoutClient>{children}</RootLayoutClient>
+        </Providers>
       </body>
     </html>
   );

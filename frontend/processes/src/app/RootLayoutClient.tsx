@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import SideBar from "@/components/Default/SideBar";
+import SideBar from "@/components/global/ui/SideBar";
 
 export default function RootLayoutClient({
   children,
@@ -23,7 +23,7 @@ export default function RootLayoutClient({
     <div className="flex h-screen">
       <div className="flex w-full h-full">
         {!hideSidebar && <SideBar />}
-        <main className="flex-1 p-4">{children}</main>
+        <main className="flex-1">{children}</main>
       </div>
     </div>
   );
