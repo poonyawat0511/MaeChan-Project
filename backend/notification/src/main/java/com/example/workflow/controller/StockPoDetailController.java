@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/stockPoDetails")
+@RequestMapping("/stock-po-details")
 public class StockPoDetailController {
 
     @Autowired
