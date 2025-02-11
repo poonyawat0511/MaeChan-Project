@@ -47,22 +47,23 @@ public class UpdateDirectorHandler implements JavaDelegate {
         StockRequest stockRequest = springRequest.getStockRequest();
 
         //check request_complete 
-        boolean requestComplete = false;
-        if(springRequest.getApproverApproveStatus() && approve){
-            requestComplete = true;
+        boolean AllrequestComplete = false;
+        if(stockRequest.getApprove() && approve){
+            AllrequestComplete = true;
         }
 
         // update springRequest       
         springRequest.setUserDirector(stockUserRepository.findById(directorId).get());
         springRequest.setDirectorApproveStatus(approve);
-        springRequest.setDirectorApproveDate(date);
-        springRequest.setAllCompleteStatus(requestComplete);
+        springRequest.setDirectorApproveDate(date); 
+        springRequest.setAllCompleteStatus(AllrequestComplete);
         springRequestService.updateSpringRequest(requestId, springRequest);
 
         // update stockRequest
-        if(requestComplete){
-        stockRequest.setStockApproveDate(date);
-        stockRequest.setRequestComplete(requestComplete);
+        stockRequest.setApprove(approve);
+        stockRequest.setRequestComplete(AllrequestComplete);
+        if(AllrequestComplete){
+        stockRequest.setStockApproveDate(date);  
         } 
         stockRequestService.updateStockRequest(stockRequest);
 

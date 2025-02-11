@@ -23,7 +23,7 @@ public class StockRequestList {
     private Long id;
 
     @Column(name = "request_list_id")
-    private Long stockPoDetailId;
+    private Long requestListId;
 
     @Column(name = "request_id")
     private Long requestId;
