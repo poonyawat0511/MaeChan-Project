@@ -10,6 +10,7 @@ public class StockBudgetMapper {
     public StockBudgetDto toDto(StockBudget stockBudget) {
         StockBudgetDto dto = new StockBudgetDto();
         dto.setId(stockBudget.getId());
+        dto.setBudgetId(stockBudget.getBudgetId());
         dto.setBudgetName(stockBudget.getBudgetName());
         dto.setBudgetStatus(stockBudget.isBudgetStatus());
         dto.setStockBudgetTypeId(stockBudget.getStockBudgetTypeId());
@@ -20,6 +21,7 @@ public class StockBudgetMapper {
     public StockBudget toEntity(StockBudgetDto dto) {
         StockBudget stockBudget = new StockBudget();
         stockBudget.setId(dto.getId());
+        stockBudget.setBudgetId(dto.getBudgetId());
         stockBudget.setBudgetName(dto.getBudgetName());
         stockBudget.setBudgetStatus(dto.isBudgetStatus());
         stockBudget.setStockBudgetTypeId(dto.getStockBudgetTypeId());

@@ -60,7 +60,6 @@
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/dto/StockUserDto.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/config/JwtAuthenticationFilter.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/StockPoService.java
-/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/mapper/StockBudgetTypeMapper.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/StockRequestService.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/controller/WorkflowController.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/controller/UserHospitalController.java
