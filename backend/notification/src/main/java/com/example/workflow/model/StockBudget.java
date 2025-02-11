@@ -22,6 +22,9 @@ public class StockBudget {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "budget_id")
+    private Long budgetId;
+
     @Column(name = "budget_name")
     private String budgetName;
 
