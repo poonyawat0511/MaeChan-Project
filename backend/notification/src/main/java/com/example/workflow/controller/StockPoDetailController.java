@@ -3,6 +3,7 @@ package com.example.workflow.controller;
 import com.example.workflow.model.StockPoDetail;
 import com.example.workflow.service.StockPoDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +18,8 @@ public class StockPoDetailController {
     private StockPoDetailService stockPoDetailService;
 
     @GetMapping
-    public List<StockPoDetail> getAllStockPoDetails() {
-        return stockPoDetailService.findAll();
+    public ResponseEntity<List<StockPoDetail>> getAllStockPoDetails() {
+        return new ResponseEntity<>(stockPoDetailService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -28,8 +29,9 @@ public class StockPoDetailController {
     }
 
     @PostMapping
-    public StockPoDetail createStockPoDetail(@RequestBody StockPoDetail stockPoDetail) {
-        return stockPoDetailService.save(stockPoDetail);
+    public ResponseEntity<StockPoDetail> createStockPoDetail(@RequestBody StockPoDetail stockPoDetail) {
+        StockPoDetail createdStockPoDetail = stockPoDetailService.save(stockPoDetail);
+        return new ResponseEntity<>(createdStockPoDetail, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -38,7 +40,8 @@ public class StockPoDetailController {
             return ResponseEntity.notFound().build();
         }
         stockPoDetail.setId(id);
-        return ResponseEntity.ok(stockPoDetailService.save(stockPoDetail));
+        StockPoDetail updatedStockPoDetail = stockPoDetailService.save(stockPoDetail);
+        return new ResponseEntity<>(updatedStockPoDetail, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

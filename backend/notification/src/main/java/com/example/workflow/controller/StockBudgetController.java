@@ -5,6 +5,8 @@ import com.example.workflow.mapper.StockBudgetMapper;
 import com.example.workflow.model.StockBudget;
 import com.example.workflow.service.StockBudgetService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,34 +23,39 @@ public class StockBudgetController {
     private StockBudgetMapper stockBudgetMapper;
 
     @GetMapping
-    public List<StockBudgetDto> getAllStockBudgets() {
-        return stockBudgetService.findAll().stream()
+    public ResponseEntity<List<StockBudgetDto>> getAllStockBudgets() {
+        List<StockBudgetDto> stockBudgets = stockBudgetService.findAll().stream()
                 .map(stockBudgetMapper::toDto)
                 .collect(Collectors.toList());
+        return new ResponseEntity<>(stockBudgets, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public StockBudgetDto getStockBudgetById(@PathVariable Long id) {
+    public ResponseEntity<StockBudgetDto> getStockBudgetById(@PathVariable Long id) {
         return stockBudgetService.findById(id)
                 .map(stockBudgetMapper::toDto)
-                .orElse(null);
+                .map(stockBudgetDto -> new ResponseEntity<>(stockBudgetDto, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
-    public StockBudgetDto createStockBudget(@RequestBody StockBudgetDto stockBudgetDto) {
+    public ResponseEntity<StockBudgetDto> createStockBudget(@RequestBody StockBudgetDto stockBudgetDto) {
         StockBudget stockBudget = stockBudgetMapper.toEntity(stockBudgetDto);
-        return stockBudgetMapper.toDto(stockBudgetService.save(stockBudget));
+        StockBudget createdStockBudget = stockBudgetService.save(stockBudget);
+        return new ResponseEntity<>(stockBudgetMapper.toDto(createdStockBudget), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public StockBudgetDto updateStockBudget(@PathVariable Long id, @RequestBody StockBudgetDto stockBudgetDto) {
+    public ResponseEntity<StockBudgetDto> updateStockBudget(@PathVariable Long id, @RequestBody StockBudgetDto stockBudgetDto) {
         StockBudget stockBudget = stockBudgetMapper.toEntity(stockBudgetDto);
         stockBudget.setId(id);
-        return stockBudgetMapper.toDto(stockBudgetService.save(stockBudget));
+        StockBudget updatedStockBudget = stockBudgetService.save(stockBudget);
+        return new ResponseEntity<>(stockBudgetMapper.toDto(updatedStockBudget), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteStockBudget(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteStockBudget(@PathVariable Long id) {
         stockBudgetService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

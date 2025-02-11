@@ -3,6 +3,7 @@ package com.example.workflow.controller;
 import com.example.workflow.model.StockBudgetType;
 import com.example.workflow.service.StockBudgetTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +29,9 @@ public class StockBudgetTypeController {
     }
 
     @PostMapping
-    public StockBudgetType createStockBudgetType(@RequestBody StockBudgetType stockBudgetType) {
-        return stockBudgetTypeService.save(stockBudgetType);
+    public ResponseEntity<StockBudgetType> createStockBudgetType(@RequestBody StockBudgetType stockBudgetType) {
+        StockBudgetType createdStockBudgetType = stockBudgetTypeService.save(stockBudgetType);
+        return new ResponseEntity<>(createdStockBudgetType, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -40,7 +42,7 @@ public class StockBudgetTypeController {
             updatedStockBudgetType.setStockBudgetTypeName(stockBudgetTypeDetails.getStockBudgetTypeName());
             updatedStockBudgetType.setAccPoBudgetTypeId(stockBudgetTypeDetails.getAccPoBudgetTypeId());
             stockBudgetTypeService.save(updatedStockBudgetType);
-            return ResponseEntity.ok(updatedStockBudgetType);
+            return new ResponseEntity<>(updatedStockBudgetType, HttpStatus.OK);
         } else {
             return ResponseEntity.notFound().build();
         }
