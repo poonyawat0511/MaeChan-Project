@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState } from "react";
+import { ElementType, useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import {
@@ -17,25 +17,55 @@ import {
 interface MenuItem {
   id: string;
   label: string;
-  icon: any;
+  icon: ElementType;
   link: string;
 }
 
-const Sidebar: FC = () => {
+const SideBar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const pathname = usePathname();
 
   const menuItems: MenuItem[] = [
-    { id: "all-stock-requests", label: "All Stock Requests", icon: HomeIcon, link: "/all-stock-requests" },
-    { id: "approver", label: "Approver", icon: UserGroupIcon, link: "/approver" },
-    { id: "director", label: "Director", icon: ShieldCheckIcon, link: "/director" },
+    {
+      id: "all-stock-requests",
+      label: "All Stock Requests",
+      icon: HomeIcon,
+      link: "/all-stock-requests",
+    },
+    {
+      id: "approver",
+      label: "Approver",
+      icon: UserGroupIcon,
+      link: "/approver",
+    },
+    {
+      id: "director",
+      label: "Director",
+      icon: ShieldCheckIcon,
+      link: "/director",
+    },
   ];
 
   const recentItems: MenuItem[] = [
-    { id: "purchasing", label: "Purchasing work", icon: ClipboardDocumentListIcon, link: "/dashboard" },
-    { id: "treasury", label: "Treasury work", icon: CurrencyDollarIcon, link: "/dashboard" },
-    { id: "distribution", label: "Distribution Unit", icon: TruckIcon, link: "/dashboard" },
+    {
+      id: "purchasing",
+      label: "Purchasing work",
+      icon: ClipboardDocumentListIcon,
+      link: "/dashboard",
+    },
+    {
+      id: "treasury",
+      label: "Treasury work",
+      icon: CurrencyDollarIcon,
+      link: "/dashboard",
+    },
+    {
+      id: "distribution",
+      label: "Distribution Unit",
+      icon: TruckIcon,
+      link: "/dashboard",
+    },
   ];
 
   const handleSignout = async () => {
@@ -53,17 +83,20 @@ const Sidebar: FC = () => {
   };
 
   return (
-    <div
-      className={`relative min-h-screen bg-white p-4 flex flex-col shadow-lg transition-all duration-500 ease-in-out ${
-        isCollapsed ? "w-16" : "w-64"
-      }`}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-    >
+<div
+  className={`relative min-h-screen bg-white p-4 flex flex-col shadow-lg transition-all duration-500 ease-in-out ${
+    isCollapsed ? "w-[5rem]" : "w-[16rem]"
+  }`}
+  onMouseEnter={() => setIsHovering(true)}
+  onMouseLeave={() => setIsHovering(false)}
+>
+
       {/* Collapse Button */}
       <button
         className={`absolute top-4 -right-3 p-2 rounded-full bg-blue-500 text-white shadow-lg hover:bg-blue-600 
-          transition-all duration-300 transform hover:scale-110 ${isHovering ? "opacity-100" : "opacity-70"}`}
+          transition-all duration-300 transform hover:scale-110 ${
+            isHovering ? "opacity-100 flex" : "opacity-70"
+          }`}
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         {isCollapsed ? (
@@ -102,9 +135,11 @@ const Sidebar: FC = () => {
 
       {/* Menu Section */}
       <div className="mb-4">
-        <h2 
+        <h2
           className={`text-[11px] font-semibold tracking-wide text-gray-400 mb-2 
-          transition-opacity duration-300 ${isCollapsed ? "opacity-0" : "opacity-100"}`}
+          transition-opacity duration-300 ${
+            isCollapsed ? "opacity-0" : "opacity-100"
+          }`}
         >
           Menu
         </h2>
@@ -114,14 +149,22 @@ const Sidebar: FC = () => {
               key={item.id}
               href={item.link}
               className={`relative flex items-center px-3 py-2 rounded-lg transition-all duration-300 
-                ${pathname === item.link ? "bg-red-50 text-red-500" : "hover:bg-gray-50 text-gray-700"}
+                ${
+                  pathname === item.link
+                    ? "bg-red-50 text-red-500"
+                    : "hover:bg-gray-50 text-gray-700"
+                }
                 transform hover:translate-x-1`}
             >
               {pathname === item.link && (
                 <div className="absolute left-0 w-1 h-8 bg-red-500 rounded-r-md animate-pulse" />
               )}
-              <item.icon className={`h-6 w-6 shrink-0 transition-transform duration-300 ${isCollapsed ? "scale-110" : ""}`} />
-              <span 
+              <item.icon
+                className={`h-6 w-6 shrink-0 transition-transform duration-300 ${
+                  isCollapsed ? "scale-110" : ""
+                }`}
+              />
+              <span
                 className={`ml-3 whitespace-nowrap transition-all duration-300 
                 ${isCollapsed ? "opacity-0 w-0" : "opacity-100"}`}
               >
@@ -134,9 +177,11 @@ const Sidebar: FC = () => {
 
       {/* Recent Section */}
       <div className="mb-auto">
-        <h2 
+        <h2
           className={`text-[11px] font-semibold tracking-wide text-gray-400 mb-2 
-          transition-opacity duration-300 ${isCollapsed ? "opacity-0" : "opacity-100"}`}
+          transition-opacity duration-300 ${
+            isCollapsed ? "opacity-0" : "opacity-100"
+          }`}
         >
           Recent
         </h2>
@@ -148,8 +193,12 @@ const Sidebar: FC = () => {
               className="flex items-center px-3 py-2 hover:bg-gray-50 rounded-lg 
                 transition-all duration-300 text-gray-600 transform hover:translate-x-1"
             >
-              <item.icon className={`h-6 w-6 shrink-0 transition-transform duration-300 ${isCollapsed ? "scale-110" : ""}`} />
-              <span 
+              <item.icon
+                className={`h-6 w-6 shrink-0 transition-transform duration-300 ${
+                  isCollapsed ? "scale-110" : ""
+                }`}
+              />
+              <span
                 className={`ml-3 whitespace-nowrap transition-all duration-300 
                 ${isCollapsed ? "opacity-0 w-0" : "opacity-100"}`}
               >
@@ -167,10 +216,11 @@ const Sidebar: FC = () => {
             transition-all duration-300 transform hover:translate-x-1 group"
           onClick={handleSignout}
         >
-          <PowerIcon className={`h-6 w-6 shrink-0 transition-all duration-300 group-hover:rotate-12 
-            ${isCollapsed ? "ml-0" : ""}`} 
+          <PowerIcon
+            className={`h-6 w-6 shrink-0 transition-all duration-300 group-hover:rotate-12 
+            ${isCollapsed ? "ml-0" : ""}`}
           />
-          <span 
+          <span
             className={`transition-all duration-300 
             ${isCollapsed ? "hidden" : "block"}`}
           >
@@ -182,4 +232,4 @@ const Sidebar: FC = () => {
   );
 };
 
-export default Sidebar;
+export default SideBar;
