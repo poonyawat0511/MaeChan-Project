@@ -1,51 +1,42 @@
 "use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import HomeIcon from "../icons/home.icon";
-import ArrowRightIcon from "../icons/arrowRight.icon";
-import TaskIcon from "../icons/task.icon";
-import ArrowLeftIcon from "../icons/arrowLeft.icon";
-import SignoutIcon from "../icons/signout.icon";
+import { FC, useState } from "react";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
+import {
+  HomeIcon,
+  ClipboardDocumentListIcon,
+  CurrencyDollarIcon,
+  TruckIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  PowerIcon,
+  UserGroupIcon,
+  ShieldCheckIcon,
+} from "@heroicons/react/24/outline";
 
-const buttons = [
-  {
-    label: "All Stock Requests",
-    icon: <HomeIcon size={20} />,
-    link: "/all-stock-requests",
-  },
-  { label: "Approver", icon: <TaskIcon size={20} />, link: "/approver" },
-  { label: "Director", icon: <TaskIcon size={20} />, link: "/director" },
-];
+interface MenuItem {
+  id: string;
+  label: string;
+  icon: any;
+  link: string;
+}
 
-const buttons2 = [
-  {
-    label: "Purchasing work",
-    icon: <ArrowLeftIcon />,
-    link: "/all-stock-requests",
-  },
-  {
-    label: "Treasury work",
-    icon: <ArrowLeftIcon />,
-    link: "/all-stock-requests",
-  },
-  {
-    label: "Distribution Unit",
-    icon: <ArrowLeftIcon />,
-    link: "/all-stock-requests",
-  },
-];
-
-const buttons3 = [{ label: "Sign Out", icon: <SignoutIcon size={20} /> }];
-
-const SideBar = () => {
-  const [selectedButton, setSelectedButton] = useState<string | null>(null);
-  const router = useRouter();
+const Sidebar: FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const pathname = usePathname();
 
-  const handleNavigation = (link: string, label: string) => {
-    setSelectedButton(label);
-    router.push(link);
-  };
+  const menuItems: MenuItem[] = [
+    { id: "all-stock-requests", label: "All Stock Requests", icon: HomeIcon, link: "/all-stock-requests" },
+    { id: "approver", label: "Approver", icon: UserGroupIcon, link: "/approver" },
+    { id: "director", label: "Director", icon: ShieldCheckIcon, link: "/director" },
+  ];
+
+  const recentItems: MenuItem[] = [
+    { id: "purchasing", label: "Purchasing work", icon: ClipboardDocumentListIcon, link: "/dashboard" },
+    { id: "treasury", label: "Treasury work", icon: CurrencyDollarIcon, link: "/dashboard" },
+    { id: "distribution", label: "Distribution Unit", icon: TruckIcon, link: "/dashboard" },
+  ];
 
   const handleSignout = async () => {
     try {
@@ -55,110 +46,140 @@ const SideBar = () => {
       });
       document.cookie = "jwt=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
       localStorage.removeItem("jwt");
-      router.push("/signin");
+      window.location.href = "/signin";
     } catch (error) {
       console.error("Sign out failed:", error);
     }
   };
 
   return (
-    <div className="relative h-full flex">
-      {/* Sidebar */}
-      <div
-        className={`h-full ${
-          isCollapsed ? "w-[5rem]" : "w-[15rem]"
-        } bg-white shadow-lg p-5 flex flex-col border-r border-gray-200 transition-all duration-300 items-center`}
-      >
-        {/* Logo */}
-        <div className={`mb-8 text-center ${isCollapsed ? "hidden" : ""}`}>
-          <img src="/logo66.png" alt="Logo" className="w-25 mx-auto" />
-        </div>
-
-        {/* Menu */}
-        <div className="mb-5">
-          <h3
-            className={`text-lg font-semibold text-gray-700 mb-3 ${
-              isCollapsed ? "hidden" : ""
-            }`}
-          >
-            Menu
-          </h3>
-          <div className="flex flex-col gap-2">
-            {buttons.map(({ label, icon, link }) => (
-              <button
-                key={label}
-                onClick={() => handleNavigation(link, label)}
-                className={`flex items-center gap-2 p-2 w-full rounded-lg text-left transition-all ${
-                  selectedButton === label ? "bg-gray-200" : "hover:bg-gray-100"
-                }`}
-              >
-                {icon} {!isCollapsed && label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Recent */}
-        <div className="mt-5">
-          <h3
-            className={`text-lg font-semibold text-gray-700 mb-3 ${
-              isCollapsed ? "hidden" : ""
-            }`}
-          >
-            Recent
-          </h3>
-          <div className="flex flex-col gap-2">
-            {buttons2.map(({ label, icon, link }) => (
-              <button
-                key={label}
-                onClick={() => handleNavigation(link, label)}
-                className={`p-2 w-full rounded-lg text-left transition-all ${
-                  selectedButton === label ? "bg-gray-200" : "hover:bg-gray-100"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  {!isCollapsed && label}
-                  {icon}
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Sign Out */}
-        <div className="mt-auto border-t pt-4 w-full">
-          <div className="flex flex-col gap-2">
-            {buttons3.map(({ label, icon }) => (
-              <button
-                key={label}
-                onClick={handleSignout}
-                className={`p-2 w-full rounded-lg text-left transition-all ${
-                  selectedButton === label ? "bg-gray-200" : "hover:bg-gray-100"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  {!isCollapsed && label}
-                  {icon}
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
+    <div
+      className={`relative min-h-screen bg-white p-4 flex flex-col shadow-lg transition-all duration-500 ease-in-out ${
+        isCollapsed ? "w-16" : "w-64"
+      }`}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
       {/* Collapse Button */}
       <button
+        className={`absolute top-4 -right-3 p-2 rounded-full bg-blue-500 text-white shadow-lg hover:bg-blue-600 
+          transition-all duration-300 transform hover:scale-110 ${isHovering ? "opacity-100" : "opacity-70"}`}
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute top-5 right-0 transform translate-x-1/2 bg-primary border border-gray-300 shadow-md rounded-full p-1 transition-all hover:bg-gray-100"
       >
         {isCollapsed ? (
-          <ArrowLeftIcon className="text-white w-4 h-4" />
+          <ChevronRightIcon className="h-4 w-4 animate-pulse" />
         ) : (
-          <ArrowRightIcon className="text-white w-4 h-4" />
+          <ChevronLeftIcon className="h-4 w-4 animate-pulse" />
         )}
       </button>
+
+      {/* Logo Container */}
+      <div className="flex justify-center items-center mb-6 h-12 overflow-hidden">
+        {isCollapsed ? (
+          <div className="w-8 h-8 flex items-center justify-center">
+            <Image
+              src="/logo66.png"
+              alt="Logo"
+              width={32}
+              height={32}
+              className="object-contain transition-all duration-500 transform scale-100"
+              priority
+            />
+          </div>
+        ) : (
+          <div className="w-full flex justify-center">
+            <Image
+              src="/logo66.png"
+              alt="Logo"
+              width={120}
+              height={48}
+              className="object-contain transition-all duration-500 transform scale-100"
+              priority
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Menu Section */}
+      <div className="mb-4">
+        <h2 
+          className={`text-[11px] font-semibold tracking-wide text-gray-400 mb-2 
+          transition-opacity duration-300 ${isCollapsed ? "opacity-0" : "opacity-100"}`}
+        >
+          Menu
+        </h2>
+        <nav className="flex flex-col gap-2">
+          {menuItems.map((item) => (
+            <a
+              key={item.id}
+              href={item.link}
+              className={`relative flex items-center px-3 py-2 rounded-lg transition-all duration-300 
+                ${pathname === item.link ? "bg-red-50 text-red-500" : "hover:bg-gray-50 text-gray-700"}
+                transform hover:translate-x-1`}
+            >
+              {pathname === item.link && (
+                <div className="absolute left-0 w-1 h-8 bg-red-500 rounded-r-md animate-pulse" />
+              )}
+              <item.icon className={`h-6 w-6 shrink-0 transition-transform duration-300 ${isCollapsed ? "scale-110" : ""}`} />
+              <span 
+                className={`ml-3 whitespace-nowrap transition-all duration-300 
+                ${isCollapsed ? "opacity-0 w-0" : "opacity-100"}`}
+              >
+                {item.label}
+              </span>
+            </a>
+          ))}
+        </nav>
+      </div>
+
+      {/* Recent Section */}
+      <div className="mb-auto">
+        <h2 
+          className={`text-[11px] font-semibold tracking-wide text-gray-400 mb-2 
+          transition-opacity duration-300 ${isCollapsed ? "opacity-0" : "opacity-100"}`}
+        >
+          Recent
+        </h2>
+        <nav className="flex flex-col gap-2">
+          {recentItems.map((item) => (
+            <a
+              key={item.id}
+              href={item.link}
+              className="flex items-center px-3 py-2 hover:bg-gray-50 rounded-lg 
+                transition-all duration-300 text-gray-600 transform hover:translate-x-1"
+            >
+              <item.icon className={`h-6 w-6 shrink-0 transition-transform duration-300 ${isCollapsed ? "scale-110" : ""}`} />
+              <span 
+                className={`ml-3 whitespace-nowrap transition-all duration-300 
+                ${isCollapsed ? "opacity-0 w-0" : "opacity-100"}`}
+              >
+                {item.label}
+              </span>
+            </a>
+          ))}
+        </nav>
+      </div>
+
+      {/* Sign Out Button */}
+      <div className="p-4 border-t border-gray-200 mt-auto">
+        <button
+          className="w-full flex items-center justify-center text-red-600 hover:bg-red-100 gap-2 px-3 py-2 rounded-lg 
+            transition-all duration-300 transform hover:translate-x-1 group"
+          onClick={handleSignout}
+        >
+          <PowerIcon className={`h-6 w-6 shrink-0 transition-all duration-300 group-hover:rotate-12 
+            ${isCollapsed ? "ml-0" : ""}`} 
+          />
+          <span 
+            className={`transition-all duration-300 
+            ${isCollapsed ? "hidden" : "block"}`}
+          >
+            Sign Out
+          </span>
+        </button>
+      </div>
     </div>
   );
 };
 
-export default SideBar;
+export default Sidebar;
