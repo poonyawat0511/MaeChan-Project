@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import generatePDF from "@/utils/pdf/generatePDF";
 import "./style.module.css";
 import { StockRequest } from "@/utils/types/stock-request";
-import StockRequestTable from "@/components/StockRequests/StockRequest.table";
-import PdfPreview from "@/components/StockRequests/PdfPreview";
+import StockRequestTable from "@/components/global/tables/StockRequests/StockRequest.table";
+import PdfPreview from "@/components/global/tables/StockRequests/PdfPreview";
 import { Input } from "@heroui/input";
 import DownloadIcon from "@/components/global/icons/download.icon";
 import SearchIcon from "@/components/global/icons/search.icon";
@@ -72,7 +72,7 @@ export default function AllStockRequest() {
   });
 
   if (loading) {
-    return <p>request loading</p>;
+    return <p>Request loading...</p>;
   }
 
   if (error) {
@@ -80,8 +80,10 @@ export default function AllStockRequest() {
   }
 
   return (
-    <div className="drop-shadow-2xl mt-10 flex justify-center flex-1 w-full">
-      <div className="rounded-md bg-white shadow-lg p-4 max-w-6xl w-full max-h-[80vh] flex flex-col">
+    <div className="drop-shadow-2xl flex-1 justify-center items-center w-full h-screen flex flex-col gap-4 p-10">
+      {/* Card Container */}
+      <div className="rounded-xl bg-white shadow-lg p-4 max-w-6xl w-full h-full">
+        {/* Header Section */}
         <div className="flex items-center gap-4 justify-between">
           <h1 className="text-3xl font-bold text-gray-800 border-r-2 border-gray-500 pr-4">
             Purchase Request List
@@ -111,12 +113,12 @@ export default function AllStockRequest() {
           </Button>
         </div>
 
-        {/* Table Container */}
-        <div className="flex-1 overflow-auto max-h-[screen] mt-4 scroll-bar-hide">
+        {/* Table Container - Takes Remaining Space */}
+        <div className="flex-1 overflow-auto mt-4 scroll-bar-hide max-h-[calc(100vh-200px)]">
           {filteredRequests.length === 0 ? (
-            <p>No tasks available.</p>
+            <p>No requests available.</p>
           ) : (
-            <div className="w-full h-full">
+            <div className="flex flex-col w-full h-[75vh]">
               <StockRequestTable
                 stockRequests={filteredRequests}
                 onRequestClick={handleTaskClick}
@@ -124,14 +126,16 @@ export default function AllStockRequest() {
             </div>
           )}
         </div>
-        <BlurModal isOpen={openPdfModal} onClose={handleClosePreview}>
-          {selectedPdfUrl && (
-            <div className="h-[70vh]">
-              <PdfPreview pdfUrl={selectedPdfUrl} />
-            </div>
-          )}
-        </BlurModal>
       </div>
+
+      {/* PDF Preview Modal */}
+      <BlurModal isOpen={openPdfModal} onClose={handleClosePreview}>
+        {selectedPdfUrl && (
+          <div className="h-[70vh]">
+            <PdfPreview pdfUrl={selectedPdfUrl} />
+          </div>
+        )}
+      </BlurModal>
     </div>
   );
 }
