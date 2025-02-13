@@ -18,6 +18,6 @@ public class StockUserDto {
     private String password;
     private String lineId;
     private String signature;
-    private String userHospitalId;
+    private Long userHospitalId;
     private String role;
 }

@@ -20,7 +20,7 @@ public class StockRequestDto {
     private String requestWarehouseId;
     private Boolean requestComplete;
     private LocalDate useDate;
-    private String stockPoId;
+    private Long stockPoId;
     private String hosGuid;
     private Integer budgetYear;
     private String stockSubject;
@@ -35,9 +35,9 @@ public class StockRequestDto {
     private Integer numberMonth;
     private String stockRequestDocId;
     private String projectId;
-    private String stockUserApprove; // StockUserApprove
+    private Long stockUserApprove; // StockUserApprove
     private LocalDate stockApproveDate;
-    private String stockUser; // StockUser
+    private Long stockUser; // StockUser
     private String stockRequestDocumentId;
     private String projectPlanId;
     private Boolean requestAllComplete;
@@ -58,6 +58,6 @@ public class StockRequestDto {
     private Double stockBudgetPrRemain;
     private String officerList;
     private String stockPoNoList;
-    private Integer stockBudgetTypeId;
+    private Long stockBudgetTypeId;
     private String depRequestNoList;
 }

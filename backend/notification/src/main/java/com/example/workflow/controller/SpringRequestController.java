@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,25 +26,31 @@ public class SpringRequestController {
     private SpringRequestService springRequestService;
 
     @GetMapping
-    public List<SpringRequest> getAllSpringRequests() {
-        return springRequestService.getAllSpringRequests();
+    public ResponseEntity<List<SpringRequest>> getAllSpringRequests() {
+        List<SpringRequest> springRequests = springRequestService.getAllSpringRequests();
+        return new ResponseEntity<>(springRequests, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SpringRequest> getSpringRequestById(@PathVariable Long id) {
         SpringRequest springRequest = springRequestService.getSpringRequestById(id);
-        return ResponseEntity.ok(springRequest);
+        if (springRequest != null) {
+            return new ResponseEntity<>(springRequest, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping
-    public SpringRequest createSpringRequest(@RequestBody SpringRequest springRequest) {
-        return springRequestService.createSpringRequest(springRequest);
+    public ResponseEntity<SpringRequest> createSpringRequest(@RequestBody SpringRequest springRequest) {
+        SpringRequest createdSpringRequest = springRequestService.createSpringRequest(springRequest);
+        return new ResponseEntity<>(createdSpringRequest, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SpringRequest> updateSpringRequest(@PathVariable Long id, @RequestBody SpringRequest springRequest) {
         SpringRequest updatedSpringRequest = springRequestService.updateSpringRequest(id, springRequest);
-        return ResponseEntity.ok(updatedSpringRequest);
+        return new ResponseEntity<>(updatedSpringRequest, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
@@ -53,7 +60,8 @@ public class SpringRequestController {
     }
 
     @GetMapping("/task/{taskId}")
-    public Optional<SpringRequest> getByCamundaTaskId(@PathVariable String taskId) {
-        return springRequestService.getByCamundaTaskId(taskId);
+    public ResponseEntity<Optional<SpringRequest>> getByCamundaTaskId(@PathVariable String taskId) {
+        Optional<SpringRequest> springRequest = springRequestService.getByCamundaTaskId(taskId);
+        return new ResponseEntity<>(springRequest, HttpStatus.OK);
     }
 }
