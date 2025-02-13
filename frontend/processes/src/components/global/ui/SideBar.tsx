@@ -1,200 +1,162 @@
 "use client";
 import React, { useState } from "react";
-import { Box, Button, ButtonGroup } from "@mui/material";
-import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-import NextWeekOutlinedIcon from "@mui/icons-material/NextWeekOutlined";
-import WalletOutlinedIcon from "@mui/icons-material/WalletOutlined";
-import EastOutlinedIcon from "@mui/icons-material/EastOutlined";
-import Person2Icon from "@mui/icons-material/Person2";
-import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
-import PublishedWithChangesRoundedIcon from "@mui/icons-material/PublishedWithChangesRounded";
-import ManageSearchRoundedIcon from "@mui/icons-material/ManageSearchRounded";
+import { useRouter } from "next/navigation";
+import HomeIcon from "../icons/home.icon";
+import ArrowRightIcon from "../icons/arrowRight.icon";
+import TaskIcon from "../icons/task.icon";
+import ArrowLeftIcon from "../icons/arrowLeft.icon";
+import SignoutIcon from "../icons/signout.icon";
 
 const buttons = [
-  { label: "All Stock Requests", icon: <HomeRoundedIcon />, link: "/all-stock-requests" },
   {
-    label: "Approver",
-    icon: <ManageSearchRoundedIcon />,
-    link: "/approver",
+    label: "All Stock Requests",
+    icon: <HomeIcon size={20} />,
+    link: "/all-stock-requests",
   },
-  {
-    label: "Director",
-    icon: <PublishedWithChangesRoundedIcon />,
-    link: "/director",
-  },
+  { label: "Approver", icon: <TaskIcon size={20} />, link: "/approver" },
+  { label: "Director", icon: <TaskIcon size={20} />, link: "/director" },
 ];
 
 const buttons2 = [
   {
     label: "Purchasing work",
-    icon: <FileUploadOutlinedIcon />,
-    link: "/dashboard",
+    icon: <ArrowLeftIcon />,
+    link: "/all-stock-requests",
   },
   {
     label: "Treasury work",
-    icon: <NextWeekOutlinedIcon />,
-    link: "/dashboard",
+    icon: <ArrowLeftIcon />,
+    link: "/all-stock-requests",
   },
   {
     label: "Distribution Unit",
-    icon: <WalletOutlinedIcon />,
-    link: "/dashboard",
+    icon: <ArrowLeftIcon />,
+    link: "/all-stock-requests",
   },
 ];
 
-const handleSignout = async () => {
-  try {
-    await fetch("http://localhost:8081/auth/signout", {
-      method: "POST",
-      credentials: "include",
-    });
-    document.cookie = "jwt=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-    localStorage.removeItem("jwt");
-    window.location.href = "/signin";
-  } catch (error) {
-    console.error("sign out failed:", error);
-  }
-};
+const buttons3 = [{ label: "Sign Out", icon: <SignoutIcon size={20} /> }];
 
 const SideBar = () => {
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
+  const router = useRouter();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const handleButtonClick = (buttonLabel: string) => {
-    setSelectedButton(buttonLabel);
+  const handleNavigation = (link: string, label: string) => {
+    setSelectedButton(label);
+    router.push(link);
+  };
+
+  const handleSignout = async () => {
+    try {
+      await fetch("http://localhost:8081/auth/signout", {
+        method: "POST",
+        credentials: "include",
+      });
+      document.cookie = "jwt=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+      localStorage.removeItem("jwt");
+      router.push("/signin");
+    } catch (error) {
+      console.error("Sign out failed:", error);
+    }
   };
 
   return (
-    <div className="h-full w-[15rem] bg-white shadow-md p-5 flex flex-col drop-shadow-2xl">
-      <div className="mb-8 text-center">
-        <img src="/logo66.png" alt="Logo" />
-      </div>
-      <div className="mb-5 border-b-2 border-gray-400">
-        <h3 className="text-lg font-medium text-gray-700 text-start">Menu</h3>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            height: "100%",
-            "& > *": {
-              m: 1,
-              flex: 1,
-            },
-          }}
-        >
-          <ButtonGroup
-            orientation="vertical"
-            aria-label="Vertical button group"
-            variant="text"
-            sx={{
-              "& .MuiButton-root": {
-                justifyContent: "flex-start",
-                textAlign: "left",
-                width: "100%",
-                textTransform: "none",
-                color: "inherit",
-                "&:hover, &:focus": {
-                  backgroundColor: "gray",
-                },
-              },
-              "& .MuiButtonGroup-grouped": {
-                border: "none",
-              },
-            }}
+    <div className="relative h-full flex">
+      {/* Sidebar */}
+      <div
+        className={`h-full ${
+          isCollapsed ? "w-[5rem]" : "w-[15rem]"
+        } bg-white shadow-lg p-5 flex flex-col border-r border-gray-200 transition-all duration-300 items-center`}
+      >
+        {/* Logo */}
+        <div className={`mb-8 text-center ${isCollapsed ? "hidden" : ""}`}>
+          <img src="/logo66.png" alt="Logo" className="w-25 mx-auto" />
+        </div>
+
+        {/* Menu */}
+        <div className="mb-5">
+          <h3
+            className={`text-lg font-semibold text-gray-700 mb-3 ${
+              isCollapsed ? "hidden" : ""
+            }`}
           >
-            {buttons.map((button) => (
-              <Button
-                key={button.label}
-                className={`w-full text-start ${
-                  selectedButton === button.label ? "bg-gray-200" : ""
+            Menu
+          </h3>
+          <div className="flex flex-col gap-2">
+            {buttons.map(({ label, icon, link }) => (
+              <button
+                key={label}
+                onClick={() => handleNavigation(link, label)}
+                className={`flex items-center gap-2 p-2 w-full rounded-lg text-left transition-all ${
+                  selectedButton === label ? "bg-gray-200" : "hover:bg-gray-100"
                 }`}
-                variant="text"
-                href={button.link}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  position: "relative",
-                }}
-                onClick={() => handleButtonClick(button.label)}
               >
-                {button.icon}
-                {button.label}
-              </Button>
+                {icon} {!isCollapsed && label}
+              </button>
             ))}
-          </ButtonGroup>
-        </Box>
+          </div>
+        </div>
+
+        {/* Recent */}
+        <div className="mt-5">
+          <h3
+            className={`text-lg font-semibold text-gray-700 mb-3 ${
+              isCollapsed ? "hidden" : ""
+            }`}
+          >
+            Recent
+          </h3>
+          <div className="flex flex-col gap-2">
+            {buttons2.map(({ label, icon, link }) => (
+              <button
+                key={label}
+                onClick={() => handleNavigation(link, label)}
+                className={`p-2 w-full rounded-lg text-left transition-all ${
+                  selectedButton === label ? "bg-gray-200" : "hover:bg-gray-100"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  {!isCollapsed && label}
+                  {icon}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Sign Out */}
+        <div className="mt-auto border-t pt-4 w-full">
+          <div className="flex flex-col gap-2">
+            {buttons3.map(({ label, icon }) => (
+              <button
+                key={label}
+                onClick={handleSignout}
+                className={`p-2 w-full rounded-lg text-left transition-all ${
+                  selectedButton === label ? "bg-gray-200" : "hover:bg-gray-100"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  {!isCollapsed && label}
+                  {icon}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <div className="mt-5">
-        <h3 className="text-lg font-medium text-gray-700 text-start">Recent</h3>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            height: "100%",
-            "& > *": {
-              m: 1,
-              flex: 1,
-            },
-          }}
-        >
-          <ButtonGroup
-            orientation="vertical"
-            aria-label="Vertical button group"
-            variant="text"
-            sx={{
-              "& .MuiButton-root": {
-                justifyContent: "flex-start",
-                textAlign: "left",
-                width: "100%",
-                textTransform: "none",
-                color: "inherit",
-                "&:hover, &:focus": {
-                  backgroundColor: "gray",
-                },
-              },
-              "& .MuiButtonGroup-grouped": {
-                border: "none",
-              },
-            }}
-          >
-            {buttons2.map((button) => (
-              <Button
-                key={button.label}
-                className={`w-full text-start ${
-                  selectedButton === button.label ? "bg-gray-200" : ""
-                }`}
-                variant="text"
-                href={button.link}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  position: "relative",
-                }}
-                onClick={() => handleButtonClick(button.label)}
-              >
-                {button.icon}
-                {button.label}
-                <EastOutlinedIcon sx={{ position: "absolute", right: 0 }} />
-              </Button>
-            ))}
-          </ButtonGroup>
-        </Box>
-      </div>
-
-      <div className="p-4 border-t border-gray-200 mt-auto">
-        <Button
-          key="profile"
-          className="w-full text-start text-red-600 hover:bg-red-100 gap-2"
-          variant="text"
-          color="error"
-          onClick={handleSignout}
-        >
-          <Person2Icon className="mr-2" />
-          Sign Out
-        </Button>
-      </div>
+      {/* Collapse Button */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="absolute top-5 right-0 transform translate-x-1/2 bg-primary border border-gray-300 shadow-md rounded-full p-1 transition-all hover:bg-gray-100"
+      >
+        {isCollapsed ? (
+          <ArrowLeftIcon className="text-white w-4 h-4" />
+        ) : (
+          <ArrowRightIcon className="text-white w-4 h-4" />
+        )}
+      </button>
     </div>
   );
 };

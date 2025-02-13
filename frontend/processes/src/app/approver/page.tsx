@@ -1,15 +1,16 @@
 "use client";
-import { Button, Chip, IconButton } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import "./style.css";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useEffect, useState } from "react";
 import { Task } from "@/utils/types/task";
-import TaskCard from "@/components/Tasks/Task.Card";
+import TaskCard from "@/components/global/cards/Task.Card";
 import { StockRequest } from "@/utils/types/stock-request";
 import generatePDF from "@/utils/pdf/generatePDF";
 import PdfPreview from "@/components/Pdf/PdfPreview";
 import { ArrowForward } from "@mui/icons-material";
 import HorizontalLinearAlternativeLabelStepper from "@/share/stepper";
+import { Chip } from "@heroui/react";
 
 const camundaTaksApiApprover = `http://localhost:8081/engine-rest/task?candidateGroup=Approver`;
 const camundaTaskSubmit = `http://localhost:8081/engine-rest/task`;
@@ -162,7 +163,7 @@ export default function ApproverPage() {
 
   return (
     <div className="flex-1 py-1">
-      <div className="mx-5 py-10 px-5 rounded-md">
+      <div className="mx-5 py-5 px-5 rounded-md">
         <div className="flex items-center gap-4 mb-6 justify-between">
           <h1 className="text-3xl font-bold text-gray-800 ml-5">
             Explore Task
@@ -178,20 +179,15 @@ export default function ApproverPage() {
           </IconButton>
         </div>
 
-        <div className="pt-20 flex justify-between gap-10 pb-20 flex-grow">
+        <div className="flex justify-between gap-5 flex-grow">
           <div className="drop-shadow-xl p-5 bg-gray-300 rounded-xl flex-1 max-h-[35rem] max-w-[30%] overflow-auto scrollbar-hidden">
             <div className="mb-2">
               <h2 className="text-xl font-bold text-gray-600">
-                Total Tasks:
-                <Chip
-                  label={tasks.length}
-                  color="warning"
-                  sx={{
-                    fontSize: "0.875rem",
-                    height: "24px",
-                    padding: "0 8px",
-                  }}
-                />
+                <Chip color="secondary" variant="dot" />
+                To Do:
+                <Chip radius="full" color="default">
+                  {tasks.length}
+                </Chip>
               </h2>
             </div>
             <TaskCard

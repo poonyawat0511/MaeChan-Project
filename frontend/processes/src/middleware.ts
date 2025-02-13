@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
 
   // 🔹 If user is authenticated and tries to access /signin, redirect to home (/)
   if (user && pathname === "/signin") {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/all-stock-requests", request.url));
   }
 
   // Allow public paths without authentication

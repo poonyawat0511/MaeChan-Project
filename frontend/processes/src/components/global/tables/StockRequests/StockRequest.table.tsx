@@ -10,6 +10,7 @@ import {
   TableRow,
   Pagination,
   Button,
+  Chip,
 } from "@heroui/react";
 
 interface StockRequestTableProps {
@@ -41,14 +42,15 @@ export default function StockRequestTable({
     { key: "requestWarehouseId", label: "Main Inventory" },
     { key: "requestItemCount", label: "Item Count" },
     { key: "requestTotalPrice", label: "Total Price" },
-    { key: "requestAllComplete", label: "Request All Complete" },
+    { key: "requestComplete", label: "Request Complete" },
     { key: "officerList", label: "Inspector" },
     { key: "actions", label: "Actions" },
   ];
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden  shadow-md">
-      <div className="flex-1 overflow-auto max-h-[60vh] scrollbar-hide">
+    <div className="w-full h-full flex flex-col overflow-hidden">
+      {/* Table Wrapper - Grow to take all available space */}
+      <div className="flex-1 overflow-auto max-h-[100vh] scrollbar-hide !rounded-none">
         <Table aria-label="Stock Requests Table" className="w-full min-w-max">
           <TableHeader columns={columns}>
             {(column) => (
@@ -94,6 +96,13 @@ export default function StockRequestTable({
                           />
                         </svg>
                       </button>
+                    ) : columnKey === "requestComplete" ? (
+                      <Chip
+                        color={item.requestComplete ? "success" : "danger"}
+                        variant="solid"
+                      >
+                        {item.requestComplete ? "Complete" : "Incomplete"}
+                      </Chip>
                     ) : (
                       getKeyValue(item, columnKey)
                     )}
@@ -105,7 +114,8 @@ export default function StockRequestTable({
         </Table>
       </div>
 
-      <div className="flex justify-center items-center p-2">
+      {/* Pagination - Sticks to the bottom */}
+      <div className="w-full flex justify-center items-center py-4 bg-white">
         <Button
           size="sm"
           style={{
@@ -131,7 +141,7 @@ export default function StockRequestTable({
             background: "transparent",
             border: "none",
             boxShadow: "none",
-            color: currentPage === 1 ? "gray" : "black",
+            color: currentPage === totalPages ? "gray" : "black",
           }}
           onPress={() =>
             setCurrentPage((prev) => Math.min(prev + 1, totalPages))

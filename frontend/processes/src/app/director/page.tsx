@@ -3,7 +3,7 @@ import { Button, Chip, IconButton } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useEffect, useState } from "react";
 import { Task } from "@/utils/types/task";
-import TaskCard from "@/components/Tasks/Task.Card";
+import TaskCard from "@/components/global/cards/Task.Card";
 import { StockRequest } from "@/utils/types/stock-request";
 import generatePDF from "@/utils/pdf/generatePDF";
 import PdfPreview from "@/components/Pdf/PdfPreview";
