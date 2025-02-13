@@ -17,5 +17,5 @@ public class UserHospitalDto {
 
     private String lastName;
 
-    private String HospitalId;
+    private Long HospitalId;
 }

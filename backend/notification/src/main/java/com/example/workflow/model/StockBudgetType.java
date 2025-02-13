@@ -1,5 +1,6 @@
 package com.example.workflow.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,12 +16,18 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "stock_user_approve")
-public class StockUserApprove {
-
+@Table(name = "stock_budget_type")
+public class StockBudgetType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long stockUserApproveId;
+    private Long id;
 
-    private String stockUserApproveName;
+    @Column(name = "stock_budget_type_id")
+    private Long stockBudgetTypeId;
+
+    @Column(name = "stock_budget_type_name")
+    private String stockBudgetTypeName;
+
+    @Column(name = "acc_po_budget_type_id")
+    private Long accPoBudgetTypeId;
 }

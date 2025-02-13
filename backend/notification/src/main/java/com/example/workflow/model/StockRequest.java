@@ -51,7 +51,7 @@ public class StockRequest {
     private LocalDate useDate;
 
     @Column(name = "stock_po_id")
-    private String stockPoId;
+    private Long stockPoId;
 
     @Column(name = "hos_guid")
     private String hosGuid;
@@ -95,13 +95,13 @@ public class StockRequest {
     private String projectId;
 
     @Column(name = "stock_user_approve_id")
-    private String stockUserApprove;
+    private Long stockUserApprove;
 
     @Column(name = "stock_approve_date")
     private LocalDate stockApproveDate;
 
     @Column(name = "stock_user_id")
-    private String stockUser;
+    private Long stockUser;
 
     @Column(name = "stock_request_document_id")
     private String stockRequestDocumentId;
@@ -162,7 +162,7 @@ public class StockRequest {
     private String stockPoNoList;
 
     @Column(name = "stock_budget_type_id")
-    private Integer stockBudgetTypeId;
+    private Long stockBudgetTypeId;
 
     @Column(name = "dep_request_no_list")
     private String depRequestNoList;

@@ -45,7 +45,7 @@ public class AuthenticationController {
         signUpRequest.setLastName(lastName);
         signUpRequest.setEmail(email);
         signUpRequest.setPassword(password);
-        signUpRequest.setUserHospitalId(userHospitalId);
+        signUpRequest.setUserHospitalId(Long.valueOf(userHospitalId));
         signUpRequest.setLineId(lineId);
         signUpRequest.setSignature(signature);
         signUpRequest.setRole(userRole);
