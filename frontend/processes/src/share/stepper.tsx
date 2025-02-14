@@ -5,7 +5,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import { StockRequest } from "@/utils/types/stock-request";
 
-const steps = ["Examine", "Approve", "Finished"];
+const steps = ["Approver", "Director", "Finished"];
 
 export default function HorizontalLinearAlternativeLabelStepper({
   stockRequest,
@@ -13,9 +13,9 @@ export default function HorizontalLinearAlternativeLabelStepper({
   stockRequest: StockRequest;
 }) {
   const getActiveStep = () => {
-    if (stockRequest.stockUserApprove === null) {
+    if (stockRequest.requestComplete !== true) {
       return 0; // ขั้นตอนแรก 'Examine'
-    } else if (stockRequest.stockApproveDate) {
+    } else if (stockRequest.stockApproveDate != null) {
       return 1; // ขั้นตอนที่สอง 'Approve'
     } else {
       return 2; // ขั้นตอนสุดท้าย 'Finished'

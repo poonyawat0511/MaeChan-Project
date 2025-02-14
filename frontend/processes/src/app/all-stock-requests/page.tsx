@@ -80,7 +80,7 @@ export default function AllStockRequest() {
   }
 
   return (
-    <div className="drop-shadow-2xl flex-1 justify-center items-center w-full h-screen flex flex-col gap-4 p-10">
+    <div className="flex-1 justify-center items-center w-full h-screen flex flex-col gap-4 p-10 ">
       {/* Card Container */}
       <div className="rounded-xl bg-white shadow-lg p-4 max-w-6xl w-full h-full">
         {/* Header Section */}
