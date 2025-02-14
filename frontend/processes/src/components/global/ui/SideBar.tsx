@@ -83,20 +83,19 @@ const SideBar = () => {
   };
 
   return (
-<div
-  className={`relative min-h-screen bg-white p-4 flex flex-col shadow-lg transition-all duration-500 ease-in-out ${
-    isCollapsed ? "w-[5rem]" : "w-[16rem]"
-  }`}
-  onMouseEnter={() => setIsHovering(true)}
-  onMouseLeave={() => setIsHovering(false)}
->
-
+    <div
+      className={`relative min-h-screen bg-white p-4 flex flex-col shadow-lg transition-all duration-500 ease-in-out ${
+        isCollapsed ? "w-[5rem]" : "w-[16rem]"
+      }`}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
       {/* Collapse Button */}
       <button
-        className={`absolute top-4 -right-3 p-2 rounded-full bg-blue-500 text-white shadow-lg hover:bg-blue-600 
-          transition-all duration-300 transform hover:scale-110 ${
-            isHovering ? "opacity-100 flex" : "opacity-70"
-          }`}
+        className={`absolute top-4 -right-3 p-2 rounded-full bg-purple-500 text-white shadow-lg hover:bg-white 
+    transition-all duration-300 transform hover:scale-110 ${
+      isHovering ? "opacity-100 flex" : "opacity-70"
+    } hover:text-purple-500`}
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
         {isCollapsed ? (

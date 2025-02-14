@@ -26,7 +26,7 @@ export default function TaskCard({ tasks, onTaskClick }: TaskCardProps) {
           <CardHeader>
             <div className="flex flex-col gap-1">
               <h2>
-                <Chip color="warning">New</Chip>
+                <Chip color="default" className="text-warning bg-orange-100">New</Chip>
               </h2>
               <h4 className="text-lg font-semibold text-default-800">
                 {task.name}
