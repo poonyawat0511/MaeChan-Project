@@ -45,7 +45,7 @@ public class StockBudgetController {
         return new ResponseEntity<>(stockBudgetMapper.toDto(createdStockBudget), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<StockBudgetDto> updateStockBudget(@PathVariable Long id, @RequestBody StockBudgetDto stockBudgetDto) {
         StockBudget stockBudget = stockBudgetMapper.toEntity(stockBudgetDto);
         stockBudget.setId(id);

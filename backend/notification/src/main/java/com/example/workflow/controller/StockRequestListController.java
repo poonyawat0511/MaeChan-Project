@@ -35,7 +35,7 @@ public class StockRequestListController {
         return new ResponseEntity<>(createdStockRequestList, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<StockRequestList> updateStockRequestList(@PathVariable Long id, @RequestBody StockRequestList stockRequestListDetails) {
         Optional<StockRequestList> stockRequestListOptional = stockRequestListService.findById(id);
         if (stockRequestListOptional.isPresent()) {
@@ -45,7 +45,6 @@ public class StockRequestListController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStockRequestList(@PathVariable Long id) {
