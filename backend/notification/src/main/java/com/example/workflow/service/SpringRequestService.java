@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.workflow.mapper.SpringRequestMapper;
 import com.example.workflow.model.SpringRequest;
 import com.example.workflow.repository.SpringRequestRepository;
 
@@ -15,9 +14,6 @@ public class SpringRequestService {
 
     @Autowired
     private SpringRequestRepository springRequestRepository;
-
-    @Autowired
-    private SpringRequestMapper springRequestMapper;
 
     public List<SpringRequest> getAllSpringRequests() {
         return springRequestRepository.findAll();

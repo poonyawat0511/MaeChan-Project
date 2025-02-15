@@ -61,12 +61,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         UserHospital user = userHospitalRepository.findByFirstNameAndLastName(signUpRequest.getFirstName(), signUpRequest.getLastName())
                 .orElse(null);
         if(user == null){
-            //หาไอดีไม่เจอ
-            System.out.println("หาไอดีโรงบาลไม่เจอ");
+            System.out.println("Can't find userHospital ID from firstName and lastName");
             return null;
         }else{
-            stockUser.setUserHospitalId(user.getHospitalId());
-            System.out.println("แมช " + stockUser.getFirstName() + " "+ stockUser.getLastName() + "กับ UserHospitalId : " + stockUser.getUserHospitalId());
+            stockUser.setUserHospitalId(user.getId());
+            System.out.println("match " + stockUser.getFirstName() + " "+ stockUser.getLastName() + "with userHospital ID : " + stockUser.getUserHospitalId());
             return stockUserRepository.save(stockUser);
         }
     }

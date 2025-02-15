@@ -1,6 +1,5 @@
 package com.example.workflow.controller;
 
-import com.example.workflow.model.StockPo;
 import com.example.workflow.model.StockRequestList;
 import com.example.workflow.service.StockRequestListService;
 import org.springframework.beans.factory.annotation.Autowired;
