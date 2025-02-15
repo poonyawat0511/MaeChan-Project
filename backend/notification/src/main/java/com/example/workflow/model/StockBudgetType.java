@@ -18,6 +18,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "stock_budget_type")
 public class StockBudgetType {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

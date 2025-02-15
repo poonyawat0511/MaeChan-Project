@@ -1,16 +1,24 @@
 package com.example.workflow.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.workflow.dto.StockBudgetDto;
 import com.example.workflow.mapper.StockBudgetMapper;
 import com.example.workflow.model.StockBudget;
 import com.example.workflow.service.StockBudgetService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/stock-budgets")
@@ -45,7 +53,7 @@ public class StockBudgetController {
         return new ResponseEntity<>(stockBudgetMapper.toDto(createdStockBudget), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<StockBudgetDto> updateStockBudget(@PathVariable Long id, @RequestBody StockBudgetDto stockBudgetDto) {
         StockBudget stockBudget = stockBudgetMapper.toEntity(stockBudgetDto);
         stockBudget.setId(id);
