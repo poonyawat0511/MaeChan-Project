@@ -23,6 +23,7 @@
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/controller/StockRequestController.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/kafka/KafkaMessageListener.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/repository/StockPoDetailRepository.java
+/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/controller/NotifyTargetUserController.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/repository/NotifyTimeRepository.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/repository/StockBudgetRepository.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/StockPoDetailService.java
@@ -37,6 +38,7 @@
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/dto/JwtAuthenticationResponse.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/repository/StockUserRepository.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/model/StockPo.java
+/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/repository/NotifyTargetUserRepository.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/component/DayInitializer.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/controller/StockUserController.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/repository/StockBudgetTypeRepository.java
@@ -47,13 +49,16 @@
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/Application.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/config/SecurityConfig.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/delegate/UpdateDirectorHandler.java
+/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/NotifyTargetUserService.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/model/NotifyTime.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/JWTService.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/StockRequestListService.java
+/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/NotifyService.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/dto/UserHospitalDto.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/controller/StockRequestListController.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/model/Role.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/model/UserHospital.java
+/Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/model/NotifyTargetUser.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/dto/RefreshTokenRequest.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/service/AuthenticationService.java
 /Users/osathi_jan_mac/Documents/GitHub/MaeChan-Project/backend/notification/src/main/java/com/example/workflow/mapper/StockUserMapper.java
