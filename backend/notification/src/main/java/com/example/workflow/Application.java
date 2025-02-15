@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.example.workflow.model.Role;
@@ -11,6 +12,7 @@ import com.example.workflow.model.StockUser;
 import com.example.workflow.repository.StockUserRepository;
 
 @SpringBootApplication
+@EnableScheduling
 public class Application implements CommandLineRunner{
   @Autowired
   private StockUserRepository stockUserRepository;

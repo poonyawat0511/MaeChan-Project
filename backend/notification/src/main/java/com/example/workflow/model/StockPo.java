@@ -2,7 +2,6 @@ package com.example.workflow.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.function.BooleanSupplier;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

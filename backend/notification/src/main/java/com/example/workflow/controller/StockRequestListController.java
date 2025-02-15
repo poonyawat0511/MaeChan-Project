@@ -1,6 +1,5 @@
 package com.example.workflow.controller;
 
-import com.example.workflow.model.StockPo;
 import com.example.workflow.model.StockRequestList;
 import com.example.workflow.service.StockRequestListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class StockRequestListController {
         return new ResponseEntity<>(createdStockRequestList, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<StockRequestList> updateStockRequestList(@PathVariable Long id, @RequestBody StockRequestList stockRequestListDetails) {
         Optional<StockRequestList> stockRequestListOptional = stockRequestListService.findById(id);
         if (stockRequestListOptional.isPresent()) {
@@ -45,7 +44,6 @@ public class StockRequestListController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStockRequestList(@PathVariable Long id) {
