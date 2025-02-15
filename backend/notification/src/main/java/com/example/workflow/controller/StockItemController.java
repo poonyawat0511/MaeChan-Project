@@ -38,7 +38,7 @@ public class StockItemController {
         return new ResponseEntity<>(createdStockItem, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<StockItem> updateStockItem(@PathVariable Long id, @RequestBody StockItem stockItem) {
         StockItem updatedStockItem = stockItemService.updateStockItem(id, stockItem);
         if (updatedStockItem != null) {

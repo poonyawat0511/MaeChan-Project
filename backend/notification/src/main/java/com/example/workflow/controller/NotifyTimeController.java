@@ -34,7 +34,7 @@ public class NotifyTimeController {
         return new ResponseEntity<>(createdMessageTime, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<NotifyTime> updateMessageTime(@PathVariable Long id, @RequestBody NotifyTime messageTime) {
         ResponseEntity<NotifyTime> responseEntity = messageTimeService.updateMessageTime(id, messageTime);
         return responseEntity.getStatusCode().is2xxSuccessful() ? ResponseEntity.ok(responseEntity.getBody()) : ResponseEntity.notFound().build();

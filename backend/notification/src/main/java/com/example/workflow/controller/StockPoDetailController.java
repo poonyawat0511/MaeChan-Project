@@ -34,7 +34,7 @@ public class StockPoDetailController {
         return new ResponseEntity<>(createdStockPoDetail, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<StockPoDetail> updateStockPoDetail(@PathVariable Long id, @RequestBody StockPoDetail stockPoDetail) {
         if (!stockPoDetailService.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();

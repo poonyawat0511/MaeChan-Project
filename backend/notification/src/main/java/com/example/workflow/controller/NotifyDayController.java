@@ -34,7 +34,7 @@ public class NotifyDayController {
         return new ResponseEntity<>(createdMessageDay, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<NotifyDay> updateMessageDay(@PathVariable Long id, @RequestBody NotifyDay messageDay) {
         ResponseEntity<NotifyDay> responseEntity = messageDayService.updateMessageDay(id, messageDay);
         return responseEntity.getStatusCode().is2xxSuccessful() ? ResponseEntity.ok(responseEntity.getBody()) : ResponseEntity.notFound().build();

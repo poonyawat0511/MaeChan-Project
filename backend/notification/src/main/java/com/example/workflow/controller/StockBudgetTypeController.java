@@ -34,7 +34,7 @@ public class StockBudgetTypeController {
         return new ResponseEntity<>(createdStockBudgetType, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<StockBudgetType> updateStockBudgetType(@PathVariable Long id, @RequestBody StockBudgetType stockBudgetTypeDetails) {
         Optional<StockBudgetType> stockBudgetType = stockBudgetTypeService.findById(id);
         if (stockBudgetType.isPresent()) {
