@@ -8,11 +8,12 @@ import generatePDF from "@/utils/pdf/generatePDF";
 import PdfPreview from "@/components/Pdf/PdfPreview";
 import HorizontalLinearAlternativeLabelStepper from "@/share/stepper";
 import { Button, Chip } from "@heroui/react";
-
 import ArrowLeftIcon from "@/components/global/icons/arrowLeft.icon";
 import XmarkIcon from "@/components/global/icons/x-mark.icon";
 import { UserIcon } from "@heroicons/react/24/solid";
 import ArrowRightIcon from "@/components/global/icons/arrowRight.icon";
+import BlurModal from "@/components/global/modals/BlurModal";
+
 
 const camundaTaksApiApprover = `http://localhost:8081/engine-rest/task?candidateGroup=Approver`;
 const camundaTaskSubmit = `http://localhost:8081/engine-rest/task`;
@@ -26,6 +27,8 @@ export default function ApproverPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [stockRequest, setStockRequest] = useState<StockRequest | null>(null);
+  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [modalAction, setModalAction] = useState<() => void>(() => () => {});
 
   useEffect(() => {
     const fetchCamundaApiApprover = async () => {
@@ -77,7 +80,20 @@ export default function ApproverPage() {
     }
   };
 
-  const handleApprove = async (task: Task) => {
+  const handleRejecte = (task: Task) => {
+    confirmAction(() => executeReject(task));
+  };
+
+  const confirmAction = (action: () => void) => {
+    setModalAction(() => action);
+    setConfirmModalOpen(true);
+  };
+
+  const handleApprove = (task: Task) => {
+    confirmAction(() => executeApprove(task));
+  };
+
+  const executeApprove = async (task: Task) => {
     try {
       const token = localStorage.getItem("jwt");
 
@@ -130,9 +146,10 @@ export default function ApproverPage() {
       console.error("Error submitting task approval:", err);
       setError("Failed to approve task. Please try again.");
     }
+    setConfirmModalOpen(false);
   };
 
-  const handleRejecte = async (task: Task) => {
+  const executeReject = async (task: Task) => {
     try {
       const token = localStorage.getItem("jwt");
 
@@ -185,6 +202,7 @@ export default function ApproverPage() {
       console.error("Error submitting task approval:", err);
       setError("Failed to approve task. Please try again.");
     }
+    setConfirmModalOpen(false);
   };
 
   const handleTaskClick = async (task: Task) => {
@@ -247,14 +265,16 @@ export default function ApproverPage() {
           >
             <div className="mb-2">
               <h2 className="text-xl font-bold text-gray-600">
-                <div className="flex justify-between">
+                <div className="flex items-center gap-x-2">
+                  {" "}
                   <Chip
                     color="secondary"
                     variant="dot"
                     className="border-none"
                   />
                   <p>To Do</p>
-                  <Chip radius="full" color="default">
+                  <Chip radius="full" color="default" className="ml-2">
+                    {" "}
                     {tasks.length}
                   </Chip>
                 </div>
@@ -323,6 +343,15 @@ export default function ApproverPage() {
           </div>
         </div>
       </div>
+      <BlurModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+        onAction={modalAction}
+        title="Decision Confirm"
+        actionLabel="Confirm"
+      >
+        <p>Are you sure you want to proceed with this action?</p>
+      </BlurModal>
     </div>
   );
 }

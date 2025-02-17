@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import generatePDF from "@/utils/pdf/generatePDF";
-import "./style.module.css";
 import { StockRequest } from "@/utils/types/stock-request";
 import StockRequestTable from "@/components/global/tables/StockRequests/StockRequest.table";
 import PdfPreview from "@/components/global/tables/StockRequests/PdfPreview";
@@ -82,7 +81,7 @@ export default function AllStockRequest() {
   return (
     <div className="flex-1 justify-center items-center w-full h-screen flex flex-col gap-4 p-10 ">
       {/* Card Container */}
-      <div className="rounded-xl bg-white shadow-lg p-4 max-w-6xl w-full h-full">
+      <div className="rounded-xl bg-white shadow-lg p-4 max-w-full h-full">
         {/* Header Section */}
         <div className="flex items-center gap-4 justify-between">
           <h1 className="text-3xl font-bold text-gray-800 border-r-2 border-gray-500 pr-4">

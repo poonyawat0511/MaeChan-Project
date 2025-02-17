@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { SignInResponse } from "@/utils/types/signInResponse";
 import styles from "./styles.module.css";
 import logo from "../../../public/logo66.png";
-import { Input } from "@heroui/input";
+
 import {
   EnvelopeIcon,
   EyeIcon,
@@ -14,6 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 import React from "react";
 import { Button } from "@heroui/button";
+import { Form, Input, Link } from "@heroui/react";
 
 const SignInPage = () => {
   const [email, setEmail] = useState("");
@@ -58,7 +59,7 @@ const SignInPage = () => {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <form className={styles.form} onSubmit={handleSignIn}>
+        <Form className={styles.form} onSubmit={handleSignIn}>
           <div className="flex w-full items-center justify-center">
             <Image
               src={logo}
@@ -71,7 +72,7 @@ const SignInPage = () => {
           <h1 className="text-2xl font-bold text-left mb-4">เข้าสู่ระบบ</h1>
 
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          <div className="space-y-8">
+          <div className="space-y-8 w-full">
             <Input
               label="อีเมล"
               labelPlacement="outside"
@@ -110,7 +111,12 @@ const SignInPage = () => {
           <Button type="submit" className="bg-[#003465] text-white w-full">
             ลงชื่อเข้าใช้
           </Button>
-        </form>
+          <p className="font-bold flex align-center">
+            <Link href="/signup">
+              <span className="text-black text-xs">ลงทะเบียนบัญชีผู้ใช้</span>
+            </Link>
+          </p>
+        </Form>
       </div>
     </div>
   );
