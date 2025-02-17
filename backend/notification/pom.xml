@@ -162,7 +162,12 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.12.0</version> <!-- ใช้เวอร์ชันล่าสุด หรือเวอร์ชันที่ต้องการ -->
         </dependency>
-
+        <!-- dot env -->
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>java-dotenv</artifactId>
+            <version>5.2.2</version>
+        </dependency>
 
     </dependencies>
 

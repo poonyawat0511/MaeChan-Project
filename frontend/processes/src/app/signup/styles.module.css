@@ -5,7 +5,7 @@
 }
 
 .card {
-    @apply w-[90%] h-[90%] bg-white rounded-2xl shadow-xl flex items-center justify-center shadow-lg;
+    @apply w-[90%] h-[90%] md:w-[100%] h-[100%] rounded-2xl shadow-xl flex items-center justify-center shadow-lg;
     background: radial-gradient(circle, #7CBDF8, #003465) no-repeat center center fixed;
     background-image: url('../../../public/auth/1.svg'), url('../../../public/auth/2.svg'), url('../../../public/auth/3.svg'), url('../../../public/auth/4.svg'), url('../../../public/auth/5.svg'), url('../../../public/auth/6.svg'), url('../../../public/auth/7.svg'), url('../../../public/auth/8.svg');
     background-size: 20dvh, 30dvh, 50dvh, 40dvh, 20dvh, 40dvh, 25dvh,35dvh;
@@ -26,6 +26,8 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px;
     backdrop-filter: blur(17.79px);
+    display: flex;
+    align-items: center;
 }
 
 .input_label {
