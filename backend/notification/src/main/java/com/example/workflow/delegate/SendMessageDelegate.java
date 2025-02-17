@@ -21,7 +21,7 @@ public class SendMessageDelegate implements JavaDelegate {
 
         // ส่งข้อความไปยัง LINE
         if (message != null && userId != null) {
-            lineMessageService.pushMessage(userId, message);
+            //lineMessageService.pushMessage(userId, message);
             System.out.println("Sent message to LINE: " + message);
         }
     }
