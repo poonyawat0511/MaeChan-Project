@@ -1,9 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signUpResponse } from "@/utils/types/signUpResponese";
-import styles from './styles.module.css';
+import styles from "./styles.module.css";
 import { Input } from "@heroui/input";
+import { Button, Form, Link, Select, SelectItem } from "@heroui/react";
+import liff from "@line/liff";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<Partial<signUpResponse>>({
@@ -18,21 +20,73 @@ export default function SignUpPage() {
 
   const [signatureFile, setSignatureFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<{
+    [key: string]: boolean;
+  }>({});
   const router = useRouter();
+
+  useEffect(() => {
+    const initializeLiff = async () => {
+      try {
+        await liff.init({ liffId: "2006520331-G14V6rPm" });
+
+        if (!liff.isLoggedIn()) {
+          liff.login();
+          return;
+        }
+
+        const profile = await liff.getProfile();
+        setFormData((prevData) => ({
+          ...prevData,
+          lineId: profile.userId,
+        }));
+      } catch (error) {
+        console.error("LIFF Initialization failed", error);
+      }
+    };
+
+    initializeLiff();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setValidationErrors((prevErrors) => ({
+      ...prevErrors,
+      [e.target.name]: false,
+    })); // Clear error
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setSignatureFile(e.target.files[0]);
+      setValidationErrors((prevErrors) => ({
+        ...prevErrors,
+        signature: false,
+      }));
     }
+  };
+
+  const validateForm = () => {
+    const errors: { [key: string]: boolean } = {};
+
+    if (!formData.firstName) errors.firstName = true;
+    if (!formData.lastName) errors.lastName = true;
+    if (!formData.email) errors.email = true;
+    if (!formData.password) errors.password = true;
+    if (!signatureFile) errors.signature = true;
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!validateForm()) {
+      setError("กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน");
+      return;
+    }
 
     try {
       const data = new FormData();
@@ -57,99 +111,97 @@ export default function SignUpPage() {
       console.log("Signup Successful:", await response.json());
       router.push("/signin");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unexpected error occurred");
+      setError(
+        err instanceof Error ? err.message : "An unexpected error occurred"
+      );
     }
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <form
-          className={styles.form}
-          onSubmit={handleSubmit}
-        >
-          <h1 className="text-2xl font-bold mb-4 text-center">Sign Up</h1>
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          <div className="flex space-x-4">
+        <Form className={styles.form} onSubmit={handleSubmit}>
+          <h2 className="text-2xl font-bold text-center w-full mt-5">
+            ลงทะเบียนบัญชีผู้ใช้
+          </h2>
+          {error && <p className="text-red-500 text-sm mb-1">{error}</p>}
+          <div className="flex space-x-5 w-full">
             <Input
               type="text"
-              labelPlacement="outside"
               name="firstName"
-              label="FirstName"
+              label={`ชื่อ ${validationErrors.firstName ? "*" : ""}`}
               value={formData.firstName}
               onChange={handleChange}
-              required
+              className={validationErrors.firstName ? "border-red-500" : ""}
             />
             <Input
               type="text"
-              labelPlacement="outside"
               name="lastName"
-              label="LastName"
+              label={`นามสกุล ${validationErrors.lastName ? "*" : ""}`}
               value={formData.lastName}
               onChange={handleChange}
-              required
+              className={validationErrors.lastName ? "border-red-500" : ""}
             />
           </div>
-
-          <input
+          <Input
             type="email"
             name="email"
-            placeholder="Email"
-            className="w-full p-2 border rounded-md mb-2"
+            label={`อีเมล ${validationErrors.email ? "*" : ""}`}
             value={formData.email}
             onChange={handleChange}
-            required
+            className={validationErrors.email ? "border-red-500" : ""}
           />
-          <input
+          <Input
             type="password"
             name="password"
-            placeholder="Password"
-            className="w-full p-2 border rounded-md mb-2"
+            label={`รหัสผ่าน ${validationErrors.password ? "*" : ""}`}
             value={formData.password}
             onChange={handleChange}
-            required
+            className={validationErrors.password ? "border-red-500" : ""}
           />
-          <input
+          <Input
             type="file"
             name="signature"
+            label={`เลือกลายเซ็น ${validationErrors.signature ? "*" : ""}`}
             accept="image/*"
-            className="w-full p-2 border rounded-md mb-2"
             onChange={handleFileChange}
-            required
+            className={validationErrors.signature ? "border-red-500" : ""}
           />
-          <input
+          <Input
             type="text"
             name="userHospitalId"
-            placeholder="User Hospital ID"
-            className="w-full p-2 border rounded-md mb-2"
+            label="รหัสประจำตัวโรงพยาบาล"
             value={formData.userHospitalId}
             onChange={handleChange}
           />
-          <input
+          <Input
             type="text"
             name="lineId"
-            placeholder="Line ID"
-            className="w-full p-2 border rounded-md mb-2"
+            label="Line ID"
             value={formData.lineId}
-            onChange={handleChange}
+            readOnly
           />
-          <input
-            type="text"
-            name="role"
-            placeholder="Role"
-            className="w-full p-2 border rounded-md mb-2"
-            value={formData.role}
-            onChange={handleChange}
-          />
-          <button
+          <Select name="role" label="ตำแหน่ง" value={formData.role}>
+            <SelectItem key="APPROVER" value="APPROVER">
+              ผู้ตรวจสอบ
+            </SelectItem>
+            <SelectItem key="DIRECTOR" value="DIRECTOR">
+              ผู้อำนวยการ
+            </SelectItem>
+          </Select>
+          <Button
             type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded-md w-full"
+            className="bg-blue-500 text-white py-1 px-3 rounded-xl w-full"
           >
-            Sign Up
-          </button>
-        </form>
+            ลงทะเบียน
+          </Button>
+          <p className="font-bold">
+            <Link href="/signin">
+              <span className="text-black text-xs">ลงชื่อเข้าใช้</span>
+            </Link>
+          </p>
+        </Form>
       </div>
     </div>
-
   );
 }

@@ -47,7 +47,7 @@ public class StockUser implements UserDetails {
     @Column(name = "signature_path", nullable = true)
     private String signaturePath;
 
-    private String userHospitalId;
+    private Long userHospitalId;
 
     private Role role;
 

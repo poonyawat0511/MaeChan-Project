@@ -63,14 +63,4 @@ public class StockRequestController {
         String result = stockRequestService.deleteStockRequestById(requestId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
-    // @GetMapping("/task/{taskId}")
-    // public ResponseEntity<StockRequest> getstockRequestByCamundaTaskId(@PathVariable String taskId) {
-    //     StockRequest stockRequest = stockRequestService.findStockRequestByCamundaTaskId(taskId);
-    //     if (stockRequest != null) {
-    //         return new ResponseEntity<>(stockRequest, HttpStatus.OK);
-    //     } else {
-    //         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    //     }
-    // }
 }

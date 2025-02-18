@@ -16,7 +16,7 @@ import com.example.workflow.service.StockRequestService;
 @Service("updateDirectorHandler")
 public class UpdateDirectorHandler implements JavaDelegate {
 
-        @Autowired
+    @Autowired
     private StockRequestService stockRequestService;
 
     @Autowired
@@ -46,27 +46,21 @@ public class UpdateDirectorHandler implements JavaDelegate {
         //get stockRequest
         StockRequest stockRequest = springRequest.getStockRequest();
 
-        //check request_complete 
-        boolean requestComplete = false;
-        if(springRequest.getApproverApproveStatus() && approve){
-            requestComplete = true;
-        }
-
         // update springRequest       
         springRequest.setUserDirector(stockUserRepository.findById(directorId).get());
         springRequest.setDirectorApproveStatus(approve);
         springRequest.setDirectorApproveDate(date);
-        springRequest.setAllCompleteStatus(requestComplete);
+        springRequest.setAllCompleteStatus(approve);
         springRequestService.updateSpringRequest(requestId, springRequest);
 
         // update stockRequest
-        if(requestComplete){
-        stockRequest.setStockSubjectPerson("ผู้อำนวยการโรงพยาบาลแม่จัน");;
-        stockRequest.setStockApproveDate(date);
-        stockRequest.setRequestComplete(requestComplete);
-        } 
+        stockRequest.setApprove(approve);
+        stockRequest.setRequestComplete(approve); // ใช้ approve กำหนดค่า requestComplete ด้วย
+        if (Boolean.TRUE.equals(approve)) {
+            stockRequest.setStockApproveDate(date);
+        }
+        stockRequest.setRequestAllComplete(approve); // ตั้งค่า requestAllComplete ตาม approve
         stockRequestService.updateStockRequest(stockRequest);
-
 
     }
 

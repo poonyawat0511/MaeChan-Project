@@ -31,6 +31,7 @@ public class UpdateApprovalHandler implements JavaDelegate {
         // ดึง Workflow Variables
         String requestIdStr = (String) execution.getVariable("requestId");
         String stockUserApproveId = (String) execution.getVariable("stockUserApprove");
+        Boolean requestComplete = (Boolean) execution.getVariable("requestComplete");
 
         // ตรวจสอบและแปลง purchaseId
         Long requestId = validateAndParseRequestId(requestIdStr);
@@ -49,14 +50,19 @@ public class UpdateApprovalHandler implements JavaDelegate {
 
         //update springRequest
         springRequest.setUserApprove(stockUser.get());
-        springRequest.setApproverApproveStatus(true);
+        springRequest.setApproverApproveStatus(requestComplete);
         springRequestService.updateSpringRequest(requestId, springRequest);
 
         //update stockRequest
         StockRequest stockRequest = stockRequestService.findStockRequestById(springRequest.getStockRequest().getId());
-        //ตอนนี้เซฟเป็น String
-        stockRequest.setStockUserApprove(stockUser.get().getUserHospitalId());
-        stockRequest.setApprove(true);
+        //Long
+        stockRequest.setStockUserApprove(stockUser.get().getStockUserId());
+        stockRequest.setStockSubjectPerson("ผู้อำนวยการโรงพยาบาลแม่จัน");
+        if (requestComplete != true) {
+
+            stockRequest.setRequestComplete(false);
+        }
+        stockRequest.setRequestComplete(requestComplete);
         stockRequestService.updateStockRequest(stockRequest);
     }
 
