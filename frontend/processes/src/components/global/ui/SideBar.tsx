@@ -22,6 +22,11 @@ const buttons = [
     icon: <PublishedWithChangesRoundedIcon />,
     link: "/director",
   },
+  { 
+    label: "Ranking", 
+    icon: <Person2Icon />, 
+    link: "/ranking"
+  },
 ];
 
 const buttons2 = [
