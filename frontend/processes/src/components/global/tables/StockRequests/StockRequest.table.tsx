@@ -48,15 +48,15 @@ export default function StockRequestTable({
   ];
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden">
-      {/* Table Wrapper - Grow to take all available space */}
-      <div className="flex-1 overflow-auto max-h-[100vh] scrollbar-hide !rounded-none">
+    <div className="bg-white shadow-lg p-4 max-w-7xl w-full h-full flex flex-col">
+      {/* Table Wrapper - Takes remaining space */}
+      <div className="flex-1 overflow-auto max-h-[calc(100vh-250px)] scrollbar-hide">
         <Table aria-label="Stock Requests Table" className="w-full min-w-max">
           <TableHeader columns={columns}>
             {(column) => (
               <TableColumn
                 key={column.key}
-                className="sticky top-0 bg-white z-10 shadow-md !rounded-none"
+                className="sticky top-0 bg-white z-10 shadow-md"
               >
                 {column.label}
               </TableColumn>
@@ -77,7 +77,7 @@ export default function StockRequestTable({
                 {(columnKey) => (
                   <TableCell>
                     {columnKey === "actions" ? (
-                      <button
+                      <Button
                         className="px-3 py-1 rounded hover:bg-gray-300"
                         onClick={() => onRequestClick(item)}
                       >
@@ -95,7 +95,7 @@ export default function StockRequestTable({
                             d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
                           />
                         </svg>
-                      </button>
+                      </Button>
                     ) : columnKey === "requestComplete" ? (
                       <Chip
                         color={item.requestComplete ? "success" : "danger"}
@@ -114,42 +114,44 @@ export default function StockRequestTable({
         </Table>
       </div>
 
-      {/* Pagination - Sticks to the bottom */}
-      <div className="w-full flex justify-center items-center py-4 bg-white">
-        <Button
-          size="sm"
-          style={{
-            background: "transparent",
-            border: "none",
-            boxShadow: "none",
-            color: currentPage === 1 ? "gray" : "black",
-          }}
-          onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </Button>
-        <Pagination
-          color="secondary"
-          page={currentPage}
-          total={totalPages}
-          onChange={setCurrentPage}
-        />
-        <Button
-          size="sm"
-          style={{
-            background: "transparent",
-            border: "none",
-            boxShadow: "none",
-            color: currentPage === totalPages ? "gray" : "black",
-          }}
-          onPress={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </Button>
+      {/* Pagination - Stays at the bottom */}
+      <div className="grid grid-flow-col">
+        <div className="w-full flex justify-center items-center bg-transparent mt-auto">
+          <Button
+            size="sm"
+            style={{
+              background: "transparent",
+              border: "none",
+              boxShadow: "none",
+              color: currentPage === 1 ? "gray" : "black",
+            }}
+            onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </Button>
+          <Pagination
+            color="secondary"
+            page={currentPage}
+            total={totalPages}
+            onChange={setCurrentPage}
+          />
+          <Button
+            size="sm"
+            style={{
+              background: "transparent",
+              border: "none",
+              boxShadow: "none",
+              color: currentPage === totalPages ? "gray" : "black",
+            }}
+            onPress={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );

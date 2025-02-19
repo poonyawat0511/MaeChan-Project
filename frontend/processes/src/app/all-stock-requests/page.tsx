@@ -9,8 +9,7 @@ import DownloadIcon from "@/components/global/icons/download.icon";
 import SearchIcon from "@/components/global/icons/search.icon";
 import { Button } from "@heroui/button";
 import BlurModal from "@/components/global/modals/BlurModal";
-
-const requestApi = `http://localhost:8081/stock-requests`;
+import { requestApi } from "@/utils/api/api";
 
 export default function AllStockRequest() {
   const [requests, setRequests] = useState<StockRequest[]>([]);
@@ -79,9 +78,9 @@ export default function AllStockRequest() {
   }
 
   return (
-    <div className="flex-1 justify-center items-center w-full h-screen flex flex-col gap-4 p-10 ">
+    <div className="flex justify-center w-full h-full p-3">
       {/* Card Container */}
-      <div className="rounded-xl bg-white shadow-lg p-4 max-w-full h-full">
+      <div className="rounded-xl bg-white shadow-lg p-2 max-w-[76rem] w-full h-full">
         {/* Header Section */}
         <div className="flex items-center gap-4 justify-between">
           <h1 className="text-3xl font-bold text-gray-800 border-r-2 border-gray-500 pr-4">
