@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { Noto_Sans_Thai } from 'next/font/google'
+import { Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 import RootLayoutClient from "./RootLayoutClient";
 import { Providers } from "./providers";
+import { GlobalAlertProvider } from "@/components/global/alerts/GlobalAlertProvider";
 
 const Noto_Sans_ThaiSans = Noto_Sans_Thai({
   variable: "--font-geist-sans",
@@ -27,11 +28,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${Noto_Sans_ThaiSans.variable} antialiased`}
-      >
+      <body className={`${Noto_Sans_ThaiSans.variable} antialiased`}>
         <Providers>
-          <RootLayoutClient>{children}</RootLayoutClient>
+          <RootLayoutClient>
+            <GlobalAlertProvider>{children}</GlobalAlertProvider>
+          </RootLayoutClient>
         </Providers>
       </body>
     </html>

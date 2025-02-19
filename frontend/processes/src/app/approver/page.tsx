@@ -10,15 +10,15 @@ import HorizontalLinearAlternativeLabelStepper from "@/share/stepper";
 import { Button, Chip } from "@heroui/react";
 import ArrowLeftIcon from "@/components/global/icons/arrowLeft.icon";
 import XmarkIcon from "@/components/global/icons/x-mark.icon";
-import { UserIcon } from "@heroicons/react/24/solid";
+import { DocumentIcon, UserIcon } from "@heroicons/react/24/solid";
 import ArrowRightIcon from "@/components/global/icons/arrowRight.icon";
 import BlurModal from "@/components/global/modals/BlurModal";
-
-
-const camundaTaksApiApprover = `http://localhost:8081/engine-rest/task?candidateGroup=Approver`;
-const camundaTaskSubmit = `http://localhost:8081/engine-rest/task`;
-const springRequestByTaskApi = (processInstanceId: string) =>
-  `http://localhost:8081/spring-requests/task/${processInstanceId}`;
+import { useAlert } from "@/components/global/alerts/GlobalAlertProvider";
+import {
+  camundaTaksApiApprover,
+  camundaTaskSubmit,
+  springRequestByTaskApi,
+} from "@/utils/api/api";
 
 export default function ApproverPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -29,6 +29,7 @@ export default function ApproverPage() {
   const [stockRequest, setStockRequest] = useState<StockRequest | null>(null);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<() => void>(() => () => {});
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const fetchCamundaApiApprover = async () => {
@@ -98,7 +99,7 @@ export default function ApproverPage() {
       const token = localStorage.getItem("jwt");
 
       if (!token) {
-        setError("You must be logged in to approve this task.");
+        showAlert("You must be logged in to approve this task.", "warning");
         return;
       }
 
@@ -106,7 +107,7 @@ export default function ApproverPage() {
         task.processInstanceId
       );
       if (!stockRequest) {
-        setError("Stock request not found.");
+        showAlert("Stock request not found.", "danger");
         return;
       }
 
@@ -140,11 +141,11 @@ export default function ApproverPage() {
         throw new Error("Failed to submit task approval.");
       }
 
-      alert("Task approved successfully!");
+      showAlert("Task approved successfully!", "success");
       setTasks((prevTasks) => prevTasks.filter((t) => t.id !== task.id));
     } catch (err) {
       console.error("Error submitting task approval:", err);
-      setError("Failed to approve task. Please try again.");
+      showAlert("Failed to approve task. Please try again.", "danger");
     }
     setConfirmModalOpen(false);
   };
@@ -154,7 +155,7 @@ export default function ApproverPage() {
       const token = localStorage.getItem("jwt");
 
       if (!token) {
-        setError("You must be logged in to approve this task.");
+        showAlert("You must be logged in to reject this task.", "warning");
         return;
       }
 
@@ -162,7 +163,7 @@ export default function ApproverPage() {
         task.processInstanceId
       );
       if (!stockRequest) {
-        setError("Stock request not found.");
+        showAlert("Stock request not found.", "danger");
         return;
       }
 
@@ -193,14 +194,14 @@ export default function ApproverPage() {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to submit task approval.");
+        throw new Error("Failed to submit task rejection.");
       }
 
-      alert("Task approved successfully!");
+      showAlert("Task rejected successfully!", "warning");
       setTasks((prevTasks) => prevTasks.filter((t) => t.id !== task.id));
     } catch (err) {
-      console.error("Error submitting task approval:", err);
-      setError("Failed to approve task. Please try again.");
+      console.error("Error submitting task rejection:", err);
+      showAlert("Failed to reject task. Please try again.", "danger");
     }
     setConfirmModalOpen(false);
   };
@@ -338,7 +339,9 @@ export default function ApproverPage() {
                 </div>
               </div>
             ) : (
-              <p className="text-xl font-semibold">PDF Preview</p>
+              <p className="text-xl font-semibold">
+                PDF Preview <DocumentIcon/>
+              </p>
             )}
           </div>
         </div>
