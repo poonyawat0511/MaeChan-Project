@@ -10,6 +10,8 @@ import SearchIcon from "@/components/global/icons/search.icon";
 import { Button } from "@heroui/button";
 import BlurModal from "@/components/global/modals/BlurModal";
 import { requestApi } from "@/utils/api/api";
+import { Pagination } from "@heroui/react";
+import { downloadCSV } from "@/utils/services/csv";
 
 export default function AllStockRequest() {
   const [requests, setRequests] = useState<StockRequest[]>([]);
@@ -18,6 +20,10 @@ export default function AllStockRequest() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openPdfModal, setOpenPdfModal] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const totalPages = Math.ceil(requests.length / itemsPerPage);
 
   useEffect(() => {
     const fetchStockRequests = async () => {
@@ -69,6 +75,11 @@ export default function AllStockRequest() {
     return request.requestId.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
+  const paginatedRequests = filteredRequests.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   if (loading) {
     return <p>Request loading...</p>;
   }
@@ -78,9 +89,9 @@ export default function AllStockRequest() {
   }
 
   return (
-    <div className="flex justify-center w-full h-full p-3">
+    <div className="flex justify-center w-full h-full p-4">
       {/* Card Container */}
-      <div className="rounded-xl bg-white shadow-lg p-2 max-w-[76rem] w-full h-full">
+      <div className="rounded-xl bg-white shadow-lg p-2 max-w-[76rem] w-full h-full flex flex-col">
         {/* Header Section */}
         <div className="flex items-center gap-4 justify-between">
           <h1 className="text-3xl font-bold text-gray-800 border-r-2 border-gray-500 pr-4">
@@ -106,27 +117,69 @@ export default function AllStockRequest() {
             color="default"
             startContent={<DownloadIcon />}
             variant="bordered"
+            className="hover:bg-gray-300"
+            onPress={() => downloadCSV(requests)}
           >
             Download
           </Button>
         </div>
 
-        {/* Table Container - Takes Remaining Space */}
         <div className="flex-1 overflow-auto mt-4 scroll-bar-hide max-h-[calc(100vh-200px)]">
           {filteredRequests.length === 0 ? (
             <p>No requests available.</p>
           ) : (
             <div className="flex flex-col w-full h-[75vh]">
               <StockRequestTable
-                stockRequests={filteredRequests}
+                stockRequests={paginatedRequests}
                 onRequestClick={handleTaskClick}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                totalPages={totalPages}
               />
             </div>
           )}
         </div>
+
+        <div className="grid grid-flow-col mt-auto p-4">
+          <div className="w-full flex justify-center items-center bg-transparent">
+            <Button
+              size="sm"
+              style={{
+                background: "transparent",
+                border: "none",
+                boxShadow: "none",
+                color: currentPage === 1 ? "gray" : "black",
+              }}
+              onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            <Pagination
+              color="secondary"
+              page={currentPage}
+              total={totalPages}
+              onChange={setCurrentPage}
+            />
+            <Button
+              size="sm"
+              style={{
+                background: "transparent",
+                border: "none",
+                boxShadow: "none",
+                color: currentPage === totalPages ? "gray" : "black",
+              }}
+              onPress={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
       </div>
 
-      {/* PDF Preview Modal */}
       <BlurModal isOpen={openPdfModal} onClose={handleClosePreview}>
         {selectedPdfUrl && (
           <div className="h-[70vh]">

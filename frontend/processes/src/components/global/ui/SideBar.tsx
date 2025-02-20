@@ -10,39 +10,20 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   PowerIcon,
-  UserGroupIcon,
   ShieldCheckIcon,
 } from "@heroicons/react/24/outline";
-import { jwtDecode } from "jwt-decode";
 
 interface MenuItem {
   id: string;
   label: string;
   icon: ElementType;
   link: string;
-  roles?: string[];
 }
 
 const SideBar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const [userRole, setUserRole] = useState<string | null>(null);
   const pathname = usePathname();
-
-  useEffect(() => {
-    const token = localStorage.getItem("jwt");
-    if (token) {
-      try {
-        const decodedToken = jwtDecode<{ role?: string }>(token);
-        setUserRole(decodedToken.role || "USER");
-      } catch (error) {
-        console.error("Invalid token", error);
-        setUserRole("USER");
-      }
-    } else {
-      setUserRole("USER");
-    }
-  }, []);
 
   const menuItems: MenuItem[] = [
     {
@@ -50,27 +31,14 @@ const SideBar = () => {
       label: "All Stock Requests",
       icon: HomeIcon,
       link: "/all-stock-requests",
-      roles: ["APPROVER", "DIRECTOR", "USER", "ADMIN"],
     },
     {
-      id: "approver",
-      label: "Approver",
-      icon: UserGroupIcon,
-      link: "/approver",
-      roles: ["APPROVER"],
-    },
-    {
-      id: "director",
-      label: "Director",
+      id: "task",
+      label: "Task",
       icon: ShieldCheckIcon,
-      link: "/director",
-      roles: ["DIRECTOR"],
+      link: "/task",
     },
   ];
-
-  const filteredMenuItems = menuItems.filter(
-    (item) => !item.roles || item.roles.includes(userRole || "")
-  );
 
   const recentItems: MenuItem[] = [
     {
@@ -92,6 +60,17 @@ const SideBar = () => {
       link: "/dashboard",
     },
   ];
+
+  useEffect(() => {
+    const savedState = localStorage.getItem("sidebar-collapsed");
+    if (savedState !== null) {
+      setIsCollapsed(savedState === "true");
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("sidebar-collapsed", String(isCollapsed));
+  }, [isCollapsed]);
 
   const handleSignout = async () => {
     try {
@@ -168,18 +147,30 @@ const SideBar = () => {
           Menu
         </h2>
         <nav className="flex flex-col gap-2">
-          {filteredMenuItems.map((item) => (
+          {menuItems.map((item) => (
             <a
               key={item.id}
               href={item.link}
-              className={`flex items-center px-3 py-2 rounded-lg transition-all duration-300 ${
-                pathname === item.link
-                  ? "bg-red-50 text-red-500"
-                  : "hover:bg-gray-50 text-gray-700"
-              }`}
+              className={`relative flex items-center px-3 py-2 rounded-lg transition-all duration-300 
+                ${
+                  pathname === item.link
+                    ? "bg-red-50 text-red-500"
+                    : "hover:bg-gray-50 text-gray-700"
+                }
+                transform hover:translate-x-1`}
             >
-              <item.icon className="h-6 w-6" />
-              <span className={`ml-3 ${isCollapsed ? "hidden" : "block"}`}>
+              {pathname === item.link && (
+                <div className="absolute left-0 w-1 h-8 bg-red-500 rounded-r-md animate-pulse" />
+              )}
+              <item.icon
+                className={`h-6 w-6 shrink-0 transition-transform duration-300 ${
+                  isCollapsed ? "scale-110" : ""
+                }`}
+              />
+              <span
+                className={`ml-3 whitespace-nowrap transition-all duration-300 
+                ${isCollapsed ? "opacity-0 w-0" : "opacity-100"}`}
+              >
                 {item.label}
               </span>
             </a>
