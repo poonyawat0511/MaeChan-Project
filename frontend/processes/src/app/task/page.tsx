@@ -17,13 +17,9 @@ import {
 import ArrowRightIcon from "@/components/global/icons/arrowRight.icon";
 import BlurModal from "@/components/global/modals/BlurModal";
 import { useAlert } from "@/components/global/alerts/GlobalAlertProvider";
-import {
-  camundaTaksApiApprover,
-  camundaTaksApiDirector,
-  camundaTaskSubmit,
-  springRequestByTaskApi,
-} from "@/utils/api/api";
+import { camundaTaskSubmit, springRequestByTaskApi } from "@/utils/api/api";
 import { jwtDecode } from "jwt-decode";
+import { getCamundaTasks } from "@/utils/services/getApi";
 export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
@@ -33,58 +29,32 @@ export default function TaskPage() {
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<() => void>(() => () => {});
   const { showAlert } = useAlert();
-  const [userRole, setUserRole] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string>("USER");
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
-    let apiUrl = "";
-
     if (token) {
       try {
         const decodedToken = jwtDecode<{ role?: string }>(token);
-        const role = decodedToken.role || "USER";
-        setUserRole(role);
-
-        if (role === "APPROVER") {
-          apiUrl = camundaTaksApiApprover;
-        } else if (role === "DIRECTOR") {
-          apiUrl = camundaTaksApiDirector;
-        }
+        setUserRole(decodedToken.role || "USER");
       } catch (error) {
         console.error("Invalid token", error);
         setUserRole("USER");
       }
-    } else {
-      setUserRole("USER");
     }
 
-    if (!apiUrl) return;
-
-    const fetchCamundaTasks = async () => {
+    const fetchTasks = async () => {
       try {
-        const response = await fetch(apiUrl, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch tasks");
-        }
-
-        const tasksData: Task[] = await response.json();
+        const tasksData = await getCamundaTasks();
         setTasks(tasksData);
-      } catch (err) {
+      } catch {
         setError("Error fetching tasks. Please try again later.");
-        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCamundaTasks();
+    fetchTasks();
   }, []);
 
   const fetchStockRequestByTaskId = async (processInstanceId: string) => {
@@ -255,7 +225,10 @@ export default function TaskPage() {
     <div className="flex-1 py-1 h-screen flex flex-col">
       <div className="mx-5 py-5 px-5 rounded-md flex flex-col h-full">
         <h1 className="text-3xl font-bold text-gray-800 ml-5">
-          Explore Task {userRole}
+          Explore Task
+          <span className="absolute text-xxl text-gray-500 ml-3">
+            {userRole}
+          </span>
         </h1>
         <div className="flex items-center justify-between gap-4 mb-3 pb-4 border-b-2">
           <Button

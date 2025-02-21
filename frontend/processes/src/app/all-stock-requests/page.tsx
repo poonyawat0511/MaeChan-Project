@@ -9,9 +9,9 @@ import DownloadIcon from "@/components/global/icons/download.icon";
 import SearchIcon from "@/components/global/icons/search.icon";
 import { Button } from "@heroui/button";
 import BlurModal from "@/components/global/modals/BlurModal";
-import { requestApi } from "@/utils/api/api";
 import { Pagination } from "@heroui/react";
 import { downloadCSV } from "@/utils/services/csv";
+import { getStockRequests } from "@/utils/services/getApi";
 
 export default function AllStockRequest() {
   const [requests, setRequests] = useState<StockRequest[]>([]);
@@ -22,29 +22,15 @@ export default function AllStockRequest() {
   const [openPdfModal, setOpenPdfModal] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-
   const totalPages = Math.ceil(requests.length / itemsPerPage);
 
   useEffect(() => {
     const fetchStockRequests = async () => {
       try {
-        const response = await fetch(requestApi, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch tasks");
-        }
-
-        const tasksData: StockRequest[] = await response.json();
+        const tasksData = await getStockRequests();
         setRequests(tasksData);
-      } catch (err) {
+      } catch {
         setError("Error fetching stock requests. Please try again later.");
-        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -90,9 +76,7 @@ export default function AllStockRequest() {
 
   return (
     <div className="flex justify-center w-full h-full p-4">
-      {/* Card Container */}
       <div className="rounded-xl bg-white shadow-lg p-2 max-w-[76rem] w-full h-full flex flex-col">
-        {/* Header Section */}
         <div className="flex items-center gap-4 justify-between">
           <h1 className="text-3xl font-bold text-gray-800 border-r-2 border-gray-500 pr-4">
             Purchase Request List
