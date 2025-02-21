@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from "react";
 import generatePDF from "@/utils/pdf/generatePDF";
 import { StockRequest } from "@/utils/types/stock-request";
-import StockRequestTable from "@/components/global/tables/StockRequests/StockRequest.table";
-import PdfPreview from "@/components/global/tables/StockRequests/PdfPreview";
+
+
 import { Input } from "@heroui/input";
 import DownloadIcon from "@/components/global/icons/download.icon";
 import SearchIcon from "@/components/global/icons/search.icon";
@@ -12,6 +12,8 @@ import BlurModal from "@/components/global/modals/BlurModal";
 import { Pagination } from "@heroui/react";
 import { downloadCSV } from "@/utils/services/csv";
 import { getStockRequests } from "@/utils/services/getApi";
+import StockRequestTable from "@/components/global/tables/StockRequest.table";
+import PdfPreview from "@/components/global/pdf/PdfPreview";
 
 export default function AllStockRequest() {
   const [requests, setRequests] = useState<StockRequest[]>([]);

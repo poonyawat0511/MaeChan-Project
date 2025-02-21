@@ -11,7 +11,8 @@ import {
   Button,
   Chip,
 } from "@heroui/react";
-import ArrowLeftIcon from "../../icons/arrowLeft.icon";
+import ArrowLeftIcon from "../icons/arrowLeft.icon";
+
 
 interface StockRequestTableProps {
   stockRequests: StockRequest[];
