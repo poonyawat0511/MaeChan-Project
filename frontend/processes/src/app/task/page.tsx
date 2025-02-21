@@ -4,7 +4,7 @@ import { Task } from "@/utils/types/task";
 import TaskCard from "@/components/global/cards/Task.Card";
 import { StockRequest } from "@/utils/types/stock-request";
 import generatePDF from "@/utils/pdf/generatePDF";
-import PdfPreview from "@/components/Pdf/PdfPreview";
+
 import { Button, Chip } from "@heroui/react";
 import ArrowLeftIcon from "@/components/global/icons/arrowLeft.icon";
 import XmarkIcon from "@/components/global/icons/x-mark.icon";
@@ -20,6 +20,8 @@ import { useAlert } from "@/components/global/alerts/GlobalAlertProvider";
 import { camundaTaskSubmit, springRequestByTaskApi } from "@/utils/api/api";
 import { jwtDecode } from "jwt-decode";
 import { getCamundaTasks } from "@/utils/services/getApi";
+import PdfPreview from "@/components/global/pdf/PdfPreview";
+
 export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
