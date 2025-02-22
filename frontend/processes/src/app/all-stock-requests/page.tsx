@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import generatePDF from "@/utils/pdf/generatePDF";
 import { StockRequest } from "@/utils/types/stock-request";
 
-
 import { Input } from "@heroui/input";
 import DownloadIcon from "@/components/global/icons/download.icon";
 import SearchIcon from "@/components/global/icons/search.icon";
@@ -27,18 +26,10 @@ export default function AllStockRequest() {
   const totalPages = Math.ceil(requests.length / itemsPerPage);
 
   useEffect(() => {
-    const fetchStockRequests = async () => {
-      try {
-        const tasksData = await getStockRequests();
-        setRequests(tasksData);
-      } catch {
-        setError("Error fetching stock requests. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStockRequests();
+    getStockRequests()
+      .then(setRequests)
+      .catch(() => console.log("Session expired. Redirecting to sign-in..."))
+      .finally(() => setLoading(false));
   }, []);
 
   const handleTaskClick = async (request: StockRequest) => {
