@@ -17,7 +17,10 @@ import {
 import ArrowRightIcon from "@/components/global/icons/arrowRight.icon";
 import BlurModal from "@/components/global/modals/BlurModal";
 import { useAlert } from "@/components/global/alerts/GlobalAlertProvider";
-import { camundaTaskSubmit, springRequestByTaskApi } from "@/utils/api/api";
+import axiosInstance, {
+  camundaTaskSubmit,
+  springRequestByTaskApi,
+} from "@/utils/api/api";
 import { jwtDecode } from "jwt-decode";
 import { getCamundaTasks } from "@/utils/services/getApi";
 import PdfPreview from "@/components/global/pdf/PdfPreview";
@@ -59,29 +62,19 @@ export default function TaskPage() {
     fetchTasks();
   }, []);
 
-  const fetchStockRequestByTaskId = async (processInstanceId: string) => {
+  const fetchStockRequestByTaskId = async (
+    processInstanceId: string
+  ): Promise<StockRequest | null> => {
     try {
-      const response = await fetch(springRequestByTaskApi(processInstanceId), {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch stock request");
-      }
-
-      const stockRequest: StockRequest = await response.json();
-      return stockRequest;
-    } catch (err) {
-      console.error("Error fetching stock request:", err);
-      setError("Failed to fetch stock request. Please try again.");
+      const response = await axiosInstance.get<StockRequest>(
+        springRequestByTaskApi(processInstanceId)
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching stock request:", error);
       return null;
     }
   };
-
   const handleRejecte = (task: Task) => {
     confirmAction(() => executeTaskAction(task, false));
   };
@@ -141,21 +134,15 @@ export default function TaskPage() {
         };
       }
 
-      const response = await fetch(
+      await axiosInstance.post(
         `${camundaTaskSubmit}/${task.id}/submit-form`,
+        requestBody,
         {
-          method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(requestBody),
         }
       );
-
-      if (!response.ok) {
-        throw new Error(`Failed to ${approve ? "approve" : "reject"} task.`);
-      }
 
       showAlert(
         `Task ${approve ? "approved" : "rejected"} successfully!`,

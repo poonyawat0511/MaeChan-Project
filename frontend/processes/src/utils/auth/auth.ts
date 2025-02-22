@@ -1,7 +1,7 @@
 
 import { NextRequest } from "next/server";
 import { StockUser } from "../types/stock-user";
-import { decode } from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
 
 export const getToken = (): string | null => {
   return localStorage.getItem("token");
@@ -31,16 +31,15 @@ export const decodeToken = (): StockUser | null => {
   }
 };
 
-export function extractUserFromCookie(request: NextRequest) {
+export const extractUserFromCookie = (request: NextRequest) => {
   const token = request.cookies.get("jwt")?.value;
 
-  if (!token) return null; // No token found
+  if (!token) return null;
 
   try {
-    const decoded = decode(token); // Decode without verification
-    return decoded; // Returns payload (object) or null if invalid
-  } catch (error: unknown) {
-    return console.log("Error decoding token", error);
-    ;
+    return jwtDecode<{ role?: string }>(token);
+  } catch (error) {
+    console.error("Invalid JWT:", error);
+    return null;
   }
-}
+};
