@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -29,7 +29,9 @@
     "jwt-decode": "^4.0.0",
     "next": "15.1.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "@myrepo/ui": "workspace:*",
+    "@myrepo/utils": "workspace:*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
