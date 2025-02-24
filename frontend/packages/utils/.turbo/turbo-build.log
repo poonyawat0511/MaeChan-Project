@@ -1,6 +1,6 @@
 
 [0m[2m[35m$[0m [2m[1mbun build src/index.ts --outdir=dist[0m
 
-  ./index.js  0.11 KB
+  ./index.js  0.13 KB
 
-[0m[2m[[1m7ms[0m[2m][0m [32mbundle[0m 1 modules
+[0m[2m[[1m2ms[0m[2m][0m [32mbundle[0m 2 modules

@@ -1,4 +1,4 @@
 export { formatDate } from "./types/stock-user";
-export { StockUser } from "./types/stock-user";
-export {SignInResponse} from "./types/signInResponse"
-export {signUpResponse} from "./types/signUpResponese"
+export type { StockUser } from "./types/stock-user";
+export type {SignInResponse} from "./types/signInResponse"
+export type {signUpResponse} from "./types/signUpResponese"
