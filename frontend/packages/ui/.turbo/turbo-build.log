@@ -1,6 +1,6 @@
 
 [0m[2m[35m$[0m [2m[1mbun build src/index.ts --outdir=dist[0m
 
-  ./index.js  71.63 KB
+  ./index.js  497.89 KB
 
-[0m[2m[[1m10ms[0m[2m][0m [32mbundle[0m 6 modules
+[0m[2m[[1m49ms[0m[2m][0m [32mbundle[0m 1627 modules
