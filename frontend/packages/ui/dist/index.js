@@ -193,9 +193,11 @@ var require_react_development = __commonJS((exports, module) => {
         } catch (x) {
           var match = x.stack.trim().match(/\n( *(at )?)/);
           prefix = match && match[1] || "";
-          suffix = -1 < x.stack.indexOf("\n    at") ? " (<anonymous>)" : -1 < x.stack.indexOf("@") ? "@unknown:0:0" : "";
+          suffix = -1 < x.stack.indexOf(`
+    at`) ? " (<anonymous>)" : -1 < x.stack.indexOf("@") ? "@unknown:0:0" : "";
         }
-      return "\n" + prefix + name + suffix;
+      return `
+` + prefix + name + suffix;
     }
     function describeNativeComponentFrame(fn, construct) {
       if (!fn || reentry)
@@ -259,7 +261,9 @@ var require_react_development = __commonJS((exports, module) => {
         namePropDescriptor && namePropDescriptor.configurable && Object.defineProperty(RunInRootFrame.DetermineComponentFrameRoot, "name", { value: "DetermineComponentFrameRoot" });
         var _RunInRootFrame$Deter = RunInRootFrame.DetermineComponentFrameRoot(), sampleStack = _RunInRootFrame$Deter[0], controlStack = _RunInRootFrame$Deter[1];
         if (sampleStack && controlStack) {
-          var sampleLines = sampleStack.split("\n"), controlLines = controlStack.split("\n");
+          var sampleLines = sampleStack.split(`
+`), controlLines = controlStack.split(`
+`);
           for (_RunInRootFrame$Deter = namePropDescriptor = 0;namePropDescriptor < sampleLines.length && !sampleLines[namePropDescriptor].includes("DetermineComponentFrameRoot"); )
             namePropDescriptor++;
           for (;_RunInRootFrame$Deter < controlLines.length && !controlLines[_RunInRootFrame$Deter].includes("DetermineComponentFrameRoot"); )
@@ -272,7 +276,8 @@ var require_react_development = __commonJS((exports, module) => {
               if (namePropDescriptor !== 1 || _RunInRootFrame$Deter !== 1) {
                 do
                   if (namePropDescriptor--, _RunInRootFrame$Deter--, 0 > _RunInRootFrame$Deter || sampleLines[namePropDescriptor] !== controlLines[_RunInRootFrame$Deter]) {
-                    var _frame = "\n" + sampleLines[namePropDescriptor].replace(" at new ", " at ");
+                    var _frame = `
+` + sampleLines[namePropDescriptor].replace(" at new ", " at ");
                     fn.displayName && _frame.includes("<anonymous>") && (_frame = _frame.replace("<anonymous>", fn.displayName));
                     typeof fn === "function" && componentFrameCache.set(fn, _frame);
                     return _frame;
@@ -416,8 +421,12 @@ var require_react_development = __commonJS((exports, module) => {
     }
     function getCurrentComponentErrorInfo(parentType) {
       var info = "", owner = getOwner();
-      owner && (owner = getComponentNameFromType(owner.type)) && (info = "\n\nCheck the render method of `" + owner + "`.");
-      info || (parentType = getComponentNameFromType(parentType)) && (info = "\n\nCheck the top-level render call using <" + parentType + ">.");
+      owner && (owner = getComponentNameFromType(owner.type)) && (info = `
+
+Check the render method of \`` + owner + "`.");
+      info || (parentType = getComponentNameFromType(parentType)) && (info = `
+
+Check the top-level render call using <` + parentType + ">.");
       return info;
     }
     function escape(key) {
@@ -523,12 +532,24 @@ var require_react_development = __commonJS((exports, module) => {
         payload._status === -1 && (payload._status = 0, payload._result = ctor);
       }
       if (payload._status === 1)
-        return ctor = payload._result, ctor === undefined && console.error("lazy: Expected the result of a dynamic import() call. Instead received: %s\n\nYour code should look like: \n  const MyComponent = lazy(() => import('./MyComponent'))\n\nDid you accidentally put curly braces around the import?", ctor), "default" in ctor || console.error("lazy: Expected the result of a dynamic import() call. Instead received: %s\n\nYour code should look like: \n  const MyComponent = lazy(() => import('./MyComponent'))", ctor), ctor.default;
+        return ctor = payload._result, ctor === undefined && console.error(`lazy: Expected the result of a dynamic import() call. Instead received: %s
+
+Your code should look like: 
+  const MyComponent = lazy(() => import('./MyComponent'))
+
+Did you accidentally put curly braces around the import?`, ctor), "default" in ctor || console.error(`lazy: Expected the result of a dynamic import() call. Instead received: %s
+
+Your code should look like: 
+  const MyComponent = lazy(() => import('./MyComponent'))`, ctor), ctor.default;
       throw payload._result;
     }
     function resolveDispatcher() {
       var dispatcher = ReactSharedInternals.H;
-      dispatcher === null && console.error("Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:\n1. You might have mismatching versions of React and the renderer (such as React DOM)\n2. You might be breaking the Rules of Hooks\n3. You might have more than one copy of React in the same app\nSee https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.");
+      dispatcher === null && console.error(`Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.`);
       return dispatcher;
     }
     function noop() {
@@ -1119,9 +1140,11 @@ var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
         } catch (x) {
           var match = x.stack.trim().match(/\n( *(at )?)/);
           prefix = match && match[1] || "";
-          suffix = -1 < x.stack.indexOf("\n    at") ? " (<anonymous>)" : -1 < x.stack.indexOf("@") ? "@unknown:0:0" : "";
+          suffix = -1 < x.stack.indexOf(`
+    at`) ? " (<anonymous>)" : -1 < x.stack.indexOf("@") ? "@unknown:0:0" : "";
         }
-      return "\n" + prefix + name + suffix;
+      return `
+` + prefix + name + suffix;
     }
     function describeNativeComponentFrame(fn, construct) {
       if (!fn || reentry)
@@ -1185,7 +1208,9 @@ var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
         namePropDescriptor && namePropDescriptor.configurable && Object.defineProperty(RunInRootFrame.DetermineComponentFrameRoot, "name", { value: "DetermineComponentFrameRoot" });
         var _RunInRootFrame$Deter = RunInRootFrame.DetermineComponentFrameRoot(), sampleStack = _RunInRootFrame$Deter[0], controlStack = _RunInRootFrame$Deter[1];
         if (sampleStack && controlStack) {
-          var sampleLines = sampleStack.split("\n"), controlLines = controlStack.split("\n");
+          var sampleLines = sampleStack.split(`
+`), controlLines = controlStack.split(`
+`);
           for (_RunInRootFrame$Deter = namePropDescriptor = 0;namePropDescriptor < sampleLines.length && !sampleLines[namePropDescriptor].includes("DetermineComponentFrameRoot"); )
             namePropDescriptor++;
           for (;_RunInRootFrame$Deter < controlLines.length && !controlLines[_RunInRootFrame$Deter].includes("DetermineComponentFrameRoot"); )
@@ -1198,7 +1223,8 @@ var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
               if (namePropDescriptor !== 1 || _RunInRootFrame$Deter !== 1) {
                 do
                   if (namePropDescriptor--, _RunInRootFrame$Deter--, 0 > _RunInRootFrame$Deter || sampleLines[namePropDescriptor] !== controlLines[_RunInRootFrame$Deter]) {
-                    var _frame = "\n" + sampleLines[namePropDescriptor].replace(" at new ", " at ");
+                    var _frame = `
+` + sampleLines[namePropDescriptor].replace(" at new ", " at ");
                     fn.displayName && _frame.includes("<anonymous>") && (_frame = _frame.replace("<anonymous>", fn.displayName));
                     typeof fn === "function" && componentFrameCache.set(fn, _frame);
                     return _frame;
@@ -1329,7 +1355,12 @@ var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
           return k !== "key";
         });
         isStaticChildren = 0 < keys.length ? "{key: someKey, " + keys.join(": ..., ") + ": ...}" : "{key: someKey}";
-        didWarnAboutKeySpread[children + isStaticChildren] || (keys = 0 < keys.length ? "{" + keys.join(": ..., ") + ": ...}" : "{}", console.error('A props object containing a "key" prop is being spread into JSX:\n  let props = %s;\n  <%s {...props} />\nReact keys must be passed directly to JSX without using spread:\n  let props = %s;\n  <%s key={someKey} {...props} />', isStaticChildren, children, keys, children), didWarnAboutKeySpread[children + isStaticChildren] = true);
+        didWarnAboutKeySpread[children + isStaticChildren] || (keys = 0 < keys.length ? "{" + keys.join(": ..., ") + ": ...}" : "{}", console.error(`A props object containing a "key" prop is being spread into JSX:
+  let props = %s;
+  <%s {...props} />
+React keys must be passed directly to JSX without using spread:
+  let props = %s;
+  <%s key={someKey} {...props} />`, isStaticChildren, children, keys, children), didWarnAboutKeySpread[children + isStaticChildren] = true);
       }
       children = null;
       maybeKey !== undefined && (checkKeyStringCoercion(maybeKey), children = "" + maybeKey);
@@ -1377,8 +1408,12 @@ var require_react_jsx_dev_runtime_development = __commonJS((exports) => {
     }
     function getCurrentComponentErrorInfo(parentType) {
       var info = "", owner = getOwner();
-      owner && (owner = getComponentNameFromType(owner.type)) && (info = "\n\nCheck the render method of `" + owner + "`.");
-      info || (parentType = getComponentNameFromType(parentType)) && (info = "\n\nCheck the top-level render call using <" + parentType + ">.");
+      owner && (owner = getComponentNameFromType(owner.type)) && (info = `
+
+Check the render method of \`` + owner + "`.");
+      info || (parentType = getComponentNameFromType(parentType)) && (info = `
+
+Check the top-level render call using <` + parentType + ">.");
       return info;
     }
     var REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler");
@@ -1524,9 +1559,11 @@ var require_react_jsx_runtime_development = __commonJS((exports) => {
         } catch (x) {
           var match = x.stack.trim().match(/\n( *(at )?)/);
           prefix = match && match[1] || "";
-          suffix = -1 < x.stack.indexOf("\n    at") ? " (<anonymous>)" : -1 < x.stack.indexOf("@") ? "@unknown:0:0" : "";
+          suffix = -1 < x.stack.indexOf(`
+    at`) ? " (<anonymous>)" : -1 < x.stack.indexOf("@") ? "@unknown:0:0" : "";
         }
-      return "\n" + prefix + name + suffix;
+      return `
+` + prefix + name + suffix;
     }
     function describeNativeComponentFrame(fn, construct) {
       if (!fn || reentry)
@@ -1590,7 +1627,9 @@ var require_react_jsx_runtime_development = __commonJS((exports) => {
         namePropDescriptor && namePropDescriptor.configurable && Object.defineProperty(RunInRootFrame.DetermineComponentFrameRoot, "name", { value: "DetermineComponentFrameRoot" });
         var _RunInRootFrame$Deter = RunInRootFrame.DetermineComponentFrameRoot(), sampleStack = _RunInRootFrame$Deter[0], controlStack = _RunInRootFrame$Deter[1];
         if (sampleStack && controlStack) {
-          var sampleLines = sampleStack.split("\n"), controlLines = controlStack.split("\n");
+          var sampleLines = sampleStack.split(`
+`), controlLines = controlStack.split(`
+`);
           for (_RunInRootFrame$Deter = namePropDescriptor = 0;namePropDescriptor < sampleLines.length && !sampleLines[namePropDescriptor].includes("DetermineComponentFrameRoot"); )
             namePropDescriptor++;
           for (;_RunInRootFrame$Deter < controlLines.length && !controlLines[_RunInRootFrame$Deter].includes("DetermineComponentFrameRoot"); )
@@ -1603,7 +1642,8 @@ var require_react_jsx_runtime_development = __commonJS((exports) => {
               if (namePropDescriptor !== 1 || _RunInRootFrame$Deter !== 1) {
                 do
                   if (namePropDescriptor--, _RunInRootFrame$Deter--, 0 > _RunInRootFrame$Deter || sampleLines[namePropDescriptor] !== controlLines[_RunInRootFrame$Deter]) {
-                    var _frame = "\n" + sampleLines[namePropDescriptor].replace(" at new ", " at ");
+                    var _frame = `
+` + sampleLines[namePropDescriptor].replace(" at new ", " at ");
                     fn.displayName && _frame.includes("<anonymous>") && (_frame = _frame.replace("<anonymous>", fn.displayName));
                     typeof fn === "function" && componentFrameCache.set(fn, _frame);
                     return _frame;
@@ -1734,7 +1774,12 @@ var require_react_jsx_runtime_development = __commonJS((exports) => {
           return k !== "key";
         });
         isStaticChildren = 0 < keys.length ? "{key: someKey, " + keys.join(": ..., ") + ": ...}" : "{key: someKey}";
-        didWarnAboutKeySpread[children + isStaticChildren] || (keys = 0 < keys.length ? "{" + keys.join(": ..., ") + ": ...}" : "{}", console.error('A props object containing a "key" prop is being spread into JSX:\n  let props = %s;\n  <%s {...props} />\nReact keys must be passed directly to JSX without using spread:\n  let props = %s;\n  <%s key={someKey} {...props} />', isStaticChildren, children, keys, children), didWarnAboutKeySpread[children + isStaticChildren] = true);
+        didWarnAboutKeySpread[children + isStaticChildren] || (keys = 0 < keys.length ? "{" + keys.join(": ..., ") + ": ...}" : "{}", console.error(`A props object containing a "key" prop is being spread into JSX:
+  let props = %s;
+  <%s {...props} />
+React keys must be passed directly to JSX without using spread:
+  let props = %s;
+  <%s key={someKey} {...props} />`, isStaticChildren, children, keys, children), didWarnAboutKeySpread[children + isStaticChildren] = true);
       }
       children = null;
       maybeKey !== undefined && (checkKeyStringCoercion(maybeKey), children = "" + maybeKey);
@@ -1782,8 +1827,12 @@ var require_react_jsx_runtime_development = __commonJS((exports) => {
     }
     function getCurrentComponentErrorInfo(parentType) {
       var info = "", owner = getOwner();
-      owner && (owner = getComponentNameFromType(owner.type)) && (info = "\n\nCheck the render method of `" + owner + "`.");
-      info || (parentType = getComponentNameFromType(parentType)) && (info = "\n\nCheck the top-level render call using <" + parentType + ">.");
+      owner && (owner = getComponentNameFromType(owner.type)) && (info = `
+
+Check the render method of \`` + owner + "`.");
+      info || (parentType = getComponentNameFromType(parentType)) && (info = `
+
+Check the top-level render call using <` + parentType + ">.");
       return info;
     }
     var REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler");
@@ -13122,7 +13171,12 @@ var SuccessIcon = (props) => {
     xmlns: "http://www.w3.org/2000/svg",
     ...props,
     children: /* @__PURE__ */ import_jsx_runtime7.jsx("path", {
-      d: "\n          M12 2C6.49 2 2 6.49 2 12C2 17.51 6.49 22 12 22C17.51 22 22 17.51 22 12C22 6.49 17.51 2 12 2Z\n          M16.78 9.7L11.11 15.37C10.97 15.51 10.78 15.59 10.58 15.59C10.38 15.59 10.19 15.51 10.05 15.37L7.22 12.54\n          C6.93 12.25 6.93 11.77 7.22 11.48C7.51 11.19 7.99 11.19 8.28 11.48L10.58 13.78L15.72 8.64\n          C16.01 8.35 16.49 8.35 16.78 8.64C17.07 8.93 17.07 9.4 16.78 9.7Z\n        "
+      d: `
+          M12 2C6.49 2 2 6.49 2 12C2 17.51 6.49 22 12 22C17.51 22 22 17.51 22 12C22 6.49 17.51 2 12 2Z
+          M16.78 9.7L11.11 15.37C10.97 15.51 10.78 15.59 10.58 15.59C10.38 15.59 10.19 15.51 10.05 15.37L7.22 12.54
+          C6.93 12.25 6.93 11.77 7.22 11.48C7.51 11.19 7.99 11.19 8.28 11.48L10.58 13.78L15.72 8.64
+          C16.01 8.35 16.49 8.35 16.78 8.64C17.07 8.93 17.07 9.4 16.78 9.7Z
+        `
     })
   });
 };
