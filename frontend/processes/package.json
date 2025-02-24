@@ -16,14 +16,20 @@
     "@heroui/react": "^2.6.14",
     "@heroui/system": "^2.4.7",
     "@heroui/theme": "^2.4.6",
+    "@line/liff": "^2.25.1",
     "@mui/icons-material": "^6.4.2",
     "@mui/material": "^6.4.2",
     "@types/jspdf": "^1.3.3",
     "axios": "^1.7.9",
     "framer-motion": "^12.4.0",
+<<<<<<< HEAD
     "iconsax-react": "^0.0.8",
+=======
+    "js-cookie": "^3.0.5",
+>>>>>>> 007a5838035c4641be01048f2574f826c73a183e
     "jsonwebtoken": "^9.0.2",
-    "jspdf": "^2.5.2",
+    "jspdf": "^3.0.0",
+    "jspdf-autotable": "^3.8.4",
     "jwt-decode": "^4.0.0",
     "next": "15.1.4",
     "react": "^19.0.0",

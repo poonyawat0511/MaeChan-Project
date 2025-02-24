@@ -1,5 +1,5 @@
 "use client";
-import { ElementType, useState } from "react";
+import { ElementType, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import {
@@ -10,7 +10,6 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   PowerIcon,
-  UserGroupIcon,
   ShieldCheckIcon,
 } from "@heroicons/react/24/outline";
 
@@ -34,16 +33,10 @@ const SideBar = () => {
       link: "/all-stock-requests",
     },
     {
-      id: "approver",
-      label: "Approver",
-      icon: UserGroupIcon,
-      link: "/approver",
-    },
-    {
-      id: "director",
-      label: "Director",
+      id: "task",
+      label: "Task",
       icon: ShieldCheckIcon,
-      link: "/director",
+      link: "/task",
     },
   ];
 
@@ -67,6 +60,17 @@ const SideBar = () => {
       link: "/dashboard",
     },
   ];
+
+  useEffect(() => {
+    const savedState = localStorage.getItem("sidebar-collapsed");
+    if (savedState !== null) {
+      setIsCollapsed(savedState === "true");
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("sidebar-collapsed", String(isCollapsed));
+  }, [isCollapsed]);
 
   const handleSignout = async () => {
     try {
