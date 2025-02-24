@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+      "jsx": "react-jsx",
+      "moduleResolution": "node",
+      "allowSyntheticDefaultImports": true,
+      "declaration": true,
+      "emitDeclarationOnly": true,
+      "outDir": "dist"
+    },
+    "include": ["src"]
+  }
+  

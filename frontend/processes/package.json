@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "PORT=3000 next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -22,11 +22,7 @@
     "@types/jspdf": "^1.3.3",
     "axios": "^1.7.9",
     "framer-motion": "^12.4.0",
-<<<<<<< HEAD
-    "iconsax-react": "^0.0.8",
-=======
     "js-cookie": "^3.0.5",
->>>>>>> 007a5838035c4641be01048f2574f826c73a183e
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^3.0.0",
     "jspdf-autotable": "^3.8.4",
@@ -34,7 +30,8 @@
     "next": "15.1.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "xlsx": "^0.18.5"
+    "@myrepo/ui": "workspace:*",
+    "@myrepo/utils": "workspace:*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

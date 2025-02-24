@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { SignInResponse } from "@/utils/types/signInResponse";
+import { SignInResponse } from "@myrepo/utils";
 import styles from "./styles.module.css";
 import logo from "../../../public/logo66.png";
 

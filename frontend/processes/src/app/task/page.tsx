@@ -16,7 +16,6 @@ import {
 } from "@heroicons/react/24/solid";
 import ArrowRightIcon from "@/components/global/icons/arrowRight.icon";
 import BlurModal from "@/components/global/modals/BlurModal";
-import { useAlert } from "@/components/global/alerts/GlobalAlertProvider";
 import axiosInstance, {
   camundaTaskSubmit,
   springRequestByTaskApi,
@@ -24,6 +23,7 @@ import axiosInstance, {
 import { jwtDecode } from "jwt-decode";
 import { getCamundaTasks } from "@/utils/services/getApi";
 import PdfPreview from "@/components/global/pdf/PdfPreview";
+import { useAlert } from "@myrepo/ui";
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>([]);

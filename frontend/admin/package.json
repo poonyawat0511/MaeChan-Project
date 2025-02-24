@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "PORT=3001 next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -13,7 +13,9 @@
     "framer-motion": "^12.4.7",
     "next": "15.1.7",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "@myrepo/ui": "workspace:*",
+    "@myrepo/utils": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5",

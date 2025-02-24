@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signUpResponse } from "@/utils/types/signUpResponese";
 import styles from "./styles.module.css";
 import { Input } from "@heroui/input";
 import { Button, Form, Link, Select, SelectItem } from "@heroui/react";
 import liff from "@line/liff";
+import { signUpResponse } from "@myrepo/utils";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<Partial<signUpResponse>>({

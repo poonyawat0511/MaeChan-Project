@@ -3,7 +3,13 @@ import { Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 import RootLayoutClient from "./RootLayoutClient";
 import { Providers } from "./providers";
-import { GlobalAlertProvider } from "@/components/global/alerts/GlobalAlertProvider";
+import { GlobalAlertProvider } from "@myrepo/ui";
+
+
+
+
+
+
 
 const Noto_Sans_ThaiSans = Noto_Sans_Thai({
   variable: "--font-geist-sans",
