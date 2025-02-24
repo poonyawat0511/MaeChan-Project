@@ -1,4 +1,5 @@
-import { StockUser } from "./stock-user";
+import { StockUser } from "@myrepo/utils";
+
 
 export interface StockRequest {
   id: string; // หรือเปลี่ยนเป็น number หาก backend ส่ง id เป็น number

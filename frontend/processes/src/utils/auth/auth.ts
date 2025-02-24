@@ -1,7 +1,8 @@
 
 import { NextRequest } from "next/server";
-import { StockUser } from "../types/stock-user";
+
 import { jwtDecode } from "jwt-decode";
+import { StockUser } from "@myrepo/utils";
 
 export const getToken = (): string | null => {
   return localStorage.getItem("token");
