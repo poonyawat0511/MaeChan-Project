@@ -1,11 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signUpResponse } from "@/utils/types/signUpResponese";
 import styles from "./styles.module.css";
 import { Input } from "@heroui/input";
 import { Button, Form, Link, Select, SelectItem } from "@heroui/react";
 import liff from "@line/liff";
+import { signUpResponse } from "@/utils/types/signUpResponese";
+import { Role } from "@/utils/types/role";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<Partial<signUpResponse>>({
@@ -15,7 +16,7 @@ export default function SignUpPage() {
     password: "",
     userHospitalId: "",
     lineId: "",
-    role: [],
+    role: undefined,
   });
 
   const [signatureFile, setSignatureFile] = useState<File | null>(null);
@@ -181,7 +182,14 @@ export default function SignUpPage() {
             value={formData.lineId}
             readOnly
           />
-          <Select name="role" label="ตำแหน่ง" value={formData.role}>
+          <Select
+            name="role"
+            label="ตำแหน่ง"
+            value={formData.role ?? ""} 
+            onChange={(e) =>
+              setFormData({ ...formData, role: e.target.value as Role })
+            }
+          >
             <SelectItem key="APPROVER" value="APPROVER">
               ผู้ตรวจสอบ
             </SelectItem>
@@ -189,6 +197,7 @@ export default function SignUpPage() {
               ผู้อำนวยการ
             </SelectItem>
           </Select>
+
           <Button
             type="submit"
             className="bg-blue-500 text-white py-1 px-3 rounded-xl w-full"

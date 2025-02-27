@@ -1,7 +1,7 @@
 import { Role } from "./role";
 
 export interface signUpResponse {
-  id: string;
+  stockUserId: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -9,5 +9,5 @@ export interface signUpResponse {
   signature: string;
   userHospitalId: string;
   lineId: string;
-  role: Role[];
+  role: Role;
 }
