@@ -182,10 +182,10 @@ export default function SignUpPage() {
             readOnly
           />
           <Select name="role" label="ตำแหน่ง" value={formData.role}>
-            <SelectItem key="APPROVER" value="APPROVER">
+            <SelectItem key="APPROVER">
               ผู้ตรวจสอบ
             </SelectItem>
-            <SelectItem key="DIRECTOR" value="DIRECTOR">
+            <SelectItem key="DIRECTOR">
               ผู้อำนวยการ
             </SelectItem>
           </Select>
