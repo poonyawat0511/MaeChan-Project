@@ -2,6 +2,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import addThaiFont from "../Sarabun-Thin-normal";
 import { StockRequest } from "../types/stock-request";
+import imageData from "../imageData.json";
 
 export default function generatePDF(stockRequest: StockRequest): string {
   const doc = new jsPDF("p", "mm", "a4");
@@ -10,7 +11,11 @@ export default function generatePDF(stockRequest: StockRequest): string {
   doc.setFont("Sarabun-Thin");
 
   doc.setFontSize(16);
-  doc.text("บันทึกข้อความ", 105, 20, { align: "center" });
+
+  const logo = imageData.myImage;
+  doc.addImage(logo, 'JPEG', 10, 10, 8, 9);
+
+  doc.text("บันทึกข้อความ", 29, 20, { align: "center" });
 
   doc.setFontSize(10);
   doc.text("ส่วนราชการ:", 20, 30);
