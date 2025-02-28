@@ -102,6 +102,7 @@ export default function StockUserTable({
                           alt="Signature"
                           className="w-16 h-16 object-contain border rounded-md shadow-sm group-hover:opacity-90 transition-all"
                         />
+
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-md flex items-center justify-center transition-all"></div>
                       </div>
                     ) : (

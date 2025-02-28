@@ -19,11 +19,11 @@ import com.example.workflow.dto.SignUpRequest;
 import com.example.workflow.dto.SigninRequest;
 import com.example.workflow.model.Role;
 import com.example.workflow.model.StockUser;
+import com.example.workflow.model.UserHospital;
 import com.example.workflow.repository.StockUserRepository;
+import com.example.workflow.repository.UserHospitalRepository;
 import com.example.workflow.service.AuthenticationService;
 import com.example.workflow.service.JWTService;
-import com.example.workflow.repository.UserHospitalRepository;
-import com.example.workflow.model.UserHospital;
 
 import lombok.RequiredArgsConstructor;
 
@@ -106,16 +106,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-
+    
             // Generate a unique file name
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             Path filePath = uploadPath.resolve(fileName);
-
+    
             // Save file
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            return filePath.toString(); // Return stored file path
+    
+            // Return a proper URL instead of the file path
+            return "http://localhost:8081/uploads/signatures/" + fileName;
         } catch (IOException e) {
             throw new RuntimeException("Failed to store signature file", e);
         }
     }
+    
 }

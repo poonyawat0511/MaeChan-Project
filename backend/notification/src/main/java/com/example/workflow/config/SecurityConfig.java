@@ -69,6 +69,17 @@ public class SecurityConfig implements WebMvcConfigurer {
         return configuration.getAuthenticationManager();
     }
 
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/uploads/**")
+                        .allowedOrigins("http://localhost:3001");
+            }
+        };
+    }
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
