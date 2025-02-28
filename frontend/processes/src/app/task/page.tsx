@@ -4,17 +4,17 @@ import { Task } from "@/utils/types/task";
 import TaskCard from "@/components/global/cards/Task.Card";
 import { StockRequest } from "@/utils/types/stock-request";
 import generatePDF from "@/utils/pdf/generatePDF";
-
-import { Button, Chip } from "@heroui/react";
-import ArrowLeftIcon from "@/components/global/icons/arrowLeft.icon";
-import XmarkIcon from "@/components/global/icons/x-mark.icon";
+import { Button, Chip, Avatar, Tooltip } from "@heroui/react";
 import {
   ArrowDownIcon,
   ArrowUpIcon,
   DocumentIcon,
   UserIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  ClockIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/solid";
-import ArrowRightIcon from "@/components/global/icons/arrowRight.icon";
 import BlurModal from "@/components/global/modals/BlurModal";
 import { useAlert } from "@/components/global/alerts/GlobalAlertProvider";
 import axiosInstance, {
@@ -76,6 +76,7 @@ export default function TaskPage() {
       return null;
     }
   };
+  
   const handleRejecte = (task: Task) => {
     confirmAction(() => executeTaskAction(task, false));
   };
@@ -186,6 +187,7 @@ export default function TaskPage() {
 
   const handleClosePreview = () => {
     setSelectedPdfUrl(null);
+    setSelectedTask(null);
   };
 
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -208,101 +210,151 @@ export default function TaskPage() {
   }
 
   if (error) {
-    return <p style={{ color: "red" }}>{error}</p>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md max-w-md">
+          <div className="flex items-center">
+            <XCircleIcon className="h-6 w-6 mr-2" />
+            <p>{error}</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="flex-1 py-1 h-screen flex flex-col">
-      <div className="mx-5 py-5 px-5 rounded-md flex flex-col h-full">
-        <h1 className="text-3xl font-bold text-gray-800 ml-5">
-          Explore Task
-          <span className="absolute text-xxl text-gray-500 ml-3">
-            {userRole}
-          </span>
-        </h1>
-        <div className="flex items-center justify-between gap-4 mb-3 pb-4 border-b-2">
-          <Button
-            onPress={handleSort}
-            className="rounded-full bg-transparent hover:text-black px-3"
-          >
-            {sortOrder === "asc" ? (
-              <ArrowUpIcon className="h-5 w-5" />
-            ) : (
-              <ArrowDownIcon className="h-5 w-5" />
-            )}
-            <span className="ml-2">Sort by Date</span>
-          </Button>
-          <Button
-            isIconOnly
-            variant="ghost"
-            className="border-transparent rounded-full"
-          >
-            <UserIcon className="border-2 rounded-full text-violet-300 text-sm" />
-          </Button>
+    <div className="flex-1 py-1 h-screen flex flex-col bg-gradient-to-br from-white to-gray-50">
+      <div className="mx-auto w-full max-w-7xl py-6 px-6 rounded-md flex flex-col h-full">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800 flex items-center">
+              Task Management
+              <Chip 
+                color="secondary" 
+                variant="flat" 
+                radius="sm"
+                size="sm" 
+                className="ml-4 font-medium text-xs py-1 capitalize bg-violet-100 text-violet-700"
+              >
+                {userRole}
+              </Chip>
+            </h1>
+            <p className="text-gray-500 mt-1">Review and approve pending requests</p>
+          </div>
+          
+          <Tooltip content={`Logged in as ${userRole}`}>
+            <Avatar
+              size="md"
+              icon={<UserIcon />}
+              className="bg-violet-100 text-violet-700"
+            />
+          </Tooltip>
+        </div>
+        
+        <div className="flex items-center justify-between gap-4 mb-6 pb-3 border-b border-gray-200">
+          <div className="flex items-center">
+            <Button
+              onPress={handleSort}
+              className="rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 flex items-center space-x-2 transition-all"
+              variant="flat"
+              size="sm"
+            >
+              {sortOrder === "asc" ? (
+                <ArrowUpIcon className="h-4 w-4" />
+              ) : (
+                <ArrowDownIcon className="h-4 w-4" />
+              )}
+              <span>Sort by Date</span>
+            </Button>
+            
+            <Chip className="ml-4" variant="flat" color="primary">
+              {tasks.length} Pending
+            </Chip>
+          </div>
+          
+          <Tooltip content="View completed tasks">
+            <Button
+              variant="light"
+              size="sm"
+              className="text-gray-600"
+              startContent={<ClockIcon className="h-4 w-4" />}
+            >
+              History
+            </Button>
+          </Tooltip>
         </div>
 
-        <div className="flex justify-between gap-5 flex-grow h-full">
-          <div
-            className="p-5 bg-[#F8F8FF] rounded-xl flex-1 max-w-[30%] 
-                          h-[calc(100vh-150px)] overflow-auto scrollbar-hidden"
-          >
-            <div className="mb-2">
-              <h2 className="text-xl font-bold text-gray-600">
+        <div className="flex justify-between gap-6 flex-grow h-full">
+          {/* Task List Panel */}
+          <div className="p-5 bg-white rounded-xl border border-gray-100 shadow-sm flex-1 max-w-[30%] h-[calc(100vh-220px)] overflow-auto scrollbar-hidden">
+            <div className="mb-4">
+              <h2 className="text-lg font-semibold text-gray-700">
                 <div className="flex items-center gap-x-2">
-                  {" "}
                   <Chip
                     color="secondary"
                     variant="dot"
                     className="border-none"
                   />
-                  <p>To Do</p>
-                  <Chip radius="full" color="default" className="ml-2">
-                    {" "}
+                  <p>Pending Tasks</p>
+                  <Chip radius="full" color="default" size="sm" className="ml-2">
                     {tasks.length}
                   </Chip>
                 </div>
               </h2>
             </div>
-            <TaskCard
-              tasks={tasks}
-              onTaskClick={(task) => handleTaskClick(task)}
-            />
+            {tasks.length > 0 ? (
+              <TaskCard
+                tasks={tasks}
+                onTaskClick={(task) => handleTaskClick(task)}
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center h-64 text-gray-400">
+                <DocumentIcon className="h-12 w-12 mb-2 opacity-30" />
+                <p className="text-center">No pending tasks</p>
+              </div>
+            )}
           </div>
 
-          <div
-            className="p-5 bg-[#F8F8FF] rounded-xl flex-1 
-            overflow-auto scrollbar-hidden ml-5 flex flex-col 
-            h-[calc(100vh-150px)] justify-center items-center text-gray-500"
-          >
+          {/* PDF Preview Panel */}
+          <div className="p-5 bg-white rounded-xl border border-gray-100 shadow-sm flex-1 overflow-hidden ml-5 flex flex-col h-[calc(100vh-220px)] justify-center items-center">
             {selectedPdfUrl ? (
               <div className="w-full h-full flex flex-col flex-grow min-h-0">
-                <PdfPreview pdfUrl={selectedPdfUrl} />
-                <div className="flex justify-between items-center mt-3">
+                <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
+                  <h3 className="font-medium text-gray-700">
+                    {selectedTask?.name || "Document Preview"}
+                  </h3>
+                  <Chip color="warning" size="sm" variant="flat">Review Required</Chip>
+                </div>
+                
+                <div className="flex-grow overflow-hidden rounded-md border border-gray-200">
+                  <PdfPreview pdfUrl={selectedPdfUrl} />
+                </div>
+                
+                <div className="flex justify-between items-center mt-4 pt-2 border-t border-gray-100">
                   <Button
-                    className="rounded-full bg-transparent hover:text-danger"
+                    className="rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700"
                     onPress={handleClosePreview}
-                    color="default"
+                    size="sm"
+                    startContent={<XMarkIcon className="h-4 w-4" />}
                   >
-                    <XmarkIcon />
+                    Close
                   </Button>
-                  <div className="flex justify-between gap-5">
+                  
+                  <div className="flex gap-3">
                     <Button
-                      className="rounded-full bg-transparent hover:text-danger"
-                      startContent={<ArrowRightIcon />}
-                      color="default"
-                      onPress={() =>
-                        selectedTask && handleRejecte(selectedTask)
-                      }
+                      className="rounded-md bg-red-50 hover:bg-red-100 text-red-600 transition-all"
+                      startContent={<XCircleIcon className="h-4 w-4" />}
+                      size="sm"
+                      onPress={() => selectedTask && handleRejecte(selectedTask)}
                     >
                       Reject
                     </Button>
+                    
                     <Button
-                      className="rounded-full bg-transparent hover:text-success"
-                      endContent={<ArrowLeftIcon />}
-                      color="default"
-                      onPress={() =>
-                        selectedTask && handleApprove(selectedTask)
-                      }
+                      className="rounded-md bg-green-50 hover:bg-green-100 text-green-600 transition-all"
+                      endContent={<CheckCircleIcon className="h-4 w-4" />}
+                      size="sm"
+                      onPress={() => selectedTask && handleApprove(selectedTask)}
                     >
                       Approve
                     </Button>
@@ -310,13 +362,17 @@ export default function TaskPage() {
                 </div>
               </div>
             ) : (
-              <p className="text-xl font-semibold">
-                PDF Preview <DocumentIcon />
-              </p>
+              <div className="flex flex-col items-center justify-center text-gray-400">
+                <DocumentIcon className="h-16 w-16 mb-3 opacity-20" />
+                <p className="text-lg font-medium text-gray-500 mb-1">No document selected</p>
+                <p className="text-sm text-gray-400">Select a task from the list to view details</p>
+              </div>
             )}
           </div>
         </div>
       </div>
+      
+      {/* Confirmation Modal */}
       <BlurModal
         isOpen={isConfirmModalOpen}
         onClose={() => setConfirmModalOpen(false)}

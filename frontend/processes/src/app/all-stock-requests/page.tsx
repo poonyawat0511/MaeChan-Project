@@ -5,16 +5,28 @@ import { StockRequest } from "@/utils/types/stock-request";
 
 import { Input } from "@heroui/input";
 import DownloadIcon from "@/components/global/icons/download.icon";
-import { Button } from "@heroui/button";
+import { Button, Chip, Tooltip, Divider } from "@heroui/react";
 import BlurModal from "@/components/global/modals/BlurModal";
-import { Card, CardBody, CardHeader, CardFooter, Pagination } from "@heroui/react";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardFooter,
+  Pagination,
+} from "@heroui/react";
 import { downloadCSV } from "@/utils/services/csv";
 import { getStockRequests } from "@/utils/services/getApi";
 import StockRequestTable from "@/components/global/tables/StockRequest.table";
 import PdfPreview from "@/components/global/pdf/PdfPreview";
 import LoadingScreen from "@/components/global/loading/loading";
 import UnauthorizedCard from "@/components/global/cards/UnauthorizedCard";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import {
+  MagnifyingGlassIcon,
+  DocumentTextIcon,
+  ArrowPathIcon,
+  DocumentChartBarIcon,
+} from "@heroicons/react/24/outline";
+import EmptyStateMessage from "@/components/global/emptys/EmptyStateMessage";
 
 export default function AllStockRequest() {
   const [requests, setRequests] = useState<StockRequest[]>([]);
@@ -24,13 +36,26 @@ export default function AllStockRequest() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openPdfModal, setOpenPdfModal] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [refreshing, setRefreshing] = useState(false);
   const itemsPerPage = 10;
 
+  const fetchRequests = async () => {
+    try {
+      setRefreshing(true);
+      const data = await getStockRequests();
+      setRequests(data);
+      setError(null);
+    } catch {
+      console.log("Session expired. Redirecting to sign-in...");
+      setError("Failed to load requests");
+    } finally {
+      setRefreshing(false);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    getStockRequests()
-      .then(setRequests)
-      .catch(() => console.log("Session expired. Redirecting to sign-in..."))
-      .finally(() => setLoading(false));
+    fetchRequests();
   }, []);
 
   const handleTaskClick = async (request: StockRequest) => {
@@ -56,7 +81,7 @@ export default function AllStockRequest() {
   });
 
   const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
-  
+
   const paginatedRequests = filteredRequests.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -64,6 +89,10 @@ export default function AllStockRequest() {
 
   const handleSignIn = () => {
     window.location.href = "/signin";
+  };
+
+  const handleRefresh = () => {
+    fetchRequests();
   };
 
   if (loading) {
@@ -82,23 +111,35 @@ export default function AllStockRequest() {
   }
 
   return (
-    <div className="flex justify-center w-full min-h-screen p-4">
-      <Card className="rounded-xl bg-white shadow-lg w-full flex flex-col max-h-[calc(100vh-32px)]">
-        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800 sm:border-r-2 sm:border-gray-500 sm:pr-4">
-              Purchase Request List
-            </h1>
-            <p className="text-gray-500 text-sm">Overall purchase requests</p>
+    <div className="flex justify-center w-full min-h-screen p-4 bg-gradient-to-br from-gray-50 to-gray-100">
+      <Card className="rounded-xl bg-white shadow-md w-full flex flex-col max-h-[calc(100vh-32px)] border border-gray-100">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between px-6 py-4 bg-white border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <DocumentChartBarIcon className="h-8 w-8 text-violet-500" />
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800">
+                Purchase Requests
+              </h1>
+              <div className="flex items-center mt-1">
+                <p className="text-gray-500 text-sm">
+                  Total requests: {requests.length}
+                </p>
+                <Divider orientation="vertical" className="h-4 mx-2" />
+                <Chip size="sm" color="secondary" variant="flat">
+                  {filteredRequests.length} matching
+                </Chip>
+              </div>
+            </div>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 items-center">
-          <Input
+            <Input
               classNames={{
                 base: "max-w-full sm:max-w-xs",
-                inputWrapper: "bg-default-100",
+                inputWrapper:
+                  "bg-default-100 border-1 hover:bg-default-200/70 transition-all",
               }}
-              placeholder="Search users..."
+              placeholder="Search by request ID..."
               size="sm"
               startContent={
                 <MagnifyingGlassIcon className="h-4 w-4 text-gray-400" />
@@ -109,25 +150,44 @@ export default function AllStockRequest() {
               isClearable
             />
 
-            <Button
-              color="default"
-              startContent={<DownloadIcon />}
-              variant="bordered"
-              size="sm"
-              className="hover:bg-gray-300 whitespace-nowrap"
-              onPress={() => downloadCSV(requests)}
-            >
-              Download
-            </Button>
+            <div className="flex gap-2">
+              <Tooltip content="Refresh data">
+                <Button
+                  isIconOnly
+                  color="default"
+                  variant="light"
+                  size="sm"
+                  className="min-w-unit-10 w-10 h-10 rounded-full"
+                  onPress={handleRefresh}
+                  isLoading={refreshing}
+                >
+                  {!refreshing && <ArrowPathIcon className="h-5 w-5" />}
+                </Button>
+              </Tooltip>
+
+              <Button
+                color="secondary"
+                startContent={<DownloadIcon />}
+                variant="flat"
+                size="sm"
+                className="bg-violet-50 hover:bg-violet-100 text-violet-700 transition-all whitespace-nowrap"
+                onPress={() => downloadCSV(requests)}
+              >
+                Export CSV
+              </Button>
+            </div>
           </div>
         </CardHeader>
 
         <CardBody className="p-0 overflow-hidden flex-1 items-center">
           <div className="h-full overflow-auto">
             {filteredRequests.length === 0 ? (
-              <div className="flex items-center justify-center h-40">
-                <p className="text-gray-500">No requests matching your search criteria.</p>
-              </div>
+              <EmptyStateMessage
+                onClearFilters={() => {
+                  setSearchQuery("");
+                  handleRefresh();
+                }}
+              />
             ) : (
               <StockRequestTable
                 stockRequests={paginatedRequests}
@@ -140,18 +200,28 @@ export default function AllStockRequest() {
           </div>
         </CardBody>
 
-        <CardFooter className="flex justify-center py-2">
+        <CardFooter className="flex justify-between py-3 px-6 border-t border-gray-100 bg-gray-50/50">
+          <div className="text-sm text-gray-500">
+            Showing{" "}
+            {paginatedRequests.length > 0
+              ? (currentPage - 1) * itemsPerPage + 1
+              : 0}{" "}
+            to {Math.min(currentPage * itemsPerPage, filteredRequests.length)}{" "}
+            of {filteredRequests.length} entries
+          </div>
+
           {filteredRequests.length > 0 && (
             <div className="flex items-center gap-2">
               <Button
                 size="sm"
-                variant="light"
+                variant="flat"
                 isDisabled={currentPage === 1}
                 onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                className="bg-white"
               >
                 Previous
               </Button>
-              
+
               <Pagination
                 color="secondary"
                 page={currentPage}
@@ -160,12 +230,15 @@ export default function AllStockRequest() {
                 showControls={false}
                 className="mx-2"
               />
-              
+
               <Button
                 size="sm"
-                variant="light"
+                variant="flat"
                 isDisabled={currentPage === totalPages || totalPages === 0}
-                onPress={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                onPress={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                className="bg-white"
               >
                 Next
               </Button>
@@ -174,10 +247,21 @@ export default function AllStockRequest() {
         </CardFooter>
       </Card>
 
-      <BlurModal isOpen={openPdfModal} onClose={handleClosePreview}>
-        {selectedPdfUrl && (
-          <div className="h-[70vh]">
+      <BlurModal
+        isOpen={openPdfModal}
+        onClose={handleClosePreview}
+        title="Purchase Request Details"
+      >
+        {selectedPdfUrl ? (
+          <div className="h-[65vh] w-full">
             <PdfPreview pdfUrl={selectedPdfUrl} />
+          </div>
+        ) : (
+          <div className="flex items-center justify-center h-64">
+            <div className="flex flex-col items-center text-gray-500">
+              <DocumentTextIcon className="h-12 w-12 text-gray-300 mb-2" />
+              <p>Loading document preview...</p>
+            </div>
           </div>
         )}
       </BlurModal>
