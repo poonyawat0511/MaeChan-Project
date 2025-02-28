@@ -4,41 +4,71 @@ import addThaiFont from "../Sarabun-Thin-normal";
 import { StockRequest } from "../types/stock-request";
 import imageData from "../imageData.json";
 
+function thaitext(doc: jsPDF, str: string, x: number, y: number) {
+  const sara = ['่', '้', '๊', '๋', '์'];
+  const pushers = ['ิ', 'ี', 'ึ', 'ื', 'ำ', 'ั'];
+  let base = '';
+  const dim = doc.getTextDimensions(str);
+  for (let i = 0; i < str.length; i++) {
+    const c = str.charAt(i);
+    if (sara.indexOf(c) < 0) {
+      base += c;
+    } else {
+      const pusher = base.charAt(base.length - 1);
+      if (pushers.indexOf(pusher) < 0) {
+        if (str.charAt(i + 1) != '' && str.charAt(i + 1) == "ำ") { // next char is ำ
+          const len = doc.getTextWidth(base + "ำ");
+          doc.text(c, x + len, y - (dim.h / 4));
+        } else {
+          base += c;
+        }
+      } else {
+        const len = doc.getTextWidth(base);
+        doc.text(c, x + len, y - (dim.h / 4));
+      }
+    }
+  }
+  doc.text(base, x, y);
+}
+
 export default function generatePDF(stockRequest: StockRequest): string {
   const doc = new jsPDF("p", "mm", "a4");
 
   addThaiFont(doc);
   doc.setFont("Sarabun-Thin");
 
-  doc.setFontSize(16);
+  const margin = 10;
+  const pageWidth = doc.internal.pageSize.getWidth();
 
   const logo = imageData.myImage;
-  doc.addImage(logo, 'JPEG', 10, 10, 8, 9);
+  doc.addImage(logo, 'JPEG', margin, margin, 16, 18);
 
-  doc.text("บันทึกข้อความ", 29, 20, { align: "center" });
+  doc.setFontSize(19);
+  thaitext(doc, "บันทึกข้อความ", pageWidth / 2, margin + 20);
 
   doc.setFontSize(10);
-  doc.text("ส่วนราชการ:", 20, 30);
-  doc.text("โรงพยาบาลแม่จัน", 60, 30);
-  doc.text("อ.แม่จัน จ.เชียงราย", 140, 30);
+  thaitext(doc, "ส่วนราชการ", margin, margin + 30);
+  thaitext(doc, "โรงพยาบาลแม่จัน   อ.แม่จัน จ.เชียงราย", pageWidth / 3, margin + 30);
 
-  doc.text(`ที่ ${stockRequest.requestNo}`, 20, 40);
-  doc.text(`ลงวันที่ ${stockRequest.requestDate}`, 140, 40);
+  thaitext(doc, `ที่ ชร 033.301/ ${stockRequest.requestNo}`, margin, margin + 40);
+  thaitext(doc, `ลงวันที่ ${stockRequest.requestDate}`, pageWidth - margin - 40, margin + 40);
 
-  doc.text("เรื่อง ขออนุมัติซื้อวัสดุ", 20, 50);
-  doc.text("เรียน ผู้อำนวยการโรงพยาบาลแม่จัน", 20, 60);
+  thaitext(doc, "เรื่อง ขออนุมัติซื้อวัสดุ", margin, margin + 50);
+  thaitext(doc, "เรียน ผู้อำนวยการโรงพยาบาลแม่จัน", margin, margin + 60);
 
-  doc.text(
+  thaitext(
+    doc,
     `ด้วย ${stockRequest.requestWarehouseId} โรงพยาบาลแม่จันมีความประสงค์ ขออนุมัติสั่งซื้อวัสดุ`,
-    20,
-    70
+    margin,
+    margin + 70
   );
-  doc.text(
+  thaitext(
+    doc,
     "เพื่อสำรองจ่ายในคลังพัสดุกลางประจำเดือน และเพื่อให้แต่ละหน่วยงานสามารถเบิกใช้ได้อย่างเหมาะสม",
-    20,
-    80
+    margin,
+    margin + 80
   );
-  doc.text("จึงขออนุมัติตามรายการดังนี้", 20, 90);
+  thaitext(doc, "จึงขออนุมัติตามรายการดังนี้", margin, margin + 90);
 
   const tableColumn = [
     "ลำดับ",
@@ -64,14 +94,14 @@ export default function generatePDF(stockRequest: StockRequest): string {
   ];
 
   doc.autoTable({
-    startY: 100,
+    startY: margin + 100,
     head: [tableColumn],
     body: tableRows,
     styles: { font: "Sarabun-Thin", fontSize: 9 },
     columnStyles: { 0: { cellWidth: 12 }, 1: { cellWidth: 80 } },
   });
 
-  const finalY = doc.lastAutoTable?.finalY ?? 120;
+  const finalY = doc.lastAutoTable?.finalY ?? margin + 120;
 
   const summaryColumns = ["รายการ", "จำนวนเงิน (บาท)"];
   const summaryRows = [
@@ -90,26 +120,27 @@ export default function generatePDF(stockRequest: StockRequest): string {
 
   const finalY2 = doc.lastAutoTable?.finalY ?? finalY + 30;
 
-  doc.text(
+  thaitext(
+    doc,
     `ด้วยวิธี ${stockRequest.note} และขอแต่งตั้งคณะกรรมการตรวจรับพัสดุ ตามารายนามดังนี้`,
-    20,
+    margin,
     finalY2 + 10
   );
-  doc.text(`${stockRequest.stockUser} ตำแหน่ง `, 20, finalY2 + 20);
+  thaitext(doc, `${stockRequest.stockUser} ตำแหน่ง `, margin, finalY2 + 20);
 
-  doc.text("▢ อนุมัติ    ▢ ไม่อนุมัติ", 20, finalY2 + 30);
+  thaitext(doc, "▢ อนุมัติ    ▢ ไม่อนุมัติ", margin, finalY2 + 30);
 
-  doc.text("ลงชื่อ ____________________ ผู้ตรวจสอบ", 120, finalY2 + 40);
-  doc.text("(นายวิสุทธิ์ แก้วประกาย)", 120, finalY2 + 50);
-  doc.text("ผู้ตรวจสอบ", 120, finalY2 + 60);
+  thaitext(doc, "ลงชื่อ ____________________ ผู้ตรวจสอบ", pageWidth - margin - 80, finalY2 + 40);
+  thaitext(doc, "(นายวิสุทธิ์ แก้วประกาย)", pageWidth - margin - 80, finalY2 + 50);
+  thaitext(doc, "ผู้ตรวจสอบ", pageWidth - margin - 80, finalY2 + 60);
 
-  doc.text("ลงชื่อ ____________________ ผู้ขออนุมัติ", 20, finalY2 + 40);
-  doc.text("(นายอธิวัฒน์ สุวรรณปัญญา)", 20, finalY2 + 50);
-  doc.text("เจ้าหน้าที่พัสดุ", 20, finalY2 + 60);
+  thaitext(doc, "ลงชื่อ ____________________ ผู้ขออนุมัติ", margin, finalY2 + 40);
+  thaitext(doc, "(นายอธิวัฒน์ สุวรรณปัญญา)", margin, finalY2 + 50);
+  thaitext(doc, "เจ้าหน้าที่พัสดุ", margin, finalY2 + 60);
 
-  doc.text("ลงชื่อ ____________________", 70, finalY2 + 80);
-  doc.text("(นายฐิติวัฒน์ ปาระมี)", 70, finalY2 + 90);
-  doc.text("ผู้อำนวยการโรงพยาบาลแม่จัน", 70, finalY2 + 100);
+  thaitext(doc, "ลงชื่อ ____________________", pageWidth / 2 - 30, finalY2 + 80);
+  thaitext(doc, "(นายฐิติวัฒน์ ปาระมี)", pageWidth / 2 - 30, finalY2 + 90);
+  thaitext(doc, "ผู้อำนวยการโรงพยาบาลแม่จัน", pageWidth / 2 - 30, finalY2 + 100);
 
   try {
     const pdfBlob = doc.output("blob");
