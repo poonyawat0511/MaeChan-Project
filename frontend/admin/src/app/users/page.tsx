@@ -11,7 +11,6 @@ import {
   CardHeader,
   CardFooter,
   Pagination,
-  Tooltip,
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
@@ -21,7 +20,6 @@ import LoadingScreen from "@/components/loading/loading";
 import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import {
   MagnifyingGlassIcon,
-  PlusIcon,
   ArrowDownTrayIcon,
   FunnelIcon,
   EllipsisVerticalIcon,
@@ -29,6 +27,8 @@ import {
 } from "@heroicons/react/24/outline";
 import StockUserTable from "@/components/tables/stockUserTable";
 import { axiosInstance, stockUserApi } from "@/utils/api/api";
+import BlurModal from "@/components/modals/BlurModal";
+import EmptyState from "@/components/emptys/EmptyState";
 
 export default function UserPage() {
   const [users, setUsers] = useState<StockUser[]>([]);
@@ -36,6 +36,8 @@ export default function UserPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -56,19 +58,24 @@ export default function UserPage() {
     }
   };
 
-  const handleDelete = async (stockUserId: string) => {
-    try {
-      await axiosInstance.delete(`${stockUserApi}/${stockUserId}`);
-      setUsers((prevUsers) =>
-        prevUsers.filter((user) => user.stockUserId !== stockUserId)
-      );
+  const handleConfirmDelete = (stockUserId: string) => {
+    setSelectedUserId(stockUserId);
+    setIsModalOpen(true);
+  };
 
-      // Show toast notification here if you have a toast component
+  const handleDelete = async () => {
+    if (!selectedUserId) return;
+    try {
+      await axiosInstance.delete(`${stockUserApi}/${selectedUserId}`);
+      setUsers((prevUsers) =>
+        prevUsers.filter((user) => user.stockUserId !== selectedUserId)
+      );
       console.log("User deleted successfully");
     } catch (error) {
       console.error("Error deleting user:", error);
-      // Show error toast here
     } finally {
+      setIsModalOpen(false);
+      setSelectedUserId(null);
     }
   };
 
@@ -101,13 +108,13 @@ export default function UserPage() {
 
   return (
     <div className="flex justify-center w-full min-h-screen bg-gray-50 p-4 md:p-6">
-      <Card className="rounded-xl bg-white shadow-md w-full flex flex-col max-h-[calc(100vh-32px)] border border-gray-100">
+      <Card className="bg-white shadow-md w-full flex flex-col max-h-[calc(100vh-32px)] border border-gray-100">
         <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between px-6 py-5 border-b border-gray-100">
           <div className="flex items-center">
             <div className="mr-4">
-            <div className="h-12 w-12 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl shadow-md flex items-center justify-center mr-4">
-              <UserGroupIcon className="h-6 w-6 text-white" />
-            </div>
+              <div className="h-12 w-12 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl shadow-md flex items-center justify-center mr-4">
+                <UserGroupIcon className="h-6 w-6 text-white" />
+              </div>
             </div>
             <div>
               <h1 className="text-xl font-semibold text-gray-800">
@@ -139,16 +146,6 @@ export default function UserPage() {
             />
 
             <div className="flex gap-2">
-              <Tooltip content="Add new user">
-                <Button
-                  color="primary"
-                  className="bg-purple-600 text-white"
-                  startContent={<PlusIcon className="h-4 w-4" />}
-                >
-                  Add User
-                </Button>
-              </Tooltip>
-
               <Dropdown>
                 <DropdownTrigger>
                   <Button
@@ -181,32 +178,21 @@ export default function UserPage() {
         <CardBody className="p-0 overflow-hidden flex-1 items-center">
           <div className="h-full overflow-auto">
             {filteredUsers.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-64 p-6">
-                <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <MagnifyingGlassIcon className="h-8 w-8 text-gray-400" />
-                </div>
-                <p className="text-gray-700 font-medium mb-1">No users found</p>
-                <p className="text-gray-500 text-sm text-center max-w-md">
-                  {searchQuery
+              <EmptyState
+                message="No users found"
+                subMessage={
+                  searchQuery
                     ? `No results matching "${searchQuery}". Try a different search term.`
-                    : "There are no users available. Add a new user to get started."}
-                </p>
-                {searchQuery && (
-                  <Button
-                    color="primary"
-                    variant="flat"
-                    className="mt-4"
-                    onPress={() => setSearchQuery("")}
-                  >
-                    Clear Search
-                  </Button>
-                )}
-              </div>
+                    : "There are no users available. Add a new user to get started."
+                }
+                showClearButton={!!searchQuery}
+                onClear={() => setSearchQuery("")}
+              />
             ) : (
               <StockUserTable
                 stockUsers={paginatedUsers}
                 currentPage={currentPage}
-                onDelete={handleDelete}
+                onDelete={handleConfirmDelete}
               />
             )}
           </div>
@@ -257,6 +243,19 @@ export default function UserPage() {
           )}
         </CardFooter>
       </Card>
+
+      <BlurModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Confirm Deletion"
+        onAction={handleDelete}
+        actionLabel="Delete"
+      >
+        <p>
+          Are you sure you want to delete this user? This action cannot be
+          undone.
+        </p>
+      </BlurModal>
     </div>
   );
 }

@@ -38,7 +38,7 @@ export default function StockUserTable({
   ];
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 w-full h-full flex flex-col">
+    <div className="bg-white p-6 w-full h-full flex flex-col">
       <Table
         aria-label="Stock Users Table"
         className="w-full min-w-max"
