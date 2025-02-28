@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.workflow.model.SpringRequest;
 import com.example.workflow.model.StockRequest;
-import com.example.workflow.repository.StockUserRepository;
+import com.example.workflow.repository.UserHospitalRepository;
 import com.example.workflow.service.SpringRequestService;
 import com.example.workflow.service.StockRequestService;
 
@@ -23,7 +23,7 @@ public class UpdateDirectorHandler implements JavaDelegate {
     private SpringRequestService springRequestService;
 
     @Autowired
-    private StockUserRepository stockUserRepository;
+    private UserHospitalRepository userHospitalRepository;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -47,7 +47,7 @@ public class UpdateDirectorHandler implements JavaDelegate {
         StockRequest stockRequest = springRequest.getStockRequest();
 
         // update springRequest       
-        springRequest.setUserDirector(stockUserRepository.findById(directorId).get());
+        springRequest.setUserDirector(userHospitalRepository.findById(directorId).get());
         springRequest.setDirectorApproveStatus(approve);
         springRequest.setDirectorApproveDate(date);
         springRequest.setAllCompleteStatus(approve);

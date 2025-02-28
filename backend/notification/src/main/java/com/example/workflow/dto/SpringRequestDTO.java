@@ -3,7 +3,7 @@ package com.example.workflow.dto;
 import java.time.LocalDate;
 
 import com.example.workflow.model.StockRequest;
-import com.example.workflow.model.StockUser;
+import com.example.workflow.model.UserHospital;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,9 +18,9 @@ public class SpringRequestDto {
     private Long id;
     private StockRequest stockRequest;
     private String camundaTaskId;
-    private StockUser userApprove;
+    private UserHospital userApprove;
     private Boolean approverApproveStatus;
-    private StockUser userDirector;
+    private UserHospital userDirector;
     private Boolean directorApproveStatus;
     private LocalDate directorApproveDate;
     private Boolean allCompleteStatus;

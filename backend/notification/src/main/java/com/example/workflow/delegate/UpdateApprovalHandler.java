@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.workflow.model.SpringRequest;
 import com.example.workflow.model.StockRequest;
-import com.example.workflow.model.StockUser;
-import com.example.workflow.repository.StockUserRepository;
+import com.example.workflow.model.UserHospital;
+import com.example.workflow.repository.UserHospitalRepository;
 import com.example.workflow.service.SpringRequestService;
 import com.example.workflow.service.StockRequestService;
 
@@ -24,7 +24,7 @@ public class UpdateApprovalHandler implements JavaDelegate {
     private SpringRequestService springRequestService;
 
     @Autowired
-    private StockUserRepository stockUserRepository;
+    private UserHospitalRepository userHospitalRepository;
 
     @Override
     public void execute(DelegateExecution execution) throws Exception {
@@ -39,24 +39,25 @@ public class UpdateApprovalHandler implements JavaDelegate {
         // ค้นหา springRequest
         SpringRequest springRequest = springRequestService.getSpringRequestById(requestId);
         if (springRequest == null) {
-            throw new RuntimeException("StockRequest not found with id: " + requestId);
+            throw new RuntimeException("SpringRequest not found with id: " + requestId);
         }
 
-        // ค้นหา StockUser 
-        Optional<StockUser> stockUser = stockUserRepository.findById(Long.parseLong(stockUserApproveId));
-        if (stockUser == null) {
-            throw new RuntimeException("StockUser not found with id: " + stockUserApproveId);
+        // ค้นหา UserHospital
+        Optional<UserHospital> userHospital = userHospitalRepository.findById(Long.parseLong(stockUserApproveId));
+        if (userHospital == null) {
+            throw new RuntimeException("UserHospital not found with id: " + stockUserApproveId);
         }
 
         //update springRequest
-        springRequest.setUserApprove(stockUser.get());
+        springRequest.setUserApprove(userHospital.get());
         springRequest.setApproverApproveStatus(requestComplete);
         springRequestService.updateSpringRequest(requestId, springRequest);
 
         //update stockRequest
         StockRequest stockRequest = stockRequestService.findStockRequestById(springRequest.getStockRequest().getId());
         //Long
-        stockRequest.setStockUserApprove(stockUser.get().getStockUserId());
+        //TODO: to obj
+        stockRequest.setStockUserApprove(userHospital.get().getStockUserId());
         stockRequest.setStockSubjectPerson("ผู้อำนวยการโรงพยาบาลแม่จัน");
         if (requestComplete != true) {
 

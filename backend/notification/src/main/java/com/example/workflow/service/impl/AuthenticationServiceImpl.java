@@ -18,12 +18,12 @@ import com.example.workflow.dto.RefreshTokenRequest;
 import com.example.workflow.dto.SignUpRequest;
 import com.example.workflow.dto.SigninRequest;
 import com.example.workflow.model.Role;
-import com.example.workflow.model.StockUser;
-import com.example.workflow.repository.StockUserRepository;
+import com.example.workflow.model.UserHospital;
+import com.example.workflow.repository.UserHospitalRepository;
 import com.example.workflow.service.AuthenticationService;
 import com.example.workflow.service.JWTService;
-import com.example.workflow.repository.UserHospitalRepository;
-import com.example.workflow.model.UserHospital;
+import com.example.workflow.repository.StockUserRepository;
+import com.example.workflow.model.StockUser;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,42 +31,42 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final StockUserRepository stockUserRepository;
+    private final UserHospitalRepository userHospitalRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
-    private final UserHospitalRepository userHospitalRepository;
+    private final StockUserRepository stockUserRepository;
 
     private static final String UPLOAD_DIR = "uploads/signatures/";
 
-    public StockUser signup(SignUpRequest signUpRequest) {
-        StockUser stockUser = new StockUser();
-        stockUser.setLineId(signUpRequest.getLineId());
-        stockUser.setUserHospitalId(signUpRequest.getUserHospitalId());
-        stockUser.setSignaturePath(UPLOAD_DIR);
-        stockUser.setEmail(signUpRequest.getEmail());
-        stockUser.setFirstName(signUpRequest.getFirstName());
-        stockUser.setLastName(signUpRequest.getLastName());
-        stockUser.setRole(signUpRequest.getRole() != null ? signUpRequest.getRole() : Role.USER);
-        stockUser.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+    public UserHospital signup(SignUpRequest signUpRequest) {
+        UserHospital userHospital = new UserHospital();
+        userHospital.setLineId(signUpRequest.getLineId());
+        userHospital.setStockUserId(signUpRequest.getStockUserId());
+        userHospital.setSignaturePath(UPLOAD_DIR);
+        userHospital.setEmail(signUpRequest.getEmail());
+        userHospital.setFirstName(signUpRequest.getFirstName());
+        userHospital.setLastName(signUpRequest.getLastName());
+        userHospital.setRole(signUpRequest.getRole() != null ? signUpRequest.getRole() : Role.USER);
+        userHospital.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
 
         // Handle signature file upload
         if (signUpRequest.getSignature() != null && !signUpRequest.getSignature().isEmpty()) {
             String filePath = saveFile(signUpRequest.getSignature());
-            stockUser.setSignaturePath(filePath);
+            userHospital.setSignaturePath(filePath);
         }
 
-        //get hospitalId from firstName and lastName
-        //and update to StockUser
-        UserHospital user = userHospitalRepository.findByFirstNameAndLastName(signUpRequest.getFirstName(), signUpRequest.getLastName())
+        //get StockUser from firstName and lastName
+        //and update to UserHospital
+        StockUser user = stockUserRepository.findByFirstNameAndLastName(signUpRequest.getFirstName(), signUpRequest.getLastName())
                 .orElse(null);
         if(user == null){
-            System.out.println("Can't find userHospital ID from firstName and lastName");
+            System.out.println("Can't find stockUser ID from firstName and lastName");
             return null;
         }else{
-            stockUser.setUserHospitalId(user.getId());
-            System.out.println("match " + stockUser.getFirstName() + " "+ stockUser.getLastName() + "with userHospital ID : " + stockUser.getUserHospitalId());
-            return stockUserRepository.save(stockUser);
+            userHospital.setStockUserId(user.getId());
+            System.out.println("match " + userHospital.getFirstName() + " "+ userHospital.getLastName() + "with StockUser ID : " + userHospital.getStockUserId());
+            return userHospitalRepository.save(userHospital);
         }
     }
 
@@ -74,10 +74,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 signinRequest.getEmail(), signinRequest.getPassword()));
 
-        var stockUser = stockUserRepository.findByEmail(signinRequest.getEmail())
+        var userHospital = userHospitalRepository.findByEmail(signinRequest.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
-        var jwt = jwtService.generateToken(stockUser);
-        var refreshToken = jwtService.generateRefreshToken(new HashMap<>(), stockUser);
+        var jwt = jwtService.generateToken(userHospital);
+        var refreshToken = jwtService.generateRefreshToken(new HashMap<>(), userHospital);
 
         JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
         jwtAuthenticationResponse.setToken(jwt);
@@ -87,9 +87,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     public JwtAuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
         String userEmail = jwtService.extractUserName(refreshTokenRequest.getToken());
-        StockUser stockUser = stockUserRepository.findByEmail(userEmail).orElseThrow();
-        if (jwtService.isTokenValid(refreshTokenRequest.getToken(), stockUser)) {
-            var jwt = jwtService.generateToken(stockUser);
+        UserHospital userHospital = userHospitalRepository.findByEmail(userEmail).orElseThrow();
+        if (jwtService.isTokenValid(refreshTokenRequest.getToken(), userHospital)) {
+            var jwt = jwtService.generateToken(userHospital);
 
             JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
             jwtAuthenticationResponse.setToken(jwt);

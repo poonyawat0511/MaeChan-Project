@@ -23,15 +23,15 @@ public class NotifyService {
     private final NotifyTimeRepository timeRepository;
     private final NotifyTargetUserRepository targetUserRepository;
     private final LineMessageService lineMessageService;
-    private final StockUserService stockUserService;
+    private final UserHospitalService userHospitalService;
 
     public NotifyService(NotifyDayRepository dayRepository, NotifyTimeRepository timeRepository, 
-                         NotifyTargetUserRepository targetUserRepository, LineMessageService lineMessageService, StockUserService stockUserService) {
+                         NotifyTargetUserRepository targetUserRepository, LineMessageService lineMessageService, UserHospitalService userHospitalService) {
         this.dayRepository = dayRepository;
         this.timeRepository = timeRepository;
         this.targetUserRepository = targetUserRepository;
         this.lineMessageService = lineMessageService;
-        this.stockUserService = stockUserService;
+        this.userHospitalService = userHospitalService;
     }
 
     @Scheduled(fixedRate = 60000) // Runs every minute 60k = 1 min
@@ -128,7 +128,7 @@ public class NotifyService {
         for (NotifyTargetUser user : users) {
 
             //get role
-            Role enumRole = stockUserService.findStockUserById(user.getTargetUser()).getRole();
+            Role enumRole = userHospitalService.findUserHospitalById(user.getTargetUser()).getRole();
             int numTask = 0;
             if(enumRole.equals(Role.APPROVER))
             {
@@ -138,7 +138,7 @@ public class NotifyService {
             {
                 numTask = taskCountDirector;
             }else{
-                System.out.println("StockUser : " + stockUserService.findStockUserById(user.getTargetUser()).getFirstName() + " have wrong role!!!!!");
+                System.out.println("UserHospital : " + userHospitalService.findUserHospitalById(user.getTargetUser()).getFirstName() + " have wrong role!!!!!");
                 return;
             }
 
@@ -146,9 +146,9 @@ public class NotifyService {
             //backend log
             System.out.println(
             "Hello : " 
-            + stockUserService.findStockUserById(user.getTargetUser()).getFirstName() 
+            + userHospitalService.findUserHospitalById(user.getTargetUser()).getFirstName() 
             + " " 
-            + stockUserService.findStockUserById(user.getTargetUser()).getFirstName() 
+            + userHospitalService.findUserHospitalById(user.getTargetUser()).getLastName() 
             + " your role is " 
             + enumRole 
             + " you have " 
@@ -157,11 +157,11 @@ public class NotifyService {
 
             //ส่งข้อความ + Link web app
             // T id line "U9248dc5b4d58a88e3810dd31a8ecfd3d"
-            lineMessageService.pushMessage(stockUserService.findStockUserById(user.getTargetUser()).getLineId(), 
+            lineMessageService.pushMessage(userHospitalService.findUserHospitalById(user.getTargetUser()).getLineId(), 
             "Hello : " 
-            + stockUserService.findStockUserById(user.getTargetUser()).getFirstName() 
+            + userHospitalService.findUserHospitalById(user.getTargetUser()).getFirstName() 
             + " " 
-            + stockUserService.findStockUserById(user.getTargetUser()).getLastName()
+            + userHospitalService.findUserHospitalById(user.getTargetUser()).getLastName()
             + " your role is " 
             + enumRole 
             + " you have " 

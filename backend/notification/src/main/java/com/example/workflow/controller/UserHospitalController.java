@@ -17,17 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.workflow.model.UserHospital;
 import com.example.workflow.service.UserHospitalService;
 
+
 @RestController
 @RequestMapping("/user-hospital")
 public class UserHospitalController {
-
     @Autowired
     private UserHospitalService userHospitalService;
 
     @PostMapping
-    public ResponseEntity<UserHospital> createStockRequest(@RequestBody UserHospital userHospital) {
-        UserHospital createUserHospital = userHospitalService.creatUserHospital(userHospital);
-        return new ResponseEntity<>(createUserHospital, HttpStatus.CREATED);
+    public ResponseEntity<UserHospital> createUserHospital(@RequestBody UserHospital userHospital) {
+        UserHospital createStockUser = userHospitalService.createUserHospital(userHospital);
+        return new ResponseEntity<>(createStockUser, HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -45,7 +45,7 @@ public class UserHospitalController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
+    
     @PatchMapping("/{id}")
     public ResponseEntity<UserHospital> updateUserHospitalById(@PathVariable Long id, @RequestBody UserHospital userHospital) {
         userHospital.setId(id);
@@ -62,5 +62,6 @@ public class UserHospitalController {
         String result = userHospitalService.deleteUserHospitalById(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
 
 }

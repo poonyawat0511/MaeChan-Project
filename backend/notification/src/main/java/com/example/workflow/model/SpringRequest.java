@@ -36,14 +36,14 @@ public class SpringRequest {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_approve_id", referencedColumnName = "stockUserId")
-    private StockUser userApprove;
+    private UserHospital userApprove;
 
     @Column(name = "approver_approve_status")
     private Boolean approverApproveStatus;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_director_id", referencedColumnName = "stockUserId")
-    private StockUser userDirector;
+    private UserHospital userDirector;
 
     @Column(name = "director_approve_status")
     private Boolean directorApproveStatus;

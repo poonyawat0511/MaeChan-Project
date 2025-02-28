@@ -12,10 +12,12 @@ import lombok.Setter;
 public class UserHospitalDto {
 
     private Long id;
-
     private String firstName;
-
     private String lastName;
-
-    private Long HospitalId;
+    private String email;
+    private String password;
+    private String lineId;
+    private String signature;
+    private Long stockUserId;
+    private String role;
 }

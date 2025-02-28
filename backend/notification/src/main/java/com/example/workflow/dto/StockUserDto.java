@@ -11,13 +11,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class StockUserDto {
 
-    private Long stockUserId;
+    private Long id;
+
     private String firstName;
+
     private String lastName;
-    private String email;
-    private String password;
-    private String lineId;
-    private String signature;
-    private Long userHospitalId;
-    private String role;
+
 }
