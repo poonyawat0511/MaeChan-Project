@@ -44,7 +44,8 @@ export default function generatePDF(stockRequest: StockRequest): string {
   doc.addImage(logo, 'JPEG', margin, margin, 16, 18);
 
   doc.setFontSize(19);
-  thaitext(doc, "บันทึกข้อความ", pageWidth / 2, margin + 20);
+  doc.text("บันทึกข้อความ", pageWidth / 2, margin + 20, { align: "center" });
+
 
   doc.setFontSize(10);
   thaitext(doc, "ส่วนราชการ", margin, margin + 30);
