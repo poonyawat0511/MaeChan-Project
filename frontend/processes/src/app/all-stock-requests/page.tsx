@@ -8,11 +8,13 @@ import DownloadIcon from "@/components/global/icons/download.icon";
 import SearchIcon from "@/components/global/icons/search.icon";
 import { Button } from "@heroui/button";
 import BlurModal from "@/components/global/modals/BlurModal";
-import { Pagination } from "@heroui/react";
+import { Card, CardBody, CardHeader, CardFooter, Pagination } from "@heroui/react";
 import { downloadCSV } from "@/utils/services/csv";
 import { getStockRequests } from "@/utils/services/getApi";
 import StockRequestTable from "@/components/global/tables/StockRequest.table";
 import PdfPreview from "@/components/global/pdf/PdfPreview";
+import LoadingScreen from "@/components/global/loading/loading";
+import UnauthorizedCard from "@/components/global/cards/UnauthorizedCard";
 
 export default function AllStockRequest() {
   const [requests, setRequests] = useState<StockRequest[]>([]);
@@ -23,7 +25,6 @@ export default function AllStockRequest() {
   const [openPdfModal, setOpenPdfModal] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(requests.length / itemsPerPage);
 
   useEffect(() => {
     getStockRequests()
@@ -54,58 +55,80 @@ export default function AllStockRequest() {
     return request.requestId.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
+  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
+  
   const paginatedRequests = filteredRequests.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
+  const handleSignIn = () => {
+    window.location.href = "/signin";
+  };
+
   if (loading) {
-    return <p>Request loading...</p>;
+    return <LoadingScreen message="Loading requests..." />;
   }
 
   if (error) {
-    return <p style={{ color: "red" }}>{error}</p>;
+    return (
+      <UnauthorizedCard
+        message="No users available"
+        onSignin={() => {
+          handleSignIn();
+        }}
+      />
+    );
   }
 
   return (
-    <div className="flex justify-center w-full h-full p-4">
-      <div className="rounded-xl bg-white shadow-lg p-2 max-w-[76rem] w-full h-full flex flex-col">
-        <div className="flex items-center gap-4 justify-between">
-          <h1 className="text-3xl font-bold text-gray-800 border-r-2 border-gray-500 pr-4">
-            Purchase Request List
-          </h1>
-          <Input
-            classNames={{
-              base: "max-w-full sm:max-w-[30rem] h-10",
-              mainWrapper: "h-full",
-              input: "text-small",
-              inputWrapper:
-                "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
-            }}
-            placeholder="Search..."
-            size="md"
-            endContent={<SearchIcon size={20} />}
-            type="search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+    <div className="flex justify-center w-full min-h-screen p-4">
+      <Card className="rounded-xl bg-white shadow-lg w-full flex flex-col max-h-[calc(100vh-32px)]">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between px-6 py-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800 sm:border-r-2 sm:border-gray-500 sm:pr-4">
+              Purchase Request List
+            </h1>
+            <p className="text-gray-500 text-sm">Overall purchase requests</p>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 items-center">
+            <Input
+              classNames={{
+                base: "max-w-full w-full sm:max-w-[20rem]",
+                mainWrapper: "h-full",
+                input: "text-small",
+                inputWrapper:
+                  "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+              }}
+              placeholder="Search by request ID..."
+              size="sm"
+              endContent={<SearchIcon size={20} />}
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
 
-          <Button
-            color="default"
-            startContent={<DownloadIcon />}
-            variant="bordered"
-            className="hover:bg-gray-300"
-            onPress={() => downloadCSV(requests)}
-          >
-            Download
-          </Button>
-        </div>
+            <Button
+              color="default"
+              startContent={<DownloadIcon />}
+              variant="bordered"
+              size="sm"
+              className="hover:bg-gray-300 whitespace-nowrap"
+              onPress={() => downloadCSV(requests)}
+            >
+              Download
+            </Button>
+          </div>
+        </CardHeader>
 
-        <div className="flex-1 overflow-auto mt-4 scroll-bar-hide max-h-[calc(100vh-200px)]">
-          {filteredRequests.length === 0 ? (
-            <p>No requests available.</p>
-          ) : (
-            <div className="flex flex-col w-full h-[75vh]">
+        <CardBody className="p-0 overflow-hidden flex-1 items-center">
+          <div className="h-full overflow-auto">
+            {filteredRequests.length === 0 ? (
+              <div className="flex items-center justify-center h-40">
+                <p className="text-gray-500">No requests matching your search criteria.</p>
+              </div>
+            ) : (
               <StockRequestTable
                 stockRequests={paginatedRequests}
                 onRequestClick={handleTaskClick}
@@ -113,49 +136,43 @@ export default function AllStockRequest() {
                 setCurrentPage={setCurrentPage}
                 totalPages={totalPages}
               />
+            )}
+          </div>
+        </CardBody>
+
+        <CardFooter className="flex justify-center py-2">
+          {filteredRequests.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="light"
+                isDisabled={currentPage === 1}
+                onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              >
+                Previous
+              </Button>
+              
+              <Pagination
+                color="secondary"
+                page={currentPage}
+                total={totalPages}
+                onChange={setCurrentPage}
+                showControls={false}
+                className="mx-2"
+              />
+              
+              <Button
+                size="sm"
+                variant="light"
+                isDisabled={currentPage === totalPages || totalPages === 0}
+                onPress={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              >
+                Next
+              </Button>
             </div>
           )}
-        </div>
-
-        <div className="grid grid-flow-col mt-auto p-4">
-          <div className="w-full flex justify-center items-center bg-transparent">
-            <Button
-              size="sm"
-              style={{
-                background: "transparent",
-                border: "none",
-                boxShadow: "none",
-                color: currentPage === 1 ? "gray" : "black",
-              }}
-              onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-            <Pagination
-              color="secondary"
-              page={currentPage}
-              total={totalPages}
-              onChange={setCurrentPage}
-            />
-            <Button
-              size="sm"
-              style={{
-                background: "transparent",
-                border: "none",
-                boxShadow: "none",
-                color: currentPage === totalPages ? "gray" : "black",
-              }}
-              onPress={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
 
       <BlurModal isOpen={openPdfModal} onClose={handleClosePreview}>
         {selectedPdfUrl && (

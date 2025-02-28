@@ -47,7 +47,7 @@ const SignInPage = () => {
 
       localStorage.setItem("jwt", data.token);
 
-      router.push("/all-stock-requests");
+      router.push("/users");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);

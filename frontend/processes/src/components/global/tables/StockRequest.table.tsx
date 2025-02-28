@@ -69,7 +69,6 @@ export default function StockRequestTable({
 
   return (
     <div className="bg-white p-4 max-w-7xl w-full h-full flex flex-col">
-      <div className="flex-1 overflow-auto max-h-[calc(100vh-250px)] scrollbar-hide">
         <Table aria-label="Stock Requests Table" className="w-full min-w-max">
           <TableHeader columns={columns}>
             {(column) => (
@@ -119,6 +118,5 @@ export default function StockRequestTable({
           </TableBody>
         </Table>
       </div>
-    </div>
   );
 }

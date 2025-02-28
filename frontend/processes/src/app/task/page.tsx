@@ -24,6 +24,7 @@ import axiosInstance, {
 import { jwtDecode } from "jwt-decode";
 import { getCamundaTasks } from "@/utils/services/getApi";
 import PdfPreview from "@/components/global/pdf/PdfPreview";
+import LoadingScreen from "@/components/global/loading/loading";
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -203,7 +204,7 @@ export default function TaskPage() {
   };
 
   if (loading) {
-    return <p>Request loading...</p>;
+    return <LoadingScreen message="Loading requests..." />;
   }
 
   if (error) {

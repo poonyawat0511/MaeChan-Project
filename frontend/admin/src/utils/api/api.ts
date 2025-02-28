@@ -19,3 +19,4 @@ axiosInstance.interceptors.response.use(
 );
 
 export const stockUserApi = "/stock-user";
+export const dayApi = "/notify-days";
