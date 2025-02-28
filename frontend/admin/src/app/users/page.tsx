@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { StockUser } from "@/utils/types/stock-user";
 import StockUserTable from "@/components/tables/stockUserTable";
 import { getStockUser } from "@/utils/services/getApi";
@@ -18,10 +18,12 @@ import {
   ModalBody,
   ModalFooter,
   Chip,
+  Pagination,
 } from "@heroui/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import LoadingScreen from "@/components/loading/loading";
+
 interface PageState {
   stockUsers: StockUser[];
   loading: boolean;
@@ -31,6 +33,22 @@ interface PageState {
 }
 
 export default function UserPage() {
+  const [state, setState] = useState<PageState>({
+    stockUsers: [],
+    loading: true,
+    isAuthorized: false,
+    searchQuery: "",
+    userToDelete: null,
+  });
+
+  const { stockUsers, loading, isAuthorized, searchQuery, userToDelete } =
+    state;
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10; // Number of rows per page
+  const totalPages = Math.ceil(stockUsers.length / rowsPerPage);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,24 +73,12 @@ export default function UserPage() {
     fetchData();
   }, []);
 
-  const [state, setState] = useState<PageState>({
-    stockUsers: [],
-    loading: true,
-    isAuthorized: false,
-    searchQuery: "",
-    userToDelete: null,
-  });
-
-  const { stockUsers, loading, isAuthorized, searchQuery, userToDelete } =
-    state;
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   const handleSearchChange = useCallback((value: string) => {
     setState((prev) => ({
       ...prev,
       searchQuery: value,
     }));
+    setCurrentPage(1); // Reset pagination when searching
   }, []);
 
   const confirmDelete = useCallback(async () => {
@@ -104,7 +110,8 @@ export default function UserPage() {
     [onOpen]
   );
 
-  const filteredUsers = useCallback(() => {
+  // Filtering users based on search query
+  const filteredUsers = useMemo(() => {
     return stockUsers.filter(
       (user) =>
         user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -113,10 +120,16 @@ export default function UserPage() {
     );
   }, [stockUsers, searchQuery]);
 
+  // Paginate the filtered users
+  const paginatedUsers = useMemo(() => {
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    return filteredUsers.slice(start, end);
+  }, [filteredUsers, currentPage, rowsPerPage]);
+
   const handleSignIn = () => {
     window.location.href = "/signin";
   };
-  
 
   if (loading) {
     return <LoadingScreen message="Loading users..." />;
@@ -124,12 +137,7 @@ export default function UserPage() {
 
   if (!isAuthorized) {
     return (
-      <UnauthorizedCard
-        message="No users available"
-        onSignin={() => {
-          handleSignIn();
-        }}
-      />
+      <UnauthorizedCard message="No users available" onSignin={handleSignIn} />
     );
   }
 
@@ -167,7 +175,7 @@ export default function UserPage() {
 
         <CardBody className="p-0">
           <div className="h-[calc(100vh-220px)] flex flex-col">
-            {filteredUsers().length === 0 ? (
+            {paginatedUsers.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full py-12">
                 <div className="text-gray-400 mb-2">
                   <svg
@@ -206,15 +214,15 @@ export default function UserPage() {
               </div>
             ) : (
               <StockUserTable
-                stockUsers={filteredUsers()}
+                stockUsers={paginatedUsers}
                 onDelete={handleDeleteClick}
               />
             )}
           </div>
         </CardBody>
 
-        {/* Stats footer could be added here */}
-        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
+        {/* Footer Chips */}
+        <div className="px-6 py-4 bg-gray-50">
           <div className="flex flex-wrap gap-2">
             <Chip color="primary" variant="flat" size="sm">
               Total: {stockUsers.length}
@@ -225,6 +233,15 @@ export default function UserPage() {
             <Chip color="warning" variant="flat" size="sm">
               Pending: {stockUsers.filter((u) => !u.email).length}
             </Chip>
+            {/* Pagination */}
+            <div className="flex justify-center py-4 bg-gray-50">
+              <Pagination
+                showControls
+                total={totalPages}
+                page={currentPage}
+                onChange={setCurrentPage}
+              />
+            </div>
           </div>
         </div>
       </Card>
@@ -232,16 +249,14 @@ export default function UserPage() {
       {/* Delete Confirmation Modal */}
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
-            Confirm User Deletion
-          </ModalHeader>
+          <ModalHeader>Confirm User Deletion</ModalHeader>
           <ModalBody>
             {userToDelete && (
               <p>
                 Are you sure you want to delete user{" "}
-                <span className="font-semibold">
+                <strong>
                   {userToDelete.firstName} {userToDelete.lastName}
-                </span>
+                </strong>
                 ? This action cannot be undone.
               </p>
             )}

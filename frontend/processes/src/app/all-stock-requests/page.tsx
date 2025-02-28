@@ -5,7 +5,6 @@ import { StockRequest } from "@/utils/types/stock-request";
 
 import { Input } from "@heroui/input";
 import DownloadIcon from "@/components/global/icons/download.icon";
-import SearchIcon from "@/components/global/icons/search.icon";
 import { Button } from "@heroui/button";
 import BlurModal from "@/components/global/modals/BlurModal";
 import { Card, CardBody, CardHeader, CardFooter, Pagination } from "@heroui/react";
@@ -15,6 +14,7 @@ import StockRequestTable from "@/components/global/tables/StockRequest.table";
 import PdfPreview from "@/components/global/pdf/PdfPreview";
 import LoadingScreen from "@/components/global/loading/loading";
 import UnauthorizedCard from "@/components/global/cards/UnauthorizedCard";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 export default function AllStockRequest() {
   const [requests, setRequests] = useState<StockRequest[]>([]);
@@ -93,20 +93,20 @@ export default function AllStockRequest() {
           </div>
           
           <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 items-center">
-            <Input
+          <Input
               classNames={{
-                base: "max-w-full w-full sm:max-w-[20rem]",
-                mainWrapper: "h-full",
-                input: "text-small",
-                inputWrapper:
-                  "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
+                base: "max-w-full sm:max-w-xs",
+                inputWrapper: "bg-default-100",
               }}
-              placeholder="Search by request ID..."
+              placeholder="Search users..."
               size="sm"
-              endContent={<SearchIcon size={20} />}
+              startContent={
+                <MagnifyingGlassIcon className="h-4 w-4 text-gray-400" />
+              }
               type="search"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onValueChange={setSearchQuery}
+              isClearable
             />
 
             <Button

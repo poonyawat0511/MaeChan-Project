@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Selection,
   Table,
@@ -9,7 +9,6 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  Pagination,
   useDisclosure,
   Modal,
   ModalContent,
@@ -27,16 +26,8 @@ interface StockUserTableProps {
 
 export default function StockUserTable({ stockUsers, onDelete }: StockUserTableProps) {
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
-  const [page, setPage] = useState(1);
-  const [rowsPerPage] = useState(5);
   const [userToDelete, setUserToDelete] = useState<StockUser | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const paginatedUsers = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    return stockUsers.slice(start, end);
-  }, [stockUsers, page, rowsPerPage]);
 
   const columns = [
     { key: "stockUserId", label: "ID" },
@@ -89,7 +80,7 @@ export default function StockUserTable({ stockUsers, onDelete }: StockUserTableP
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={paginatedUsers}>
+        <TableBody items={stockUsers}>
           {(user) => (
             <TableRow key={user.stockUserId}>
               {(columnKey) => (
@@ -119,15 +110,6 @@ export default function StockUserTable({ stockUsers, onDelete }: StockUserTableP
           Delete Selected
         </Button>
       )}
-
-      <Pagination
-        showControls
-        showShadow
-        color="primary"
-        page={page}
-        total={Math.ceil(stockUsers.length / rowsPerPage)}
-        onChange={setPage}
-      />
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
