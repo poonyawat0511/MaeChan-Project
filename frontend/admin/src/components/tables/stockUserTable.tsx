@@ -1,34 +1,30 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React from "react";
 import {
-  Selection,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
   TableRow,
-  useDisclosure,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
+  Tooltip,
 } from "@heroui/react";
+import { TrashIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import { StockUser } from "@/utils/types/stock-user";
+import { Role } from "@/utils/types/role";
 
 interface StockUserTableProps {
   stockUsers: StockUser[];
-  onDelete: (stockUser: StockUser) => void;
+  currentPage: number;
+  onDelete: (userId: string) => void;
 }
 
-export default function StockUserTable({ stockUsers, onDelete }: StockUserTableProps) {
-  const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
-  const [userToDelete, setUserToDelete] = useState<StockUser | null>(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
+export default function StockUserTable({
+  stockUsers,
+  onDelete,
+}: StockUserTableProps) {
   const columns = [
     { key: "stockUserId", label: "ID" },
     { key: "firstName", label: "First Name" },
@@ -38,65 +34,98 @@ export default function StockUserTable({ stockUsers, onDelete }: StockUserTableP
     { key: "userHospitalId", label: "Hospital ID" },
     { key: "lineId", label: "Line UID" },
     { key: "signaturePath", label: "Signature" },
+    { key: "actions", label: "Actions" },
   ];
 
-  const handleSelectionChange = useCallback((keys: Selection) => {
-    setSelectedKeys(keys);
-  }, []);
-
-  const handleDeleteClick = useCallback(() => {
-    const selectedUser = stockUsers.find(user => selectedKeys instanceof Set && selectedKeys.has(user.stockUserId));
-    if (selectedUser) {
-      setUserToDelete(selectedUser);
-      onOpen();
-    }
-  }, [selectedKeys, stockUsers, onOpen]);
-
-  const confirmDelete = useCallback(() => {
-    if (userToDelete) {
-      onDelete(userToDelete);
-      setUserToDelete(null);
-      onClose();
-    }
-  }, [userToDelete, onDelete, onClose]);
-
   return (
-    <div className="bg-white p-4 rounded-lg w-full flex flex-col gap-4">
+    <div className="bg-white rounded-lg shadow-md p-6 w-full h-full flex flex-col">
       <Table
         aria-label="Stock Users Table"
-        selectionMode="multiple"
-        selectedKeys={selectedKeys}
-        onSelectionChange={handleSelectionChange}
-        className="min-w-full"
+        className="w-full min-w-max"
+        classNames={{
+          th: "bg-gray-50 text-gray-600 font-medium px-4 py-3 text-sm",
+          td: "px-4 py-3",
+        }}
       >
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn 
-              key={column.key} 
-              className="bg-gray-50"
-              align={column.key === "actions" ? "center" : "start"}
+            <TableColumn
+              key={column.key}
+              className="sticky top-0 bg-gray-50 z-10"
             >
               {column.label}
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={stockUsers}>
+        <TableBody items={stockUsers} emptyContent={"No users found"}>
           {(user) => (
-            <TableRow key={user.stockUserId}>
+            <TableRow
+              key={user.stockUserId}
+              className={
+                stockUsers.indexOf(user) % 2 === 0
+                  ? "bg-white hover:bg-blue-50"
+                  : "bg-gray-50 hover:bg-blue-50"
+              }
+            >
               {(columnKey) => (
                 <TableCell>
-                  {columnKey === "signaturePath" ? (
+                  {columnKey === "stockUserId" ? (
+                    <span className="font-mono text-xs text-gray-500">
+                      {user.stockUserId}
+                    </span>
+                  ) : columnKey === "email" ? (
+                    <a
+                      href={`mailto:${user.email}`}
+                      className="text-blue-600 hover:underline"
+                    >
+                      {user.email}
+                    </a>
+                  ) : columnKey === "role" ? (
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        user.role.includes("ADMIN" as Role)
+                          ? "bg-purple-100 text-purple-800"
+                          : user.role.includes("DIRECTOR" as Role)
+                          ? "bg-green-100 text-green-800"
+                          : user.role.includes("APPROVER" as Role)
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {user.role}
+                    </span>
+                  ) : columnKey === "signaturePath" ? (
                     user.signaturePath ? (
-                      <img 
-                        src={user.signaturePath} 
-                        alt="Signature"
-                        className="w-16 h-16 object-contain border rounded-md shadow-sm"
-                      />
+                      <div className="relative group">
+                        <img
+                          src={user.signaturePath}
+                          alt="Signature"
+                          className="w-16 h-16 object-contain border rounded-md shadow-sm group-hover:opacity-90 transition-all"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-md flex items-center justify-center transition-all"></div>
+                      </div>
                     ) : (
-                      <span className="text-gray-400 italic">No Signature</span>
+                      <span className="text-gray-400 italic text-sm">
+                        No Signature
+                      </span>
                     )
+                  ) : columnKey === "actions" ? (
+                    <Tooltip content="Delete user">
+                      <Button
+                        size="sm"
+                        color="danger"
+                        variant="light"
+                        isIconOnly
+                        className="flex items-center justify-center"
+                        onPress={() => onDelete(user.stockUserId)}
+                      >
+                        <TrashIcon className="h-4 w-4" />
+                      </Button>
+                    </Tooltip>
                   ) : (
-                    user[columnKey as keyof StockUser]
+                    user[columnKey as keyof StockUser] || (
+                      <span className="text-gray-400 italic text-sm">—</span>
+                    )
                   )}
                 </TableCell>
               )}
@@ -105,28 +134,10 @@ export default function StockUserTable({ stockUsers, onDelete }: StockUserTableP
         </TableBody>
       </Table>
 
-      {selectedKeys instanceof Set && selectedKeys.size > 0 && (
-        <Button color="danger" onPress={handleDeleteClick}>
-          Delete Selected
-        </Button>
-      )}
-
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalContent>
-          <ModalHeader>Confirm User Deletion</ModalHeader>
-          <ModalBody>
-            {userToDelete && (
-              <p>
-                Are you sure you want to delete user <span className="font-semibold">{userToDelete.firstName} {userToDelete.lastName}</span>? This action cannot be undone.
-              </p>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="flat" onPress={onClose}>Cancel</Button>
-            <Button color="danger" onPress={confirmDelete}>Delete</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <div className="mt-4 text-sm text-gray-500 flex items-center gap-2">
+        <ExclamationCircleIcon className="h-4 w-4 text-gray-400" />
+        <span>Showing {stockUsers.length} users</span>
+      </div>
     </div>
   );
 }

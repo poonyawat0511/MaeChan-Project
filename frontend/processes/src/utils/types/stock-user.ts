@@ -1,13 +1,13 @@
 import { Role } from "./role";
 
 export interface StockUser {
-  id: string;
+  stockUserId: string;
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-  signature: string;
-  hospitalId: string;
+  signaturePath: string;
+  stockHospitalId: string;
   lineId: string;
-  role: Role[];
+  role: Role;
 }

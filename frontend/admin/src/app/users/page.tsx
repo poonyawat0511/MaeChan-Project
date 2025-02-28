@@ -1,131 +1,89 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { StockUser } from "@/utils/types/stock-user";
-import StockUserTable from "@/components/tables/stockUserTable";
 import { getStockUser } from "@/utils/services/getApi";
-import { axiosInstance, stockUserApi } from "@/utils/api/api";
 import {
   Input,
   Button,
   Card,
   CardBody,
   CardHeader,
-  useDisclosure,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Chip,
+  CardFooter,
   Pagination,
+  Tooltip,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@heroui/react";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import LoadingScreen from "@/components/loading/loading";
-
-interface PageState {
-  stockUsers: StockUser[];
-  loading: boolean;
-  isAuthorized: boolean;
-  searchQuery: string;
-  userToDelete: StockUser | null;
-}
+import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
+import {
+  MagnifyingGlassIcon,
+  PlusIcon,
+  ArrowDownTrayIcon,
+  FunnelIcon,
+  EllipsisVerticalIcon,
+  UserGroupIcon,
+} from "@heroicons/react/24/outline";
+import StockUserTable from "@/components/tables/stockUserTable";
+import { axiosInstance, stockUserApi } from "@/utils/api/api";
 
 export default function UserPage() {
-  const [state, setState] = useState<PageState>({
-    stockUsers: [],
-    loading: true,
-    isAuthorized: false,
-    searchQuery: "",
-    userToDelete: null,
-  });
-
-  const { stockUsers, loading, isAuthorized, searchQuery, userToDelete } =
-    state;
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  // Pagination State
-  const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 10; // Number of rows per page
-  const totalPages = Math.ceil(stockUsers.length / rowsPerPage);
+  const [users, setUsers] = useState<StockUser[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [error, setError] = useState<string | null>(null);
+  const itemsPerPage = 10;
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getStockUser();
-        setState((prev) => ({
-          ...prev,
-          stockUsers: data,
-          isAuthorized: true,
-          loading: false,
-        }));
-      } catch (error) {
-        console.error("Error fetching stock users:", error);
-        setState((prev) => ({
-          ...prev,
-          isAuthorized: false,
-          loading: false,
-        }));
-      }
-    };
-
-    fetchData();
+    fetchUsers();
   }, []);
 
-  const handleSearchChange = useCallback((value: string) => {
-    setState((prev) => ({
-      ...prev,
-      searchQuery: value,
-    }));
-    setCurrentPage(1); // Reset pagination when searching
-  }, []);
-
-  const confirmDelete = useCallback(async () => {
-    if (!userToDelete) return;
-
+  const fetchUsers = async () => {
     try {
-      await axiosInstance.delete(`${stockUserApi}/${userToDelete.stockUserId}`);
-      setState((prev) => ({
-        ...prev,
-        stockUsers: prev.stockUsers.filter(
-          (user) => user.stockUserId !== userToDelete.stockUserId
-        ),
-        userToDelete: null,
-      }));
-      onClose();
+      setLoading(true);
+      const userData = await getStockUser();
+      setUsers(userData);
+      setError(null);
+    } catch {
+      console.log("Session expired. Redirecting to sign-in...");
+      setError("Failed to load users");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (stockUserId: string) => {
+    try {
+      await axiosInstance.delete(`${stockUserApi}/${stockUserId}`);
+      setUsers((prevUsers) =>
+        prevUsers.filter((user) => user.stockUserId !== stockUserId)
+      );
+
+      // Show toast notification here if you have a toast component
+      console.log("User deleted successfully");
     } catch (error) {
       console.error("Error deleting user:", error);
+      // Show error toast here
+    } finally {
     }
-  }, [userToDelete, onClose]);
+  };
 
-  const handleDeleteClick = useCallback(
-    (user: StockUser) => {
-      setState((prev) => ({
-        ...prev,
-        userToDelete: user,
-      }));
-      onOpen();
-    },
-    [onOpen]
+  const filteredUsers = users.filter(
+    (user) =>
+      user.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Filtering users based on search query
-  const filteredUsers = useMemo(() => {
-    return stockUsers.filter(
-      (user) =>
-        user.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [stockUsers, searchQuery]);
-
-  // Paginate the filtered users
-  const paginatedUsers = useMemo(() => {
-    const start = (currentPage - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    return filteredUsers.slice(start, end);
-  }, [filteredUsers, currentPage, rowsPerPage]);
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleSignIn = () => {
     window.location.href = "/signin";
@@ -135,30 +93,38 @@ export default function UserPage() {
     return <LoadingScreen message="Loading users..." />;
   }
 
-  if (!isAuthorized) {
+  if (error) {
     return (
       <UnauthorizedCard message="No users available" onSignin={handleSignIn} />
     );
   }
 
   return (
-    <div className="flex justify-center w-full min-h-screen bg-gray-50 p-4">
-      <Card className="max-w-7xl w-full shadow-md">
-        <CardHeader className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center px-6 py-5 border-b">
-          <div className="flex flex-col">
-            <h1 className="text-2xl font-bold text-gray-800">
-              User Management
-            </h1>
-            <p className="text-gray-500 text-sm">
-              Manage stock users and their permissions
-            </p>
+    <div className="flex justify-center w-full min-h-screen bg-gray-50 p-4 md:p-6">
+      <Card className="rounded-xl bg-white shadow-md w-full flex flex-col max-h-[calc(100vh-32px)] border border-gray-100">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between px-6 py-5 border-b border-gray-100">
+          <div className="flex items-center">
+            <div className="mr-4">
+            <div className="h-12 w-12 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl shadow-md flex items-center justify-center mr-4">
+              <UserGroupIcon className="h-6 w-6 text-white" />
+            </div>
+            </div>
+            <div>
+              <h1 className="text-xl font-semibold text-gray-800">
+                User Management
+              </h1>
+              <p className="text-gray-500 text-sm">
+                {filteredUsers.length} users found
+              </p>
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 items-center">
             <Input
               classNames={{
                 base: "max-w-full sm:max-w-xs",
-                inputWrapper: "bg-default-100",
+                inputWrapper:
+                  "bg-gray-50 hover:bg-gray-100 focus-within:bg-white border-2 border-gray-200",
               }}
               placeholder="Search users..."
               size="sm"
@@ -167,46 +133,70 @@ export default function UserPage() {
               }
               type="search"
               value={searchQuery}
-              onValueChange={handleSearchChange}
+              onValueChange={setSearchQuery}
               isClearable
+              aria-label="Search users"
             />
+
+            <div className="flex gap-2">
+              <Tooltip content="Add new user">
+                <Button
+                  color="primary"
+                  className="bg-purple-600 text-white"
+                  startContent={<PlusIcon className="h-4 w-4" />}
+                >
+                  Add User
+                </Button>
+              </Tooltip>
+
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button
+                    variant="bordered"
+                    className="min-w-0 px-2 border-gray-200"
+                    isIconOnly
+                  >
+                    <EllipsisVerticalIcon className="h-5 w-5 text-gray-500" />
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu aria-label="User actions">
+                  <DropdownItem
+                    key="export-users"
+                    startContent={<ArrowDownTrayIcon className="h-4 w-4" />}
+                  >
+                    Export Users
+                  </DropdownItem>
+                  <DropdownItem
+                    key="filter-options"
+                    startContent={<FunnelIcon className="h-4 w-4" />}
+                  >
+                    Filter Options
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </div>
           </div>
         </CardHeader>
 
-        <CardBody className="p-0">
-          <div className="h-[calc(100vh-220px)] flex flex-col">
-            {paginatedUsers.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full py-12">
-                <div className="text-gray-400 mb-2">
-                  <svg
-                    className="w-12 h-12 mx-auto"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                    />
-                  </svg>
+        <CardBody className="p-0 overflow-hidden flex-1 items-center">
+          <div className="h-full overflow-auto">
+            {filteredUsers.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-64 p-6">
+                <div className="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <MagnifyingGlassIcon className="h-8 w-8 text-gray-400" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-700">
-                  No Users Found
-                </h3>
-                <p className="text-gray-500 text-center mt-1 max-w-md px-6">
+                <p className="text-gray-700 font-medium mb-1">No users found</p>
+                <p className="text-gray-500 text-sm text-center max-w-md">
                   {searchQuery
-                    ? `No users matching "${searchQuery}" were found. Try adjusting your search.`
-                    : "There are no users available in the system yet."}
+                    ? `No results matching "${searchQuery}". Try a different search term.`
+                    : "There are no users available. Add a new user to get started."}
                 </p>
                 {searchQuery && (
                   <Button
                     color="primary"
                     variant="flat"
-                    size="sm"
                     className="mt-4"
-                    onPress={() => handleSearchChange("")}
+                    onPress={() => setSearchQuery("")}
                   >
                     Clear Search
                   </Button>
@@ -215,62 +205,58 @@ export default function UserPage() {
             ) : (
               <StockUserTable
                 stockUsers={paginatedUsers}
-                onDelete={handleDeleteClick}
+                currentPage={currentPage}
+                onDelete={handleDelete}
               />
             )}
           </div>
         </CardBody>
 
-        {/* Footer Chips */}
-        <div className="px-6 py-4 bg-gray-50">
-          <div className="flex flex-wrap gap-2">
-            <Chip color="primary" variant="flat" size="sm">
-              Total: {stockUsers.length}
-            </Chip>
-            <Chip color="success" variant="flat" size="sm">
-              Active: {stockUsers.filter((u) => u.userHospitalId).length}
-            </Chip>
-            <Chip color="warning" variant="flat" size="sm">
-              Pending: {stockUsers.filter((u) => !u.email).length}
-            </Chip>
-            {/* Pagination */}
-            <div className="flex justify-center py-4 bg-gray-50">
-              <Pagination
-                showControls
-                total={totalPages}
-                page={currentPage}
-                onChange={setCurrentPage}
-              />
-            </div>
-          </div>
-        </div>
-      </Card>
+        <CardFooter className="flex justify-between items-center py-3 px-6 border-t border-gray-100">
+          <p className="text-sm text-gray-500">
+            Showing{" "}
+            {Math.min(
+              filteredUsers.length,
+              (currentPage - 1) * itemsPerPage + 1
+            )}{" "}
+            - {Math.min(currentPage * itemsPerPage, filteredUsers.length)} of{" "}
+            {filteredUsers.length} users
+          </p>
 
-      {/* Delete Confirmation Modal */}
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalContent>
-          <ModalHeader>Confirm User Deletion</ModalHeader>
-          <ModalBody>
-            {userToDelete && (
-              <p>
-                Are you sure you want to delete user{" "}
-                <strong>
-                  {userToDelete.firstName} {userToDelete.lastName}
-                </strong>
-                ? This action cannot be undone.
-              </p>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="flat" onPress={onClose}>
-              Cancel
-            </Button>
-            <Button color="danger" onPress={confirmDelete}>
-              Delete
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          {filteredUsers.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="flat"
+                isDisabled={currentPage === 1}
+                onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                className="text-gray-700"
+              >
+                Previous
+              </Button>
+              <Pagination
+                color="secondary"
+                page={currentPage}
+                total={totalPages}
+                onChange={setCurrentPage}
+                showControls={false}
+                className="mx-2"
+              />
+              <Button
+                size="sm"
+                variant="flat"
+                isDisabled={currentPage === totalPages || totalPages === 0}
+                onPress={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                className="text-gray-700"
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </CardFooter>
+      </Card>
     </div>
   );
 }
