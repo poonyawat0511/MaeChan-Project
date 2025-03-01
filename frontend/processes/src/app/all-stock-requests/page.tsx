@@ -111,9 +111,9 @@ export default function AllStockRequest() {
   }
 
   return (
-    <div className="flex justify-center w-full min-h-screen p-4 bg-gradient-to-br from-gray-50 to-gray-100">
-      <Card className="rounded-xl bg-white shadow-md w-full flex flex-col max-h-[calc(100vh-32px)] border border-gray-100">
-        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between px-6 py-4 bg-white border-b border-gray-100">
+    <div className="w-full p-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex">
+      <Card className="rounded-xl bg-white shadow-md w-full max-w-full mx-auto flex flex-col h-[calc(100vh-32px)] border border-gray-100">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between px-4 sm:px-6 py-4 bg-white border-b border-gray-100 flex-shrink-0">
           <div className="flex items-center gap-3">
             <DocumentChartBarIcon className="h-8 w-8 text-violet-500" />
             <div>
@@ -135,7 +135,7 @@ export default function AllStockRequest() {
           <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 items-center">
             <Input
               classNames={{
-                base: "max-w-full sm:max-w-xs",
+                base: "w-full sm:w-64",
                 inputWrapper:
                   "bg-default-100 border-1 hover:bg-default-200/70 transition-all",
               }}
@@ -150,7 +150,7 @@ export default function AllStockRequest() {
               isClearable
             />
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full sm:w-auto justify-end">
               <Tooltip content="Refresh data">
                 <Button
                   isIconOnly
@@ -179,8 +179,8 @@ export default function AllStockRequest() {
           </div>
         </CardHeader>
 
-        <CardBody className="p-0 overflow-hidden flex-1 items-center">
-          <div className="h-full overflow-auto">
+        <CardBody className="p-0 overflow-hidden flex-grow relative">
+          <div className="h-full w-full overflow-auto">
             {filteredRequests.length === 0 ? (
               <EmptyStateMessage
                 onClearFilters={() => {
@@ -189,19 +189,21 @@ export default function AllStockRequest() {
                 }}
               />
             ) : (
-              <StockRequestTable
-                stockRequests={paginatedRequests}
-                onRequestClick={handleTaskClick}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                totalPages={totalPages}
-              />
+              <div className="w-full h-full">
+                <StockRequestTable
+                  stockRequests={paginatedRequests}
+                  onRequestClick={handleTaskClick}
+                  currentPage={currentPage}
+                  setCurrentPage={setCurrentPage}
+                  totalPages={totalPages}
+                />
+              </div>
             )}
           </div>
         </CardBody>
 
-        <CardFooter className="flex justify-between py-3 px-6 border-t border-gray-100 bg-gray-50/50">
-          <div className="text-sm text-gray-500">
+        <CardFooter className="flex flex-col sm:flex-row sm:justify-between py-3 px-4 sm:px-6 border-t border-gray-100 bg-gray-50/50 gap-3 flex-shrink-0">
+          <div className="text-sm text-gray-500 text-center sm:text-left">
             Showing{" "}
             {paginatedRequests.length > 0
               ? (currentPage - 1) * itemsPerPage + 1
@@ -211,7 +213,7 @@ export default function AllStockRequest() {
           </div>
 
           {filteredRequests.length > 0 && (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-center sm:justify-end gap-2 w-full sm:w-auto">
               <Button
                 size="sm"
                 variant="flat"
