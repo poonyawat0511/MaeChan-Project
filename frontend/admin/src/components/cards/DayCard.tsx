@@ -66,7 +66,10 @@ export default function DayCard({ days, onActive }: DayCardProps) {
           </CardBody>
 
           <CardFooter className="flex justify-between px-4 py-1">
-            <Switch checked={day.active} onChange={() => handleToggle(day)} />
+            <Switch
+              isSelected={day.active}
+              onChange={() => handleToggle(day)}
+            />
           </CardFooter>
         </Card>
       ))}
