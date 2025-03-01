@@ -108,7 +108,7 @@ export default function UserPage() {
 
   return (
     <div className="flex justify-center w-full min-h-screen bg-gray-50 p-4 md:p-6">
-      <Card className="bg-white shadow-md w-full flex flex-col max-h-[calc(100vh-32px)] border border-gray-100">
+      <Card className="bg-white shadow-md w-full flex flex-col border border-gray-100">
         <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between px-6 py-5 border-b border-gray-100">
           <div className="flex items-center">
             <div className="mr-4">
@@ -175,27 +175,25 @@ export default function UserPage() {
           </div>
         </CardHeader>
 
-        <CardBody className="p-0 overflow-hidden flex-1 items-center">
-          <div className="h-full overflow-auto">
-            {filteredUsers.length === 0 ? (
-              <EmptyState
-                message="No users found"
-                subMessage={
-                  searchQuery
-                    ? `No results matching "${searchQuery}". Try a different search term.`
-                    : "There are no users available. Add a new user to get started."
-                }
-                showClearButton={!!searchQuery}
-                onClear={() => setSearchQuery("")}
-              />
-            ) : (
-              <StockUserTable
-                stockUsers={paginatedUsers}
-                currentPage={currentPage}
-                onDelete={handleConfirmDelete}
-              />
-            )}
-          </div>
+        <CardBody className="p-0 overflow-auto flex-grow">
+          {filteredUsers.length === 0 ? (
+            <EmptyState
+              message="No users found"
+              subMessage={
+                searchQuery
+                  ? `No results matching "${searchQuery}". Try a different search term.`
+                  : "There are no users available. Add a new user to get started."
+              }
+              showClearButton={!!searchQuery}
+              onClear={() => setSearchQuery("")}
+            />
+          ) : (
+            <StockUserTable
+              stockUsers={paginatedUsers}
+              currentPage={currentPage}
+              onDelete={handleConfirmDelete}
+            />
+          )}
         </CardBody>
 
         <CardFooter className="flex justify-between items-center py-3 px-6 border-t border-gray-100">

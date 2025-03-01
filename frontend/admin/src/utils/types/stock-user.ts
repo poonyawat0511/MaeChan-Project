@@ -9,5 +9,5 @@ export interface StockUser {
   signaturePath: string;
   userHospitalId: string;
   lineId: string;
-  role: Role[];
+  role: Role;
 }
