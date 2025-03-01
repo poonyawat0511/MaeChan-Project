@@ -25,9 +25,11 @@ public class StockRequestList {
     @Column(name = "request_list_id")
     private Long requestListId;
 
+    //TODO: Add relation to StockRequest
     @Column(name = "request_id")
     private Long requestId;
 
+    //TODO: Add relation to stock item
     @Column(name = "item_id")
     private Long itemId;
 

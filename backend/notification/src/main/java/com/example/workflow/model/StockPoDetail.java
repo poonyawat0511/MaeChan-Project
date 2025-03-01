@@ -25,9 +25,11 @@ public class StockPoDetail {
     @Column(name = "stock_po_detail_id")
     private Long stockPoDetailId;
 
+    //TODO: Add relation to StockPo
     @Column(name = "stock_po_id")
     private Long stockPoId;
 
+    //TODO: Add relation to stock item
     @Column(name = "item_id")
     private Long itemId;
 
@@ -106,6 +108,7 @@ public class StockPoDetail {
     @Column(name = "item_drug_account")
     private String itemDrugAccount;
 
+    //TODO: Add relation
     @Column(name = "request_list_id")
     private Long requestListId;
 
@@ -205,6 +208,7 @@ public class StockPoDetail {
     @Column(name = "back_order_qty")
     private Integer backOrderQty;
 
+    //TODO: Add relation
     @Column(name = "last_warehouse_id")
     private Long lastWarehouseId;
 

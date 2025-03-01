@@ -31,6 +31,7 @@ public class StockBudget {
     @Column(name = "budget_status")
     private boolean budgetStatus;
 
+    //TODO: Add relation
     @Column(name = "stock_budget_type_id")
     private Long stockBudgetTypeId;
 

@@ -25,6 +25,7 @@ public class NotifyTargetUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //TODO: Add relation to UserHospital
     @Column(name = "target_user")
     private Long targetUser;
 }

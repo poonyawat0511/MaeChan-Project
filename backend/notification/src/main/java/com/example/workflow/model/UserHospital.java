@@ -47,7 +47,7 @@ public class UserHospital implements UserDetails {
     @Column(name = "signature_path", nullable = true)
     private String signaturePath;
 
-    //TODO: Add relation
+    //TODO: Add relation to stock user
     private Long stockUserId;
 
     private Role role;

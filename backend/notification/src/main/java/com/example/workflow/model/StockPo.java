@@ -28,6 +28,7 @@ public class StockPo {
     @Column(name = "stock_po_id")
     private Long stockPoId;
 
+    //TODO: Add relation
     @Column(name = "warehouse_id")
     private Long warehouseId;
 
@@ -40,6 +41,7 @@ public class StockPo {
     @Column(name = "supplier_id")
     private Long supplierId;
 
+    //TODO: Add relation to stock budget
     @Column(name = "budget_id")
     private Long budgetId;
 
@@ -259,6 +261,7 @@ public class StockPo {
     @Column(name = "stock_po_adj_before_vat")
     private Double stockPoAdjBeforeVat;
 
+    //TODO: Add relation to StockRequest
     @Column(name = "ref_request_id")
     private Long refRequestId;
 

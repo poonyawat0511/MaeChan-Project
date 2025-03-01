@@ -41,6 +41,7 @@ public class StockRequest {
     @Column(name = "request_receive_date")
     private LocalDate requestReceiveDate;
 
+    //TODO: Add relation 
     @Column(name = "request_warehouse_id")
     private String requestWarehouseId;
 
@@ -50,6 +51,7 @@ public class StockRequest {
     @Column(name = "use_date")
     private LocalDate useDate;
 
+    //TODO: Add relation to StockPo
     @Column(name = "stock_po_id")
     private Long stockPoId;
 
@@ -76,6 +78,7 @@ public class StockRequest {
     @Column(name = "transport_day")
     private Integer transportDay;
 
+    //TODO: Add relation to Stock budget
     @Column(name = "budget_id")
     private String budgetId;
 
@@ -94,12 +97,14 @@ public class StockRequest {
     @Column(name = "project_id")
     private String projectId;
 
+    //TODO: Add relation to StockUser
     @Column(name = "stock_user_approve_id")
     private Long stockUserApprove;
 
     @Column(name = "stock_approve_date")
     private LocalDate stockApproveDate;
 
+    //TODO: Add relation to StockUser
     @Column(name = "stock_user_id")
     private Long stockUser;
 
