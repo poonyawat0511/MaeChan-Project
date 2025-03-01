@@ -3,12 +3,12 @@ import { ElementType, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import {
-  HomeIcon,
-  ClipboardDocumentListIcon,
+  CalendarDaysIcon,
   CurrencyDollarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   PowerIcon,
+  UserGroupIcon,
 } from "@heroicons/react/24/outline";
 
 interface MenuItem {
@@ -27,13 +27,13 @@ const SideBar = () => {
     {
       id: "ListUser",
       label: "List User",
-      icon: HomeIcon,
+      icon: UserGroupIcon,
       link: "/users",
     },
     {
       id: "days",
       label: "Day",
-      icon: ClipboardDocumentListIcon,
+      icon: CalendarDaysIcon,
       link: "/days",
     },
     {

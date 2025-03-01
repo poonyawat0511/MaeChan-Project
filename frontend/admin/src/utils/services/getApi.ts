@@ -1,6 +1,7 @@
-import { axiosInstance, dayApi, stockUserApi } from "../api/api";
+import { axiosInstance, dayApi, stockUserApi, timeApi } from "../api/api";
 import { Days } from "../types/day";
 import { StockUser } from "../types/stock-user";
+import { Times } from "../types/time";
 
 // Function to get stock requests
 export const getStockUser = async (): Promise<StockUser[]> => {
@@ -19,6 +20,16 @@ export const getNotifyDay = async (): Promise<Days[]> => {
     return response.data;
   } catch (error) {
     console.error("Error fetching Days :", error);
+    throw error;
+  }
+};
+
+export const getNotifyTime = async (): Promise<Times[]> => {
+  try {
+    const response = await axiosInstance.get<Times[]>(timeApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Time :", error);
     throw error;
   }
 };
