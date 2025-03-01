@@ -21,15 +21,15 @@ import { Days } from "@/utils/types/day";
 import {
   ArrowPathIcon,
   CalendarDaysIcon,
-  PlusIcon,
   ClockIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import LoadingScreen from "@/components/loading/loading";
 import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import { Times } from "@/utils/types/time";
-import { axiosInstance, dayApi } from "@/utils/api/api";
+import { axiosInstance, dayApi, timeApi } from "@/utils/api/api";
 import DayFormModal from "@/components/modals/DayModalForm";
-import BlurModal from "@/components/modals/BlurModal";
+import TimeFormModal from "@/components/modals/TimeModalForm";
 
 export default function DayPage() {
   const [days, setDays] = useState<Days[]>([]);
@@ -37,15 +37,18 @@ export default function DayPage() {
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [editData, setEditData] = useState<{
+  const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
+  const [editData] = useState<{
     id?: string;
     name: string;
     active: boolean;
   } | null>(null);
+  const [editDataTime, setEditDataTime] = useState<{
+    id?: string;
+    time: string;
+  } | null>(null);
   const [selectedTime, setSelectedTime] = useState("Select Time");
   const [times, setTimes] = useState<Times[]>([]);
-  const [selectedDayId, setSelectedDayId] = useState<string | null>(null);
 
   const fetchData = async () => {
     try {
@@ -68,14 +71,9 @@ export default function DayPage() {
     fetchData();
   }, []);
 
-  const handleCreate = () => {
-    setEditData(null);
-    setIsModalOpen(true);
-  };
-
-  const handleEdit = (day: Days) => {
-    setEditData({ id: day.id, name: day.name, active: day.active });
-    setIsModalOpen(true);
+  const handleCreateTime = () => {
+    setEditDataTime(null);
+    setIsTimeModalOpen(true);
   };
 
   const handleSubmit = async (data: { name: string; active?: boolean }) => {
@@ -99,22 +97,55 @@ export default function DayPage() {
     }
   };
 
-  const handleConfirmDelete = (id: string) => {
-    setSelectedDayId(id);
-    setIsDeleteModalOpen(true);
+  // Toggle active status of a day
+  const handleToggleActive = async (updatedDay: Days) => {
+    try {
+      const response = await axiosInstance.patch(`${dayApi}/${updatedDay.id}`, {
+        name: updatedDay.name,
+        active: updatedDay.active,
+      });
+
+      console.log("Updated Response:", response.data);
+
+      setDays((prevDays) =>
+        prevDays.map((day) => (day.id === updatedDay.id ? response.data : day))
+      );
+    } catch (error) {
+      console.error("Error updating day:", error);
+    }
   };
 
-  const handleDelete = async () => {
-    if (!selectedDayId) return;
+  const handleSubmitTime = async (data: { time: string }) => {
     try {
-      await axiosInstance.delete(`${dayApi}/${selectedDayId}`);
-      setDays((prevDays) => prevDays.filter((day) => day.id !== selectedDayId));
-      console.log("Day deleted successfully");
+      let response;
+
+      console.log("Submitting new time:", data);
+
+      if (editDataTime && editDataTime.id) {
+        response = await axiosInstance.patch(
+          `${timeApi}/${editDataTime.id}`,
+          data
+        );
+      } else {
+        response = await axiosInstance.post(timeApi, data);
+      }
+
+      console.log("Response:", response.data);
+
+      fetchData();
+      setIsTimeModalOpen(false);
     } catch (error) {
-      console.error("Error deleting day:", error);
-    } finally {
-      setIsDeleteModalOpen(false);
-      setSelectedDayId(null);
+      console.error("Error submitting time:", error);
+    }
+  };
+
+  const handleDeleteTime = async (id: string) => {
+    try {
+      await axiosInstance.delete(`${timeApi}/${id}`);
+      setTimes((prevTimes) => prevTimes.filter((time) => time.id !== id));
+      console.log("Time deleted successfully");
+    } catch (error) {
+      console.error("Error deleting time:", error);
     }
   };
 
@@ -142,12 +173,12 @@ export default function DayPage() {
       {/* Parent Container with Flex Row */}
       <div className="flex flex-col md:flex-row gap-6">
         {/* Left Section: Main Info Card */}
-        <Card className="flex-1 bg-gradient-to-r from-primary-500 to-primary-700">
+        <Card className="flex-1 bg-gradient-to-r from-purple-500 to-blue-200">
           <CardBody className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-6">
             <div className="flex items-center gap-4">
               <Avatar
                 icon={<CalendarDaysIcon />}
-                className="bg-white text-primary"
+                className="bg-white text-secondary"
                 size="lg"
               />
               <div>
@@ -159,15 +190,7 @@ export default function DayPage() {
                 </p>
               </div>
             </div>
-            <div className="flex gap-3">
-              <Button
-                color="success"
-                variant="flat"
-                startContent={<PlusIcon />}
-                onPress={handleCreate}
-              >
-                Create
-              </Button>
+            <div className="flex gap-1">
               <Button
                 color="default"
                 variant="flat"
@@ -207,7 +230,17 @@ export default function DayPage() {
                     key={time.id}
                     onPress={() => handleTimeSelect(time.time)}
                   >
-                    {time.time}
+                    <div className="flex justify-between items-center w-full">
+                      {time.time}
+                      <Button
+                        size="sm"
+                        variant="light"
+                        color="danger"
+                        onPress={() => handleDeleteTime(time.id)}
+                      >
+                        <XMarkIcon />
+                      </Button>
+                    </div>
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -215,9 +248,9 @@ export default function DayPage() {
             <Button
               color="primary"
               className="w-full mt-4"
-              onPress={() => console.log("Applied time:", selectedTime)}
+              onPress={handleCreateTime}
             >
-              Apply Time
+              Add New Time
             </Button>
           </CardBody>
         </Card>
@@ -238,8 +271,7 @@ export default function DayPage() {
               <DayCard
                 key={day.id}
                 days={[day]}
-                onEdit={handleEdit}
-                onDelete={handleConfirmDelete}
+                onActive={handleToggleActive}
               />
             ))}
           </div>
@@ -254,18 +286,12 @@ export default function DayPage() {
         onSubmit={handleSubmit}
       />
 
-      <BlurModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        title="Confirm Deletion"
-        onAction={handleDelete}
-        actionLabel="Delete"
-      >
-        <p>
-          Are you sure you want to delete this day? This action cannot be
-          undone.
-        </p>
-      </BlurModal>
+      <TimeFormModal
+        isOpen={isTimeModalOpen}
+        onClose={() => setIsTimeModalOpen(false)}
+        title="Create new time"
+        onSubmit={handleSubmitTime}
+      />
     </div>
   );
 }

@@ -1,18 +1,16 @@
 import { Days } from "@/utils/types/day";
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
   Card,
   CardHeader,
   Chip,
   CardBody,
   CardFooter,
-  Button,
+  Switch,
 } from "@heroui/react";
 
 interface DayCardProps {
   days: Days[];
-  onEdit: (day: Days) => void;
-  onDelete: (id: string) => void;
+  onActive: (day: Days) => void;
 }
 
 const dayColorMap: Record<string, string> = {
@@ -25,7 +23,11 @@ const dayColorMap: Record<string, string> = {
   sunday: "bg-red-100 text-red-700",
 };
 
-export default function DayCard({ days, onEdit, onDelete }: DayCardProps) {
+export default function DayCard({ days, onActive }: DayCardProps) {
+  const handleToggle = (day: Days) => {
+    onActive({ ...day, active: !day.active });
+  };
+
   return (
     <div className="flex flex-col items-center gap-4">
       {days.map((day) => (
@@ -38,11 +40,11 @@ export default function DayCard({ days, onEdit, onDelete }: DayCardProps) {
               <h2>
                 <Chip
                   className={`${
-                    dayColorMap[day.name.toLowerCase()] ||
+                    dayColorMap[day.name?.toLowerCase() ?? "unknown"] ||
                     "bg-gray-100 text-gray-700"
                   }`}
                 >
-                  {day.name}
+                  {day.name ?? "Unknown"}
                 </Chip>
               </h2>
               <h4 className="text-lg font-semibold text-default-800">
@@ -53,31 +55,18 @@ export default function DayCard({ days, onEdit, onDelete }: DayCardProps) {
           <CardBody className="text-default-600">
             <p className="text-sm text-default-400">
               Status:{" "}
-              <span className={day.active ? "text-green-600 gap-5" : "text-red-600 gap-5"}>
+              <span
+                className={
+                  day.active ? "text-green-600 gap-5" : "text-red-600 gap-5"
+                }
+              >
                 {day.active ? "Active" : "Inactive"}
               </span>
             </p>
           </CardBody>
 
           <CardFooter className="flex justify-between px-4 py-1">
-            <Button
-              size="sm"
-              radius="md"
-              variant="light"
-              color="danger"
-              onPress={() => onDelete(day.id)}
-            >
-              <TrashIcon className="w-4 h-4" />
-            </Button>
-            <Button
-              size="sm"
-              radius="md"
-              variant="light"
-              color="default"
-              onPress={() => onEdit(day)}
-            >
-              <PencilSquareIcon className="w-4 h-4" />
-            </Button>
+            <Switch checked={day.active} onChange={() => handleToggle(day)} />
           </CardFooter>
         </Card>
       ))}

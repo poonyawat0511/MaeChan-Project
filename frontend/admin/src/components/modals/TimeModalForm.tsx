@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -7,49 +7,30 @@ import {
   Button,
   Form,
   Input,
-  Switch,
 } from "@heroui/react";
 
 interface FormModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
-  onSubmit: (formData: { name: string; active: boolean }) => void;
-  initialValues?: { name: string; active: boolean } | null;
+  onSubmit: (formData: { time: string }) => void;
 }
 
-const DayFormModal: React.FC<FormModalProps> = ({
+const TimeFormModal: React.FC<FormModalProps> = ({
   isOpen,
   onClose,
   title = "Create Item",
   onSubmit,
-  initialValues = null,
 }) => {
-  const [formData, setFormData] = useState({ name: "", active: true });
+  const [formData, setFormData] = useState({ time: "" });
 
-  // Populate form when initialValues change
-  useEffect(() => {
-    if (initialValues) {
-      setFormData(initialValues);
-    } else {
-      setFormData({ name: "", active: true });
-    }
-  }, [initialValues]);
-
-  // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle switch toggle
-  const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, active: e.target.checked }));
-  };
-
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim()) return; // Prevent empty names
+    if (!formData.time.trim()) return;
     onSubmit(formData);
     onClose();
   };
@@ -64,22 +45,18 @@ const DayFormModal: React.FC<FormModalProps> = ({
             <Input
               isRequired
               errorMessage={({ validationDetails }) =>
-                validationDetails.valueMissing ? "Please enter a Day" : undefined
+                validationDetails.valueMissing
+                  ? "Please enter a name"
+                  : undefined
               }
-              label="Day"
+              label="Time"
               labelPlacement="outside"
-              name="name"
-              placeholder="Enter Day"
+              name="time"
+              placeholder="Enter name"
               type="text"
-              value={formData.name}
+              value={formData.time}
               onChange={handleChange}
             />
-
-            {/* Active Switch */}
-            <div className="mt-4 flex items-center justify-between gap-4">
-              <span className="text-gray-700">Active</span>
-              <Switch isSelected={formData.active} onChange={handleToggle} />
-            </div>
 
             {/* Action Buttons */}
             <div className="flex justify-end gap-3 mt-4">
@@ -87,7 +64,7 @@ const DayFormModal: React.FC<FormModalProps> = ({
                 Cancel
               </Button>
               <Button type="submit" color="primary">
-                {initialValues ? "Update" : "Create"}
+                Confirm
               </Button>
             </div>
           </Form>
@@ -97,4 +74,4 @@ const DayFormModal: React.FC<FormModalProps> = ({
   );
 };
 
-export default DayFormModal;
+export default TimeFormModal;
