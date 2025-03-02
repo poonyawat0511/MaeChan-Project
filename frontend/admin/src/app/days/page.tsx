@@ -37,22 +37,16 @@ import LoadingScreen from "@/components/loading/loading";
 import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import { Times } from "@/utils/types/time";
 import { axiosInstance, dayApi, targetApi, timeApi } from "@/utils/api/api";
-import DayFormModal from "@/components/modals/DayModalForm";
 import TimeFormModal from "@/components/modals/TimeModalForm";
 import { StockUser } from "@/utils/types/stock-user";
+import { useAlert } from "@/components/alerts/GlobalAlertProvider";
 
 export default function DayPage() {
   const [days, setDays] = useState<Days[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
-  const [editData] = useState<{
-    id?: string;
-    name: string;
-    active: boolean;
-  } | null>(null);
   const [editDataTime, setEditDataTime] = useState<{
     id?: string;
     time: string;
@@ -63,6 +57,7 @@ export default function DayPage() {
   const [selectedUsers, setSelectedUsers] = useState<StockUser[]>([]);
   const [userSearchQuery, setUserSearchQuery] = useState("");
   const LOCAL_STORAGE_KEY = "selectedUsers";
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     const storedUsers = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -107,32 +102,13 @@ export default function DayPage() {
     setIsTimeModalOpen(true);
   };
 
-  const handleSubmit = async (data: { name: string; active?: boolean }) => {
-    try {
-      let response;
-      console.log("Submitting data:", data);
-
-      if (editData && editData.id) {
-        response = await axiosInstance.patch(`${dayApi}/${editData.id}`, data);
-      } else {
-        response = await axiosInstance.post(dayApi, data);
-      }
-
-      console.log("Response:", response.data);
-      fetchData();
-      setIsModalOpen(false);
-    } catch {
-      console.error("Error submitting form:");
-    }
-  };
-
   const handleToggleActive = async (updatedDay: Days) => {
     try {
       const response = await axiosInstance.patch(`${dayApi}/${updatedDay.id}`, {
         name: updatedDay.name,
         active: updatedDay.active,
       });
-
+      showAlert(`Update Active Status Sucessfully!` , `success`)
       console.log("Updated Response:", response.data);
 
       setDays((prevDays) =>
@@ -160,7 +136,9 @@ export default function DayPage() {
       console.log("Response:", response.data);
       fetchData();
       setIsTimeModalOpen(false);
+      showAlert('Time Created Successfully', 'success')
     } catch (error) {
+      showAlert('Time Create Failed', 'danger')
       console.error("Error submitting time:", error);
     }
   };
@@ -169,6 +147,7 @@ export default function DayPage() {
     try {
       await axiosInstance.delete(`${timeApi}/${id}`);
       setTimes((prevTimes) => prevTimes.filter((time) => time.id !== id));
+      showAlert('Time Deleted Successfully', 'success')
       console.log("Time deleted successfully");
     } catch (error) {
       console.error("Error deleting time:", error);
@@ -194,7 +173,7 @@ export default function DayPage() {
         const response = await axiosInstance.post(targetApi, {
           targetUser: user.stockUserId,
         });
-
+        showAlert('User Added Successfully', 'success')
         console.log("User added successfully:", response.data);
 
         setSelectedUsers([...selectedUsers, user]);
@@ -226,6 +205,7 @@ export default function DayPage() {
         selectedUsers.filter((user) => user.stockUserId !== stockUserId)
       );
 
+      showAlert('User Removed Successfully', 'success')
       console.log(`User with API id ${targetRecord.id} removed successfully`);
     } catch (error) {
       console.error("Error removing user:", error);
@@ -472,14 +452,6 @@ export default function DayPage() {
           </Card>
         </div>
       </div>
-
-      {/* Modal for Creating & Editing */}
-      <DayFormModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={editData ? "Edit Schedule" : "Create Schedule"}
-        onSubmit={handleSubmit}
-      />
 
       <TimeFormModal
         isOpen={isTimeModalOpen}

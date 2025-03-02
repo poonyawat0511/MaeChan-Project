@@ -3,6 +3,7 @@ import { Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import RootLayoutClient from "./RootLayoutClient";
+import { GlobalAlertProvider } from "@/components/alerts/GlobalAlertProvider";
 
 const Noto_Sans_ThaiSans = Noto_Sans_Thai({
   variable: "--font-geist-sans",
@@ -29,7 +30,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${Noto_Sans_ThaiSans.variable} antialiased`}>
         <Providers>
-          <RootLayoutClient>{children}</RootLayoutClient>
+          <RootLayoutClient>
+            <GlobalAlertProvider>{children}</GlobalAlertProvider>
+          </RootLayoutClient>
         </Providers>
       </body>
     </html>

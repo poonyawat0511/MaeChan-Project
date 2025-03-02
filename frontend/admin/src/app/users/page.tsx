@@ -29,6 +29,7 @@ import StockUserTable from "@/components/tables/stockUserTable";
 import { axiosInstance, stockUserApi } from "@/utils/api/api";
 import BlurModal from "@/components/modals/BlurModal";
 import EmptyState from "@/components/emptys/EmptyState";
+import { useAlert } from "@/components/alerts/GlobalAlertProvider";
 
 export default function UserPage() {
   const [users, setUsers] = useState<StockUser[]>([]);
@@ -39,6 +40,7 @@ export default function UserPage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const itemsPerPage = 10;
+  const { showAlert } = useAlert();
 
   useEffect(() => {
     fetchUsers();
@@ -70,8 +72,9 @@ export default function UserPage() {
       setUsers((prevUsers) =>
         prevUsers.filter((user) => user.stockUserId !== selectedUserId)
       );
-      console.log("User deleted successfully");
+      showAlert(`Deteletd user successfully!` , `success`)
     } catch (error) {
+      showAlert(`Deteletd user Failed!` , `danger`)
       console.error("Error deleting user:", error);
     } finally {
       setIsModalOpen(false);
