@@ -11,7 +11,10 @@ import {
   ChevronRightIcon,
   PowerIcon,
   ShieldCheckIcon,
+  UserIcon,
+  CalendarDaysIcon,
 } from "@heroicons/react/24/outline";
+import { jwtDecode } from "jwt-decode";
 
 interface MenuItem {
   id: string;
@@ -19,46 +22,46 @@ interface MenuItem {
   icon: ElementType;
   link: string;
 }
+interface StockUser {
+  role: string;
+}
 
 const SideBar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const [user, setUser] = useState<StockUser | null>(null); 
   const pathname = usePathname();
 
-  const menuItems: MenuItem[] = [
-    {
-      id: "all-stock-requests",
-      label: "All Stock Requests",
-      icon: HomeIcon,
-      link: "/all-stock-requests",
-    },
-    {
-      id: "task",
-      label: "Task",
-      icon: ShieldCheckIcon,
-      link: "/task",
-    },
+  useEffect(() => {
+    try {
+      const token = localStorage.getItem("jwt");
+
+      if (token) {
+        const decoded: StockUser = jwtDecode(token);
+        setUser(decoded);
+      }
+    } catch (error) {
+      console.error("Error decoding JWT:", error);
+      setUser(null);
+    }
+  }, []);
+
+  const userMenuItems: MenuItem[] = [
+    { id: "all-stock-requests", label: "All Stock Requests", icon: HomeIcon, link: "/all-stock-requests" },
+    { id: "task", label: "Task", icon: ShieldCheckIcon, link: "/task" },
   ];
 
+  const adminMenuItems: MenuItem[] = [
+    { id: "users", label: "User Management", icon: UserIcon, link: "/users" },
+    { id: "days", label: "Day Management", icon: CalendarDaysIcon, link: "/days" },
+  ];
+
+  const menuItems = user?.role === "ADMIN" ? adminMenuItems : userMenuItems;
+
   const recentItems: MenuItem[] = [
-    {
-      id: "purchasing",
-      label: "Purchasing work",
-      icon: ClipboardDocumentListIcon,
-      link: "/dashboard",
-    },
-    {
-      id: "treasury",
-      label: "Treasury work",
-      icon: CurrencyDollarIcon,
-      link: "/dashboard",
-    },
-    {
-      id: "distribution",
-      label: "Distribution Unit",
-      icon: TruckIcon,
-      link: "/dashboard",
-    },
+    { id: "purchasing", label: "Purchasing work", icon: ClipboardDocumentListIcon, link: "/dashboard" },
+    { id: "treasury", label: "Treasury work", icon: CurrencyDollarIcon, link: "/dashboard" },
+    { id: "distribution", label: "Distribution Unit", icon: TruckIcon, link: "/dashboard" },
   ];
 
   useEffect(() => {
@@ -74,11 +77,7 @@ const SideBar = () => {
 
   const handleSignout = async () => {
     try {
-      await fetch("http://localhost:8081/auth/signout", {
-        method: "POST",
-        credentials: "include",
-      });
-      document.cookie = "jwt=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+      await fetch("http://localhost:8081/auth/signout", { method: "POST", credentials: "include" });
       localStorage.removeItem("jwt");
       window.location.href = "/signin";
     } catch (error) {
@@ -102,48 +101,27 @@ const SideBar = () => {
     } hover:text-purple-500`}
         onClick={() => setIsCollapsed(!isCollapsed)}
       >
-        {isCollapsed ? (
-          <ChevronRightIcon className="h-4 w-4 animate-pulse" />
-        ) : (
-          <ChevronLeftIcon className="h-4 w-4 animate-pulse" />
-        )}
+        {isCollapsed ? <ChevronRightIcon className="h-4 w-4 animate-pulse" /> : <ChevronLeftIcon className="h-4 w-4 animate-pulse" />}
       </button>
 
       {/* Logo Container */}
       <div className="flex justify-center items-center mb-6 h-12 overflow-hidden">
         {isCollapsed ? (
           <div className="w-8 h-8 flex items-center justify-center">
-            <Image
-              src="/logo66.png"
-              alt="Logo"
-              width={32}
-              height={32}
-              className="object-contain transition-all duration-500 transform scale-100"
-              priority
-            />
+            <Image src="/logo66.png" alt="Logo" width={32} height={32} className="object-contain transition-all duration-500 transform scale-100" priority />
           </div>
         ) : (
           <div className="w-full flex justify-center">
-            <Image
-              src="/logo66.png"
-              alt="Logo"
-              width={120}
-              height={48}
-              className="object-contain transition-all duration-500 transform scale-100"
-              priority
-            />
+            <Image src="/logo66.png" alt="Logo" width={120} height={48} className="object-contain transition-all duration-500 transform scale-100" priority />
           </div>
         )}
       </div>
 
       {/* Menu Section */}
       <div className="mb-4">
-        <h2
-          className={`text-[11px] font-semibold tracking-wide text-gray-400 mb-2 
-          transition-opacity duration-300 ${
-            isCollapsed ? "opacity-0" : "opacity-100"
-          }`}
-        >
+        <h2 className={`text-[11px] font-semibold tracking-wide text-gray-400 mb-2 transition-opacity duration-300 ${
+          isCollapsed ? "opacity-0" : "opacity-100"
+        }`}>
           Menu
         </h2>
         <nav className="flex flex-col gap-2">
@@ -152,25 +130,12 @@ const SideBar = () => {
               key={item.id}
               href={item.link}
               className={`relative flex items-center px-3 py-2 rounded-lg transition-all duration-300 
-                ${
-                  pathname === item.link
-                    ? "bg-red-50 text-red-500"
-                    : "hover:bg-gray-50 text-gray-700"
-                }
+                ${pathname === item.link ? "bg-red-50 text-red-500" : "hover:bg-gray-50 text-gray-700"}
                 transform hover:translate-x-1`}
             >
-              {pathname === item.link && (
-                <div className="absolute left-0 w-1 h-8 bg-red-500 rounded-r-md animate-pulse" />
-              )}
-              <item.icon
-                className={`h-6 w-6 shrink-0 transition-transform duration-300 ${
-                  isCollapsed ? "scale-110" : ""
-                }`}
-              />
-              <span
-                className={`ml-3 whitespace-nowrap transition-all duration-300 
-                ${isCollapsed ? "opacity-0 w-0" : "opacity-100"}`}
-              >
+              {pathname === item.link && <div className="absolute left-0 w-1 h-8 bg-red-500 rounded-r-md animate-pulse" />}
+              <item.icon className={`h-6 w-6 shrink-0 transition-transform duration-300 ${isCollapsed ? "scale-110" : ""}`} />
+              <span className={`ml-3 whitespace-nowrap transition-all duration-300 ${isCollapsed ? "opacity-0 w-0" : "opacity-100"}`}>
                 {item.label}
               </span>
             </a>
@@ -180,12 +145,9 @@ const SideBar = () => {
 
       {/* Recent Section */}
       <div className="mb-auto">
-        <h2
-          className={`text-[11px] font-semibold tracking-wide text-gray-400 mb-2 
-          transition-opacity duration-300 ${
-            isCollapsed ? "opacity-0" : "opacity-100"
-          }`}
-        >
+        <h2 className={`text-[11px] font-semibold tracking-wide text-gray-400 mb-2 transition-opacity duration-300 ${
+          isCollapsed ? "opacity-0" : "opacity-100"
+        }`}>
           Recent
         </h2>
         <nav className="flex flex-col gap-2">
@@ -193,18 +155,10 @@ const SideBar = () => {
             <a
               key={item.id}
               href={item.link}
-              className="flex items-center px-3 py-2 hover:bg-gray-50 rounded-lg 
-                transition-all duration-300 text-gray-600 transform hover:translate-x-1"
+              className="flex items-center px-3 py-2 hover:bg-gray-50 rounded-lg transition-all duration-300 text-gray-600 transform hover:translate-x-1"
             >
-              <item.icon
-                className={`h-6 w-6 shrink-0 transition-transform duration-300 ${
-                  isCollapsed ? "scale-110" : ""
-                }`}
-              />
-              <span
-                className={`ml-3 whitespace-nowrap transition-all duration-300 
-                ${isCollapsed ? "opacity-0 w-0" : "opacity-100"}`}
-              >
+              <item.icon className={`h-6 w-6 shrink-0 transition-transform duration-300 ${isCollapsed ? "scale-110" : ""}`} />
+              <span className={`ml-3 whitespace-nowrap transition-all duration-300 ${isCollapsed ? "opacity-0 w-0" : "opacity-100"}`}>
                 {item.label}
               </span>
             </a>
@@ -219,14 +173,8 @@ const SideBar = () => {
             transition-all duration-300 transform hover:translate-x-1 group"
           onClick={handleSignout}
         >
-          <PowerIcon
-            className={`h-6 w-6 shrink-0 transition-all duration-300 group-hover:rotate-12 
-            ${isCollapsed ? "ml-0" : ""}`}
-          />
-          <span
-            className={`transition-all duration-300 
-            ${isCollapsed ? "hidden" : "block"}`}
-          >
+          <PowerIcon className={`h-6 w-6 shrink-0 transition-all duration-300 group-hover:rotate-12 ${isCollapsed ? "ml-0" : ""}`} />
+          <span className={`transition-all duration-300 ${isCollapsed ? "hidden" : "block"}`}>
             Sign Out
           </span>
         </button>
