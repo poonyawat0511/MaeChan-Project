@@ -12,8 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StockRequestDto {
-    private Long id;
-    private String requestId;
+    private Long requestId;
     private LocalDate requestDate;
     private String requestNo;
     private LocalDate requestReceiveDate;

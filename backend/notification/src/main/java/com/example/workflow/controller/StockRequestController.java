@@ -49,7 +49,7 @@ public class StockRequestController {
     
     @PatchMapping("/{requestId}")
     public ResponseEntity<StockRequest> updateStockRequestById(@PathVariable Long requestId, @RequestBody StockRequest stockRequest) {
-        stockRequest.setId(requestId);
+        stockRequest.setRequestId(requestId);
         StockRequest updatedStockRequest = stockRequestService.updateStockRequest(stockRequest);
         if (updatedStockRequest != null) {
             return new ResponseEntity<>(updatedStockRequest, HttpStatus.OK);

@@ -27,10 +27,8 @@ public class StockRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "request_id")
-    private String requestId;
+    private Long requestId;
 
     @Column(name = "request_date")
     private LocalDate requestDate;

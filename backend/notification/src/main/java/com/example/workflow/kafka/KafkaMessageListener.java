@@ -48,7 +48,8 @@ public class KafkaMessageListener {
             JSONObject payload = jsonMessage.getJSONObject("payload");
             JSONObject after = payload.has("after") ? payload.getJSONObject("after") : null;
 
-            String requestId = after != null ? after.optString("id", "N/A") : "N/A";
+
+            String requestId = after != null ? after.optString("request_id", "N/A") : "N/A";
             String documentNumber = after != null ? after.optString("document_number", "N/A") : "N/A";
             String requester = after != null ? after.optString("requester", "Unknown Requester") : "Unknown Requester";
             String stockUser = after != null ? after.optString("stockUser", "Unknown StockUser") : "Unknown StockUser";
@@ -78,6 +79,7 @@ public class KafkaMessageListener {
 
             // สร้าง SpringRequest ใหม่ แล้วอัพเดท camundaTaskId, StockRequestId
             SpringRequest springRequest = new SpringRequest();
+            springRequest.setId(Long.valueOf(requestId)); //use same id as stockRequest
             springRequest.setCamundaTaskId(taskId);
             springRequest.setStockRequest(stockRequestRepository.findById(Long.valueOf(requestId)).get());
             springRequestRepository.save(springRequest);

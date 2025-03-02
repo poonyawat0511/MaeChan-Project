@@ -24,11 +24,10 @@ import lombok.Setter;
 public class SpringRequest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "stock_request_id", referencedColumnName = "id")
+    @JoinColumn(name = "stock_request_id", referencedColumnName = "request_id")
     private StockRequest stockRequest;
 
     @Column(name = "camunda_task_id")
