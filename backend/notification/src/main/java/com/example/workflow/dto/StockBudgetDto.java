@@ -1,13 +1,20 @@
 package com.example.workflow.dto;
 
-import lombok.Data;
+import com.example.workflow.model.StockBudgetType;
 
-@Data
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class StockBudgetDto {
-    private Long id;
     private Long budgetId;
     private String budgetName;
     private boolean budgetStatus;
-    private Long stockBudgetTypeId;
+    private StockBudgetType stockBudgetTypeId;
     private Long accPoBudgetSubTypeId;
 }

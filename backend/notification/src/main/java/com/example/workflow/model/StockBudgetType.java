@@ -21,8 +21,6 @@ public class StockBudgetType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "stock_budget_type_id")
     private Long stockBudgetTypeId;
 
@@ -31,4 +29,9 @@ public class StockBudgetType {
 
     @Column(name = "acc_po_budget_type_id")
     private Long accPoBudgetTypeId;
+
+    // Add constructor to accept integer argument
+    public StockBudgetType(Long stockBudgetTypeId) {
+        this.stockBudgetTypeId = stockBudgetTypeId;
+    }
 }

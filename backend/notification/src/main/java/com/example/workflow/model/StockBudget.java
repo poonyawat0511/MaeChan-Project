@@ -2,14 +2,19 @@ package com.example.workflow.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Getter
 @Setter
@@ -20,8 +25,6 @@ import lombok.Setter;
 public class StockBudget {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "budget_id")
     private Long budgetId;
 
@@ -31,9 +34,11 @@ public class StockBudget {
     @Column(name = "budget_status")
     private boolean budgetStatus;
 
-    //TODO: Add relation
-    @Column(name = "stock_budget_type_id")
-    private Long stockBudgetTypeId;
+    // Add relation
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "stock_budget_type_id", referencedColumnName = "stock_budget_type_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "stockBudgetTypeId")
+    private StockBudgetType stockBudgetTypeId;
 
     @Column(name = "acc_po_budget_sub_type_id")
     private Long accPoBudgetSubTypeId;
