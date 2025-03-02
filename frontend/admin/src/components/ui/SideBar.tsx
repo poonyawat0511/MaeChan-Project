@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import {
   CalendarDaysIcon,
-  CurrencyDollarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   PowerIcon,
@@ -35,12 +34,6 @@ const SideBar = () => {
       label: "Day",
       icon: CalendarDaysIcon,
       link: "/days",
-    },
-    {
-      id: "times",
-      label: "Time",
-      icon: CurrencyDollarIcon,
-      link: "/times",
     },
   ];
 

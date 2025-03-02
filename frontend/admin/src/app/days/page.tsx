@@ -36,7 +36,7 @@ import {
 import LoadingScreen from "@/components/loading/loading";
 import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import { Times } from "@/utils/types/time";
-import { axiosInstance, dayApi, timeApi } from "@/utils/api/api";
+import { axiosInstance, dayApi, targetApi, timeApi } from "@/utils/api/api";
 import DayFormModal from "@/components/modals/DayModalForm";
 import TimeFormModal from "@/components/modals/TimeModalForm";
 import { StockUser } from "@/utils/types/stock-user";
@@ -62,6 +62,22 @@ export default function DayPage() {
   const [users, setUsers] = useState<StockUser[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<StockUser[]>([]);
   const [userSearchQuery, setUserSearchQuery] = useState("");
+  const LOCAL_STORAGE_KEY = "selectedUsers";
+
+  useEffect(() => {
+    const storedUsers = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (storedUsers) {
+      setSelectedUsers(JSON.parse(storedUsers));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedUsers.length > 0) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(selectedUsers));
+    } else {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+    }
+  }, [selectedUsers]);
 
   const fetchData = async () => {
     try {
@@ -168,20 +184,52 @@ export default function DayPage() {
     console.log("Selected time:", time);
   };
 
-  const handleAddUser = (user: StockUser) => {
+  const handleAddUser = async (user: StockUser) => {
     if (
       !selectedUsers.some(
         (selectedUser) => selectedUser.stockUserId === user.stockUserId
       )
     ) {
-      setSelectedUsers([...selectedUsers, user]);
+      try {
+        const response = await axiosInstance.post(targetApi, {
+          targetUser: user.stockUserId,
+        });
+
+        console.log("User added successfully:", response.data);
+
+        setSelectedUsers([...selectedUsers, user]);
+      } catch (error) {
+        console.error("Error adding user:", error);
+      }
     }
   };
 
-  const handleRemoveUser = (stockUserId: string) => {
-    setSelectedUsers(
-      selectedUsers.filter((user) => user.stockUserId !== stockUserId)
-    );
+  const handleRemoveUser = async (stockUserId: string) => {
+    try {
+      const response = await axiosInstance.get(targetApi);
+      const targetUsers = response.data;
+      const targetRecord = targetUsers.find(
+        (record: { id: string; targetUser: string }) =>
+          record.targetUser === stockUserId
+      );
+
+      if (!targetRecord) {
+        console.warn(
+          `No matching target record found for stockUserId: ${stockUserId}`
+        );
+        return;
+      }
+
+      await axiosInstance.delete(`${targetApi}/${targetRecord.id}`);
+
+      setSelectedUsers(
+        selectedUsers.filter((user) => user.stockUserId !== stockUserId)
+      );
+
+      console.log(`User with API id ${targetRecord.id} removed successfully`);
+    } catch (error) {
+      console.error("Error removing user:", error);
+    }
   };
 
   const filteredUsers = users.filter(
@@ -250,7 +298,7 @@ export default function DayPage() {
               <Divider />
               <CardBody className="p-3">
                 <p className="text-gray-600 mb-2 text-xs sm:text-sm">
-                  Select a time slot for your schedule:
+                  Add a time slot for your schedule:
                 </p>
                 <Dropdown>
                   <DropdownTrigger>
