@@ -1,5 +1,9 @@
 package com.example.workflow.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,7 +29,7 @@ public class NotifyTargetUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //TODO: Add relation to UserHospital
-    @Column(name = "target_user")
-    private Long targetUser;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "target_user", referencedColumnName = "id")
+    private UserHospital targetUser;
 }

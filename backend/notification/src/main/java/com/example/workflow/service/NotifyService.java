@@ -128,7 +128,7 @@ public class NotifyService {
         for (NotifyTargetUser user : users) {
 
             //get role
-            Role enumRole = userHospitalService.findUserHospitalById(user.getTargetUser()).getRole();
+            Role enumRole = user.getTargetUser().getRole();
             int numTask = 0;
             if(enumRole.equals(Role.APPROVER))
             {
@@ -138,7 +138,7 @@ public class NotifyService {
             {
                 numTask = taskCountDirector;
             }else{
-                System.out.println("UserHospital : " + userHospitalService.findUserHospitalById(user.getTargetUser()).getFirstName() + " have wrong role!!!!!");
+                System.out.println("UserHospital : " + user.getTargetUser().getFirstName() + " have wrong role!!!!!");
                 return;
             }
 
@@ -146,9 +146,9 @@ public class NotifyService {
             //backend log
             System.out.println(
             "Hello : " 
-            + userHospitalService.findUserHospitalById(user.getTargetUser()).getFirstName() 
+            + user.getTargetUser().getFirstName() 
             + " " 
-            + userHospitalService.findUserHospitalById(user.getTargetUser()).getLastName() 
+            + user.getTargetUser().getLastName() 
             + " your role is " 
             + enumRole 
             + " you have " 
@@ -157,11 +157,11 @@ public class NotifyService {
 
             //ส่งข้อความ + Link web app
             // T id line "U9248dc5b4d58a88e3810dd31a8ecfd3d"
-            lineMessageService.pushMessage(userHospitalService.findUserHospitalById(user.getTargetUser()).getLineId(), 
+            lineMessageService.pushMessage(user.getTargetUser().getLineId(), 
             "Hello : " 
-            + userHospitalService.findUserHospitalById(user.getTargetUser()).getFirstName() 
+            + user.getTargetUser().getFirstName() 
             + " " 
-            + userHospitalService.findUserHospitalById(user.getTargetUser()).getLastName()
+            + user.getTargetUser().getLastName()
             + " your role is " 
             + enumRole 
             + " you have " 
