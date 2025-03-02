@@ -37,14 +37,12 @@ import { Times } from "@/utils/types/time";
 
 import { StockUser } from "@/utils/types/stock-user";
 
-
+import DayCard from "@/components/global/cards/DayCard";
+import LoadingScreen from "@/components/global/loading/loading";
+import UnauthorizedCard from "@/components/global/cards/UnauthorizedCard";
 import { axiosInstance, dayApi, targetApi, timeApi } from "@/utils/api/api";
-import { useAlert } from "@/components/alerts/GlobalAlertProvider";
-import LoadingScreen from "@/components/loading/loading";
-import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
-import DayCard from "@/components/cards/DayCard";
-import TimeFormModal from "@/components/modals/TimeModalForm";
-
+import TimeFormModal from "@/components/global/modals/TimeModalForm";
+import { useAlert } from "@/components/global/alerts/GlobalAlertProvider";
 
 export default function DayPage() {
   const [days, setDays] = useState<Days[]>([]);

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
   baseURL: "http://localhost:8081",
   withCredentials: true,
   headers: {
@@ -18,8 +18,6 @@ const axiosInstance = axios.create({
 //   }
 // );
 
-export default axiosInstance;
-
 // API Endpoints
 export const camundaTaksApiApprover =
   "/engine-rest/task?candidateGroup=Approver";
@@ -29,3 +27,7 @@ export const camundaTaskSubmit = "/engine-rest/task";
 export const springRequestByTaskApi = (processInstanceId: string) =>
   `/spring-requests/task/${processInstanceId}`;
 export const requestApi = "/stock-requests";
+export const stockUserApi = "/stock-user";
+export const dayApi = "/notify-days";
+export const timeApi = "/notify-time"
+export const targetApi = "/notify-target-user"

@@ -7,7 +7,8 @@ export interface StockUser {
   email: string;
   password: string;
   signaturePath: string;
-  stockHospitalId: string;
+  userHospitalId: string;
   lineId: string;
   role: Role;
 }
+
