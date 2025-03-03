@@ -347,7 +347,7 @@ public class StockPo {
     private Double stockPoAdjVat;
 
 
-     // Add constructor to accept integer argument
+    // Add constructor to accept integer argument
     public StockPo(Long stockPoId) {
         this.stockPoId = stockPoId;
     }

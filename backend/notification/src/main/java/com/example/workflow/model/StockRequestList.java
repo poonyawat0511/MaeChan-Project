@@ -199,4 +199,9 @@ public class StockRequestList {
 
     @Column(name = "contract_remain_package_qty")
     private int contractRemainPackageQty;
+
+    // Add constructor to handle deserialization from number value
+    public StockRequestList(long requestListId) {
+    this.requestListId = requestListId;
+    }
 }

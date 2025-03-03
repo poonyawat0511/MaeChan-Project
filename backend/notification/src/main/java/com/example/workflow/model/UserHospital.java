@@ -68,7 +68,10 @@ public class UserHospital implements UserDetails {
         }
     }
 
-    
+    // Add constructor to handle deserialization from number value
+    public UserHospital(long id) {
+        this.id = id;
+    }
 
     public Long getId() {
         return id;

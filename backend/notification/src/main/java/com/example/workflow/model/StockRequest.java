@@ -33,6 +33,24 @@ public class StockRequest {
     @Column(name = "request_id")
     private Long requestId;
 
+    // Add relation 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "request_warehouse_id", referencedColumnName = "warehouse_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "warehouseId")
+    private StockWarehouse requestWarehouseId;  
+
+    // Add relation to StockPo
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "stock_po_id", referencedColumnName = "stock_po_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "stockPoId")
+    private StockPo stockPoId;
+
+    // Add relation to Stock budget
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "budget_id", referencedColumnName = "budget_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "budgetId")
+    private StockBudget budgetId;
+
     @Column(name = "request_date")
     private LocalDate requestDate;
 
@@ -42,23 +60,11 @@ public class StockRequest {
     @Column(name = "request_receive_date")
     private LocalDate requestReceiveDate;
 
-    // Add relation 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "request_warehouse_id", referencedColumnName = "warehouse_id")
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "warehouseId")
-    private StockWarehouse requestWarehouseId;
-
     @Column(name = "request_complete")
     private Boolean requestComplete;
 
     @Column(name = "use_date")
     private LocalDate useDate;
-
-    // Add relation to StockPo
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "stock_po_id", referencedColumnName = "stock_po_id")
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "stockPoId")
-    private StockPo stockPoId;
 
     @Column(name = "hos_guid")
     private String hosGuid;
@@ -82,12 +88,6 @@ public class StockRequest {
 
     @Column(name = "transport_day")
     private Integer transportDay;
-
-    // Add relation to Stock budget
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "budget_id", referencedColumnName = "budget_id")
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "budgetId")
-    private StockBudget budgetId;
 
     @Column(name = "runnumber")
     private Integer runNumber;
