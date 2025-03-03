@@ -47,7 +47,7 @@ public class StockPoDetailController {
         if (!stockPoDetailService.findById(id).isPresent()) {
             return ResponseEntity.notFound().build();
         }
-        stockPoDetail.setId(id);
+        stockPoDetail.setStockPoDetailId(id);
         StockPoDetail updatedStockPoDetail = stockPoDetailService.save(stockPoDetail);
         return new ResponseEntity<>(updatedStockPoDetail, HttpStatus.OK);
     }
