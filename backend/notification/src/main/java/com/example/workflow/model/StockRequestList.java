@@ -20,8 +20,6 @@ import lombok.Setter;
 public class StockRequestList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "request_list_id")
     private Long requestListId;
 
