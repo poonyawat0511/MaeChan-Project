@@ -1,5 +1,7 @@
 package com.example.workflow.controller;
 
+import com.example.workflow.dto.StockRequestListDto;
+import com.example.workflow.mapper.StockRequestListMapper;
 import com.example.workflow.model.StockRequestList;
 import com.example.workflow.service.StockRequestListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/stock-request-list")
@@ -17,29 +20,39 @@ public class StockRequestListController {
     @Autowired
     private StockRequestListService stockRequestListService;
 
+    @Autowired
+    private StockRequestListMapper stockRequestListMapper;
+
     @GetMapping
-    public ResponseEntity<List<StockRequestList>> getAllStockRequestLists() {
-        return new ResponseEntity<>(stockRequestListService.findAll(),HttpStatus.OK);
+    public ResponseEntity<List<StockRequestListDto>> getAllStockRequestLists() {
+        List<StockRequestList> stockRequestLists = stockRequestListService.findAll();
+        List<StockRequestListDto> stockRequestListDtos = stockRequestLists.stream()
+            .map(stockRequestListMapper::toDto)
+            .collect(Collectors.toList());
+        return new ResponseEntity<>(stockRequestListDtos, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StockRequestList> getStockRequestListById(@PathVariable Long id) {
+    public ResponseEntity<StockRequestListDto> getStockRequestListById(@PathVariable Long id) {
         Optional<StockRequestList> stockRequestList = stockRequestListService.findById(id);
-        return stockRequestList.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return stockRequestList.map(value -> ResponseEntity.ok(stockRequestListMapper.toDto(value)))
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<StockRequestList> createStockRequestList(@RequestBody StockRequestList stockRequestList) {
+    public ResponseEntity<StockRequestListDto> createStockRequestList(@RequestBody StockRequestListDto stockRequestListDto) {
+        StockRequestList stockRequestList = stockRequestListMapper.toEntity(stockRequestListDto);
         StockRequestList createdStockRequestList = stockRequestListService.save(stockRequestList);
-        return new ResponseEntity<>(createdStockRequestList, HttpStatus.CREATED);
+        return new ResponseEntity<>(stockRequestListMapper.toDto(createdStockRequestList), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<StockRequestList> updateStockRequestList(@PathVariable Long id, @RequestBody StockRequestList stockRequestListDetails) {
+    public ResponseEntity<StockRequestListDto> updateStockRequestList(@PathVariable Long id, @RequestBody StockRequestListDto stockRequestListDto) {
         Optional<StockRequestList> stockRequestListOptional = stockRequestListService.findById(id);
         if (stockRequestListOptional.isPresent()) {
-            StockRequestList updatedStockRequestList = stockRequestListService.save(stockRequestListDetails);
-            return new ResponseEntity<>(updatedStockRequestList, HttpStatus.OK);
+            StockRequestList stockRequestList = stockRequestListMapper.toEntity(stockRequestListDto);
+            StockRequestList updatedStockRequestList = stockRequestListService.save(stockRequestList);
+            return new ResponseEntity<>(stockRequestListMapper.toDto(updatedStockRequestList), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

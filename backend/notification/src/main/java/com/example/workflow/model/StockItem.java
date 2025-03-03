@@ -282,4 +282,9 @@ public class StockItem {
 
     @Column(name = "gpsc_code")
     private String gpscCode;
+
+    // Add constructor to accept integer argument
+    public StockItem(Long itemId) {
+    this.itemId = itemId;
+    }
 }

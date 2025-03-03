@@ -1,10 +1,16 @@
 package com.example.workflow.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,13 +29,17 @@ public class StockRequestList {
     @Column(name = "request_list_id")
     private Long requestListId;
 
-    //TODO: Add relation to StockRequest
-    @Column(name = "request_id")
-    private Long requestId;
+    // Add relation to StockRequest
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "request_id", referencedColumnName = "request_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "requestId")
+    private StockRequest requestId;
 
-    //TODO: Add relation to stock item
-    @Column(name = "item_id")
-    private Long itemId;
+    // Add relation to stock item
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "item_id", referencedColumnName = "item_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "itemId")
+    private StockItem itemId;
 
     @Column(name = "request_qty")
     private int requestQty;
