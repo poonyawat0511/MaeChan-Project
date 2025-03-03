@@ -42,7 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public UserHospital signup(SignUpRequest signUpRequest) {
         UserHospital userHospital = new UserHospital();
         userHospital.setLineId(signUpRequest.getLineId());
-        userHospital.setStockUserId(signUpRequest.getStockUserId());
+        //userHospital.setStockUserId(stockUserRepository.findById(signUpRequest.getStockUserId()).get());
         userHospital.setSignaturePath(UPLOAD_DIR);
         userHospital.setEmail(signUpRequest.getEmail());
         userHospital.setFirstName(signUpRequest.getFirstName());
@@ -58,13 +58,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         //get StockUser from firstName and lastName
         //and update to UserHospital
-        StockUser user = stockUserRepository.findByFirstNameAndLastName(signUpRequest.getFirstName(), signUpRequest.getLastName())
-                .orElse(null);
+        StockUser user = stockUserRepository.findByFirstNameAndLastName(signUpRequest.getFirstName(), signUpRequest.getLastName());
+                
         if(user == null){
             System.out.println("Can't find stockUser ID from firstName and lastName");
             return null;
         }else{
-            userHospital.setStockUserId(user.getId());
+            userHospital.setStockUserId(user);
             System.out.println("match " + userHospital.getFirstName() + " "+ userHospital.getLastName() + "with StockUser ID : " + userHospital.getStockUserId());
             return userHospitalRepository.save(userHospital);
         }

@@ -95,16 +95,18 @@ public class StockRequest {
     @Column(name = "project_id")
     private String projectId;
 
-    //TODO: Add relation to StockUser
-    @Column(name = "stock_user_approve_id")
-    private Long stockUserApprove;
+    // Add relation to StockUser
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "stock_user_approve_id", referencedColumnName = "id")
+    private StockUser stockUserApprove;
 
     @Column(name = "stock_approve_date")
     private LocalDate stockApproveDate;
 
-    //TODO: Add relation to StockUser
-    @Column(name = "stock_user_id")
-    private Long stockUser;
+    // Add relation to StockUser
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "stock_user_id", referencedColumnName = "id")
+    private StockUser stockUser;
 
     @Column(name = "stock_request_document_id")
     private String stockRequestDocumentId;

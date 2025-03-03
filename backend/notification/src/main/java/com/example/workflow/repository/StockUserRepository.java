@@ -7,5 +7,5 @@ import com.example.workflow.model.StockUser;
 import java.util.Optional;
 
 public interface StockUserRepository extends JpaRepository<StockUser, Long> {
-    Optional<StockUser> findByFirstNameAndLastName(String firstName, String lastName);
+    StockUser findByFirstNameAndLastName(String firstName, String lastName);
 }

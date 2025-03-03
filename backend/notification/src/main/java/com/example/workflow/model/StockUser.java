@@ -20,7 +20,7 @@ public class StockUser {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //TODO: refactor later
+    private Long id; //TODO: refactor later (dont forget to update UserHospital/SpringRequest)
 
     private String firstName; 
 
