@@ -48,6 +48,8 @@ public class UserHospital implements UserDetails {
 
     private String lineId;
 
+    //TODO: add boolean Active
+
     @Column(name = "signature_path", nullable = true)
     private String signaturePath;
 

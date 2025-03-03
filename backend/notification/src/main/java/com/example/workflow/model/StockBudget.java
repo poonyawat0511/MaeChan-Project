@@ -43,5 +43,8 @@ public class StockBudget {
     @Column(name = "acc_po_budget_sub_type_id")
     private Long accPoBudgetSubTypeId;
 
-
+    // Add constructor to accept Long argument
+    public StockBudget(Long budgetId) {
+        this.budgetId = budgetId;
+    }
 }

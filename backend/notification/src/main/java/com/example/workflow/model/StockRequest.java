@@ -3,6 +3,9 @@ package com.example.workflow.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -39,9 +42,11 @@ public class StockRequest {
     @Column(name = "request_receive_date")
     private LocalDate requestReceiveDate;
 
-    //TODO: Add relation 
-    @Column(name = "request_warehouse_id")
-    private String requestWarehouseId;
+    // Add relation 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "request_warehouse_id", referencedColumnName = "warehouse_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "warehouseId")
+    private StockWarehouse requestWarehouseId;
 
     @Column(name = "request_complete")
     private Boolean requestComplete;
@@ -49,9 +54,11 @@ public class StockRequest {
     @Column(name = "use_date")
     private LocalDate useDate;
 
-    //TODO: Add relation to StockPo
-    @Column(name = "stock_po_id")
-    private Long stockPoId;
+    // Add relation to StockPo
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "stock_po_id", referencedColumnName = "stock_po_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "stockPoId")
+    private StockPo stockPoId;
 
     @Column(name = "hos_guid")
     private String hosGuid;
@@ -76,9 +83,11 @@ public class StockRequest {
     @Column(name = "transport_day")
     private Integer transportDay;
 
-    //TODO: Add relation to Stock budget
-    @Column(name = "budget_id")
-    private String budgetId;
+    // Add relation to Stock budget
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "budget_id", referencedColumnName = "budget_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "budgetId")
+    private StockBudget budgetId;
 
     @Column(name = "runnumber")
     private Integer runNumber;
@@ -171,4 +180,9 @@ public class StockRequest {
 
     @Column(name = "dep_request_no_list")
     private String depRequestNoList;
+
+     // Add constructor to accept integer argument
+    public StockRequest(Long requestId) {
+        this.requestId = requestId;
+}
 }

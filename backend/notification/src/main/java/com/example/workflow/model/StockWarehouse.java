@@ -97,4 +97,9 @@ public class StockWarehouse {
 
     @Column(name = "deliver_document_prefix")
     private String deliverDocumentPrefix;
+
+    // Add constructor to handle deserialization from number value
+    public StockWarehouse(int warehouseId) {
+        this.warehouseId = (long) warehouseId;
+    }
 }

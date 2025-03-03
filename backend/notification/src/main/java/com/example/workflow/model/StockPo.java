@@ -334,4 +334,11 @@ public class StockPo {
 
     @Column(name = "stock_po_adj_vat")
     private Double stockPoAdjVat;
+
+
+     // Add constructor to accept integer argument
+    public StockPo(Long stockPoId) {
+        this.stockPoId = stockPoId;
+
+    }
 }

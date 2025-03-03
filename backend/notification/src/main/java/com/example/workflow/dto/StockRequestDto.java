@@ -2,7 +2,10 @@ package com.example.workflow.dto;
 
 import java.time.LocalDate;
 
+import com.example.workflow.model.StockBudget;
+import com.example.workflow.model.StockPo;
 import com.example.workflow.model.StockUser;
+import com.example.workflow.model.StockWarehouse;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,10 +21,10 @@ public class StockRequestDto {
     private LocalDate requestDate;
     private String requestNo;
     private LocalDate requestReceiveDate;
-    private String requestWarehouseId;
+    private StockWarehouse requestWarehouseId; //relation
     private Boolean requestComplete;
     private LocalDate useDate;
-    private Long stockPoId;
+    private StockPo stockPoId; //relation
     private String hosGuid;
     private Integer budgetYear;
     private String stockSubject;
@@ -30,7 +33,7 @@ public class StockRequestDto {
     private String departmentId;
     private String note;
     private Integer transportDay;
-    private String budgetId;
+    private StockBudget budgetId; //relation
     private Integer runNumber;
     private Integer numberYear;
     private Integer numberMonth;

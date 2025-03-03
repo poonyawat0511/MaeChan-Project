@@ -1,6 +1,7 @@
 package com.example.workflow.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,9 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.workflow.dto.StockRequestDto;
+import com.example.workflow.mapper.StockRequestMapper;
 import com.example.workflow.model.StockRequest;
 import com.example.workflow.service.StockRequestService;
-
 
 @RestController
 @RequestMapping("/stock-requests")
@@ -26,33 +28,41 @@ public class StockRequestController {
     StockRequestService stockRequestService;
 
     @PostMapping
-    public ResponseEntity<StockRequest> createStockRequest(@RequestBody StockRequest stockRequest) {
-        StockRequest createStockRequest = stockRequestService.createStockRequest(stockRequest);
-        return new ResponseEntity<>(createStockRequest, HttpStatus.CREATED);
+    public ResponseEntity<StockRequestDto> createStockRequest(@RequestBody StockRequestDto stockRequestDto) {
+        StockRequest stockRequest = StockRequestMapper.mapToStockRequest(stockRequestDto);
+        StockRequest createdStockRequest = stockRequestService.createStockRequest(stockRequest);
+        StockRequestDto createdStockRequestDto = StockRequestMapper.mapToStockRequestDto(createdStockRequest);
+        return new ResponseEntity<>(createdStockRequestDto, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<StockRequest>> getStockRequestList() {
-        List<StockRequest> stockRequest = stockRequestService.findAllStockRequest();
-        return new ResponseEntity<>(stockRequest, HttpStatus.OK);
+    public ResponseEntity<List<StockRequestDto>> getStockRequestList() {
+        List<StockRequest> stockRequests = stockRequestService.findAllStockRequest();
+        List<StockRequestDto> stockRequestDtos = stockRequests.stream()
+                .map(StockRequestMapper::mapToStockRequestDto)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(stockRequestDtos, HttpStatus.OK);
     }
 
     @GetMapping("/{requestId}")
-    public ResponseEntity<StockRequest> getStockRequestByStockRequestId(@PathVariable Long requestId) {
+    public ResponseEntity<StockRequestDto> getStockRequestByStockRequestId(@PathVariable Long requestId) {
         StockRequest stockRequest = stockRequestService.findStockRequestById(requestId);
         if (stockRequest != null) {
-            return new ResponseEntity<>(stockRequest, HttpStatus.OK);
+            StockRequestDto stockRequestDto = StockRequestMapper.mapToStockRequestDto(stockRequest);
+            return new ResponseEntity<>(stockRequestDto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
     
     @PatchMapping("/{requestId}")
-    public ResponseEntity<StockRequest> updateStockRequestById(@PathVariable Long requestId, @RequestBody StockRequest stockRequest) {
+    public ResponseEntity<StockRequestDto> updateStockRequestById(@PathVariable Long requestId, @RequestBody StockRequestDto stockRequestDto) {
+        StockRequest stockRequest = StockRequestMapper.mapToStockRequest(stockRequestDto);
         stockRequest.setRequestId(requestId);
         StockRequest updatedStockRequest = stockRequestService.updateStockRequest(stockRequest);
         if (updatedStockRequest != null) {
-            return new ResponseEntity<>(updatedStockRequest, HttpStatus.OK);
+            StockRequestDto updatedStockRequestDto = StockRequestMapper.mapToStockRequestDto(updatedStockRequest);
+            return new ResponseEntity<>(updatedStockRequestDto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
