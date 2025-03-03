@@ -23,8 +23,6 @@ import lombok.Setter;
 public class StockPo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "stock_po_id")
     private Long stockPoId;
 

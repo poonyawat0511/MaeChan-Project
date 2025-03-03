@@ -37,11 +37,11 @@ public class StockPoController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<StockPo> updateStockPo(@PathVariable Long id, @RequestBody StockPo stockPoDetails) {
-        Optional<StockPo> stockPo = stockPoService.findById(id);
-        if (stockPo.isPresent()) {
-            stockPoDetails.setId(id);
-            StockPo updatedStockPo = stockPoService.save(stockPoDetails);
+    public ResponseEntity<StockPo> updateStockPo(@PathVariable Long id, @RequestBody StockPo stockPoNew) {
+        Optional<StockPo> stockPoOld = stockPoService.findById(id);
+        if (stockPoOld.isPresent()) {
+            stockPoNew.setStockPoId(id);
+            StockPo updatedStockPo = stockPoService.save(stockPoNew);
             return new ResponseEntity<>(updatedStockPo, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
