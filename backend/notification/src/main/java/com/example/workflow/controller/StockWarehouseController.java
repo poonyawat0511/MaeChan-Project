@@ -40,7 +40,7 @@ public class StockWarehouseController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<StockWarehouse> updateStockWarehouseById(@PathVariable Long id, @RequestBody StockWarehouse stockWarehouse) {
-        stockWarehouse.setId(id);
+        stockWarehouse.setWarehouseId(id);
         StockWarehouse updatedStockWarehouse = stockWarehouseService.updateStockWarehouse(stockWarehouse);
         if (updatedStockWarehouse != null) {
             return new ResponseEntity<>(updatedStockWarehouse, HttpStatus.OK);
