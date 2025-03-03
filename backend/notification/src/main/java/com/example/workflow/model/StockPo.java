@@ -3,11 +3,16 @@ package com.example.workflow.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,9 +31,23 @@ public class StockPo {
     @Column(name = "stock_po_id")
     private Long stockPoId;
 
-    //TODO: Add relation
-    @Column(name = "warehouse_id")
-    private Long warehouseId;
+    //Add relation
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "warehouse_id", referencedColumnName = "warehouse_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "warehouseId")
+    private StockWarehouse warehouseId;
+
+    //Add relation to StockRequest
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ref_request_id", referencedColumnName = "request_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "requestId")
+    private StockRequest refRequestId;
+
+    //Add relation to stock budget
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "budget_id", referencedColumnName = "budget_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "budgetId")
+    private StockBudget budgetId;
 
     @Column(name = "stock_po_no")
     private String stockPoNo;
@@ -38,10 +57,6 @@ public class StockPo {
 
     @Column(name = "supplier_id")
     private Long supplierId;
-
-    //TODO: Add relation to stock budget
-    @Column(name = "budget_id")
-    private Long budgetId;
 
     @Column(name = "item_type")
     private String itemType;
@@ -259,10 +274,6 @@ public class StockPo {
     @Column(name = "stock_po_adj_before_vat")
     private Double stockPoAdjBeforeVat;
 
-    //TODO: Add relation to StockRequest
-    @Column(name = "ref_request_id")
-    private Long refRequestId;
-
     @Column(name = "po_est_date")
     private LocalDate poEstDate;
 
@@ -339,6 +350,5 @@ public class StockPo {
      // Add constructor to accept integer argument
     public StockPo(Long stockPoId) {
         this.stockPoId = stockPoId;
-
     }
 }
