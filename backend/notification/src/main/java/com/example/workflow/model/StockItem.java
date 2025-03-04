@@ -23,10 +23,8 @@ import lombok.Setter;
 public class StockItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "item_id")
-    private String itemId;
+    private Long itemId;
 
     @Column(name = "item_name")
     private String itemName;
@@ -284,4 +282,9 @@ public class StockItem {
 
     @Column(name = "gpsc_code")
     private String gpscCode;
+
+    // Add constructor to accept integer argument
+    public StockItem(Long itemId) {
+    this.itemId = itemId;
+    }
 }

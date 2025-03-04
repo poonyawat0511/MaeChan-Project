@@ -2,6 +2,11 @@ package com.example.workflow.dto;
 
 import java.time.LocalDate;
 
+import com.example.workflow.model.StockBudget;
+import com.example.workflow.model.StockPo;
+import com.example.workflow.model.StockUser;
+import com.example.workflow.model.StockWarehouse;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,15 +17,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StockRequestDto {
-    private Long id;
-    private String requestId;
+    private Long requestId;
     private LocalDate requestDate;
     private String requestNo;
     private LocalDate requestReceiveDate;
-    private String requestWarehouseId;
+    private StockWarehouse requestWarehouseId; //relation
     private Boolean requestComplete;
     private LocalDate useDate;
-    private Long stockPoId;
+    private StockPo stockPoId; //relation
     private String hosGuid;
     private Integer budgetYear;
     private String stockSubject;
@@ -29,15 +33,15 @@ public class StockRequestDto {
     private String departmentId;
     private String note;
     private Integer transportDay;
-    private String budgetId;
+    private StockBudget budgetId; //relation
     private Integer runNumber;
     private Integer numberYear;
     private Integer numberMonth;
     private String stockRequestDocId;
     private String projectId;
-    private Long stockUserApprove; // StockUserApprove
+    private StockUser stockUserApprove; // relation
     private LocalDate stockApproveDate;
-    private Long stockUser; // StockUser
+    private StockUser stockUser; // relation
     private String stockRequestDocumentId;
     private String projectPlanId;
     private Boolean requestAllComplete;

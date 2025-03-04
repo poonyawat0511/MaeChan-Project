@@ -8,7 +8,7 @@ import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.example.workflow.model.StockUser;
+import com.example.workflow.model.UserHospital;
 import com.example.workflow.service.JWTService;
 
 import io.jsonwebtoken.Claims;
@@ -34,10 +34,10 @@ public class JWTServiceImpl implements JWTService {
 
     @Override
     public String generateToken(UserDetails userDetails) {
-        StockUser user = (StockUser) userDetails;
+        UserHospital user = (UserHospital) userDetails;
 
         Map<String, Object> claims = Map.of(
-            "stockUserId", user.getStockUserId(),
+            "userHospitalId", user.getId(),
             "firstName", user.getFirstName(),
             "lastName", user.getLastName(),
             "role", user.getRole().name()
@@ -85,7 +85,7 @@ public class JWTServiceImpl implements JWTService {
     }
 
     public Long extractStockUserId(String token) {
-        return extractClaim(token, claims -> claims.get("stockUserId", Long.class));
+        return extractClaim(token, claims -> claims.get("Id", Long.class));
     }
 
     public String extractFirstName(String token) {

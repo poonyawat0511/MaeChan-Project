@@ -3,6 +3,9 @@ package com.example.workflow.model;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,10 +30,26 @@ public class StockRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "request_id")
-    private String requestId;
+    private Long requestId;
+
+    // Add relation 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "request_warehouse_id", referencedColumnName = "warehouse_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "warehouseId")
+    private StockWarehouse requestWarehouseId;  
+
+    // Add relation to StockPo
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "stock_po_id", referencedColumnName = "stock_po_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "stockPoId")
+    private StockPo stockPoId;
+
+    // Add relation to Stock budget
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "budget_id", referencedColumnName = "budget_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "budgetId")
+    private StockBudget budgetId;
 
     @Column(name = "request_date")
     private LocalDate requestDate;
@@ -41,17 +60,11 @@ public class StockRequest {
     @Column(name = "request_receive_date")
     private LocalDate requestReceiveDate;
 
-    @Column(name = "request_warehouse_id")
-    private String requestWarehouseId;
-
     @Column(name = "request_complete")
     private Boolean requestComplete;
 
     @Column(name = "use_date")
     private LocalDate useDate;
-
-    @Column(name = "stock_po_id")
-    private Long stockPoId;
 
     @Column(name = "hos_guid")
     private String hosGuid;
@@ -76,9 +89,6 @@ public class StockRequest {
     @Column(name = "transport_day")
     private Integer transportDay;
 
-    @Column(name = "budget_id")
-    private String budgetId;
-
     @Column(name = "runnumber")
     private Integer runNumber;
 
@@ -94,14 +104,18 @@ public class StockRequest {
     @Column(name = "project_id")
     private String projectId;
 
-    @Column(name = "stock_user_approve_id")
-    private Long stockUserApprove;
+    // Add relation to StockUser
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "stock_user_approve_id", referencedColumnName = "id")
+    private StockUser stockUserApprove;
 
     @Column(name = "stock_approve_date")
     private LocalDate stockApproveDate;
 
-    @Column(name = "stock_user_id")
-    private Long stockUser;
+    // Add relation to StockUser
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "stock_user_id", referencedColumnName = "id")
+    private StockUser stockUser;
 
     @Column(name = "stock_request_document_id")
     private String stockRequestDocumentId;
@@ -166,4 +180,9 @@ public class StockRequest {
 
     @Column(name = "dep_request_no_list")
     private String depRequestNoList;
+
+     // Add constructor to accept integer argument
+    public StockRequest(Long requestId) {
+        this.requestId = requestId;
+}
 }

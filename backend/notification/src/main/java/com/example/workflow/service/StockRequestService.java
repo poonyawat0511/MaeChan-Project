@@ -31,8 +31,7 @@ public class StockRequestService {
     }
 
     public StockRequest updateStockRequest(StockRequest updatedStockRequest) {
-        return stockRequestRepository.findById(updatedStockRequest.getId()).map(existingStockRequest -> {
-            existingStockRequest.setRequestId(updatedStockRequest.getRequestId());
+        return stockRequestRepository.findById(updatedStockRequest.getRequestId()).map(existingStockRequest -> {
             existingStockRequest.setRequestDate(updatedStockRequest.getRequestDate());
             existingStockRequest.setRequestNo(updatedStockRequest.getRequestNo());
             existingStockRequest.setRequestReceiveDate(updatedStockRequest.getRequestReceiveDate());
@@ -81,7 +80,7 @@ public class StockRequestService {
             existingStockRequest.setDepRequestNoList(updatedStockRequest.getDepRequestNoList());
     
             return stockRequestRepository.save(existingStockRequest);
-        }).orElseThrow(() -> new RuntimeException("StockRequest not found with id: " + updatedStockRequest.getId()));
+        }).orElseThrow(() -> new RuntimeException("StockRequest not found with id: " + updatedStockRequest.getRequestId()));
     }
     
 

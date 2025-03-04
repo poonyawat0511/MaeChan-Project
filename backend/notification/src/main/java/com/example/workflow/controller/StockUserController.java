@@ -17,16 +17,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.workflow.model.StockUser;
 import com.example.workflow.service.StockUserService;
 
-
 @RestController
 @RequestMapping("/stock-user")
 public class StockUserController {
+
     @Autowired
     private StockUserService stockUserService;
 
     @PostMapping
-    public ResponseEntity<StockUser> createStockRequest(@RequestBody StockUser stockUser) {
-        StockUser createStockUser = stockUserService.creatStockUser(stockUser);
+    public ResponseEntity<StockUser> createStockUser(@RequestBody StockUser stockUser) {
+        StockUser createStockUser = stockUserService.createStockUser(stockUser);
         return new ResponseEntity<>(createStockUser, HttpStatus.CREATED);
     }
 
@@ -36,19 +36,19 @@ public class StockUserController {
         return new ResponseEntity<>(stockUser, HttpStatus.OK);
     }
 
-    @GetMapping("/{stockUserId}")
-    public ResponseEntity<StockUser> getStockUserByStockUserId(@PathVariable Long stockUserId) {
-        StockUser stockUser = stockUserService.findStockUserById(stockUserId);
+    @GetMapping("/{id}")
+    public ResponseEntity<StockUser> getStockUserById(@PathVariable Long id) {
+        StockUser stockUser = stockUserService.findStockUserById(id);
         if (stockUser != null) {
             return new ResponseEntity<>(stockUser, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
-    @PatchMapping("/{stockUserId}")
-    public ResponseEntity<StockUser> updateStockUserById(@PathVariable Long stockUserId, @RequestBody StockUser stockUser) {
-        stockUser.setStockUserId(stockUserId);
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<StockUser> updateStockUserById(@PathVariable Long id, @RequestBody StockUser stockUser) {
+        stockUser.setId(id);
         StockUser updatedStockUser = stockUserService.updateStockUser(stockUser);
         if (updatedStockUser != null) {
             return new ResponseEntity<>(updatedStockUser, HttpStatus.OK);
@@ -57,11 +57,10 @@ public class StockUserController {
         }
     }
 
-    @DeleteMapping("/{stockUserId}")
-    public ResponseEntity<String> deletedStockUserById(@PathVariable Long stockUserId) {
-        String result = stockUserService.deleteStockUserById(stockUserId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deletedStockUserById(@PathVariable Long id) {
+        String result = stockUserService.deleteStockUserById(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
 
 }

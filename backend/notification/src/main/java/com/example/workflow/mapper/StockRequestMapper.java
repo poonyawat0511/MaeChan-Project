@@ -14,7 +14,6 @@ public class StockRequestMapper {
         }
 
         StockRequestDto dto = new StockRequestDto();
-        dto.setId(stockRequest.getId());
         dto.setRequestId(stockRequest.getRequestId());
         dto.setRequestDate(stockRequest.getRequestDate());
         dto.setRequestNo(stockRequest.getRequestNo());
@@ -73,7 +72,6 @@ public class StockRequestMapper {
         }
 
         StockRequest stockRequest = new StockRequest();
-        stockRequest.setId(stockRequestDto.getId());
         stockRequest.setRequestId(stockRequestDto.getRequestId());
         stockRequest.setRequestDate(stockRequestDto.getRequestDate());
         stockRequest.setRequestNo(stockRequestDto.getRequestNo());

@@ -1,10 +1,16 @@
 package com.example.workflow.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,16 +26,20 @@ import lombok.Setter;
 public class StockRequestList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "request_list_id")
     private Long requestListId;
 
-    @Column(name = "request_id")
-    private Long requestId;
+    // Add relation to StockRequest
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "request_id", referencedColumnName = "request_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "requestId")
+    private StockRequest requestId;
 
-    @Column(name = "item_id")
-    private Long itemId;
+    // Add relation to stock item
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "item_id", referencedColumnName = "item_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "itemId")
+    private StockItem itemId;
 
     @Column(name = "request_qty")
     private int requestQty;
@@ -189,4 +199,9 @@ public class StockRequestList {
 
     @Column(name = "contract_remain_package_qty")
     private int contractRemainPackageQty;
+
+    // Add constructor to handle deserialization from number value
+    public StockRequestList(long requestListId) {
+    this.requestListId = requestListId;
+    }
 }

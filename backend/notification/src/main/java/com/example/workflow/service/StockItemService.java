@@ -27,7 +27,7 @@ public class StockItemService {
 
     public StockItem updateStockItem(Long id, StockItem stockItem) {
         if (stockItemRepository.existsById(id)) {
-            stockItem.setId(id);
+            stockItem.setItemId(id);
             return stockItemRepository.save(stockItem);
         }
         return null;

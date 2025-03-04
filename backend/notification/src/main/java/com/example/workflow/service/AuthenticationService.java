@@ -4,10 +4,10 @@ import com.example.workflow.dto.JwtAuthenticationResponse;
 import com.example.workflow.dto.RefreshTokenRequest;
 import com.example.workflow.dto.SignUpRequest;
 import com.example.workflow.dto.SigninRequest;
-import com.example.workflow.model.StockUser;
+import com.example.workflow.model.UserHospital;
 
 public interface AuthenticationService {
-    StockUser signup(SignUpRequest signUpRequest);
+    UserHospital signup(SignUpRequest signUpRequest);
 
     JwtAuthenticationResponse signin(SigninRequest signinRequest);
 

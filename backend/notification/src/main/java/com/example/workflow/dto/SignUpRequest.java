@@ -8,13 +8,13 @@ import lombok.Data;
 
 @Data
 public class SignUpRequest {
-    private String stockUser;
+    private String userHospital;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
     private String lineId;
     private MultipartFile signature;
-    private Long userHospitalId;
+    private Long stockUserId;
     private Role role;
 }

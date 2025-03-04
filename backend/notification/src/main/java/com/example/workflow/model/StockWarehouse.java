@@ -20,8 +20,6 @@ import lombok.Setter;
 public class StockWarehouse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "warehouse_id")
     private Long warehouseId;
 
@@ -99,4 +97,9 @@ public class StockWarehouse {
 
     @Column(name = "deliver_document_prefix")
     private String deliverDocumentPrefix;
+
+    // Add constructor to handle deserialization from number value
+    public StockWarehouse(long warehouseId) {
+        this.warehouseId = warehouseId;
+    }
 }

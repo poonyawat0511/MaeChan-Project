@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.workflow.model.UserHospital;
@@ -13,9 +14,12 @@ import com.example.workflow.repository.UserHospitalRepository;
 public class UserHospitalService {
 
     @Autowired
-    UserHospitalRepository userHospitalRepository;
+    private UserHospitalRepository userHospitalRepository;
 
-    public UserHospital creatUserHospital(UserHospital userHospital) {
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    public UserHospital createUserHospital(UserHospital userHospital) {
         return userHospitalRepository.save(userHospital);
     }
 
@@ -23,25 +27,34 @@ public class UserHospitalService {
         return userHospitalRepository.findAll();
     }
 
-    public UserHospital findUserHospitalById(Long id) {
-        Optional<UserHospital> userHospital = userHospitalRepository.findById(id);
+    public UserHospital findUserHospitalById(Long userHospitalId) {
+        Optional<UserHospital> userHospital = userHospitalRepository.findById(userHospitalId);
         return userHospital.orElse(null);
     }
 
     public UserHospital updateUserHospital(UserHospital updatedUserHospital) {
         return userHospitalRepository.findById(updatedUserHospital.getId())
                 .map(existingUserHospital -> {
-                    existingUserHospital.setId(updatedUserHospital.getId());
-                    existingUserHospital.setFirstName(updatedUserHospital.getFirstName());
+                    existingUserHospital.setEmail(updatedUserHospital.getEmail());
+                    existingUserHospital.setFirstName(updatedUserHospital.getLastName());
                     existingUserHospital.setLastName(updatedUserHospital.getLastName());
-                    existingUserHospital.setHospitalId(updatedUserHospital.getHospitalId());
+                    existingUserHospital.setLineId(updatedUserHospital.getLineId());
+                    existingUserHospital.setRole(updatedUserHospital.getRole());
+                    existingUserHospital.setSignaturePath(updatedUserHospital.getSignaturePath());
+                    existingUserHospital.setId(updatedUserHospital.getId());
+
+                    if (updatedUserHospital.getPassword() != null && !updatedUserHospital.getPassword().isEmpty()) {
+                        String hashedPassword = passwordEncoder.encode(updatedUserHospital.getPassword());
+                        existingUserHospital.setPassword(hashedPassword);
+                    }
+
                     return userHospitalRepository.save(existingUserHospital);
                 })
                 .orElseThrow(() -> new RuntimeException("UserHospital not found with id: " + updatedUserHospital.getId()));
     }
 
-    public String deleteUserHospitalById(Long id) {
-        userHospitalRepository.deleteById(id);
-        return "UserHospital id:" + id + " has been deleted";
+    public String deleteUserHospitalById(Long userHospitalId) {
+        userHospitalRepository.deleteById(userHospitalId);
+        return "UserHospital id:" + userHospitalId + " has been deleted";
     }
 }

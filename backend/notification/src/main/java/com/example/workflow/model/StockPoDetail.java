@@ -1,10 +1,16 @@
 package com.example.workflow.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,16 +26,32 @@ import lombok.Setter;
 public class StockPoDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "stock_po_detail_id")
     private Long stockPoDetailId;
 
-    @Column(name = "stock_po_id")
-    private Long stockPoId;
+    // Add relation to StockPo
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "stock_po_id", referencedColumnName = "stock_po_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "stockPoId")
+    private StockPo stockPoId;
 
-    @Column(name = "item_id")
-    private Long itemId;
+    // Add relation to stock item
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "item_id", referencedColumnName = "item_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "itemId")
+    private StockItem itemId;
+
+    // Add relation
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "request_list_id", referencedColumnName = "request_list_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "requestListId")
+    private StockRequestList requestListId;
+    
+    // Add relation
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "last_warehouse_id", referencedColumnName = "warehouse_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "warehouseId")
+    private StockWarehouse lastWarehouseId;
 
     @Column(name = "stock_po_qty")
     private Integer stockPoQty;
@@ -105,9 +127,6 @@ public class StockPoDetail {
 
     @Column(name = "item_drug_account")
     private String itemDrugAccount;
-
-    @Column(name = "request_list_id")
-    private Long requestListId;
 
     @Column(name = "stock_co_po_detail_id")
     private Long stockCoPoDetailId;
@@ -205,9 +224,11 @@ public class StockPoDetail {
     @Column(name = "back_order_qty")
     private Integer backOrderQty;
 
-    @Column(name = "last_warehouse_id")
-    private Long lastWarehouseId;
-
     @Column(name = "stock_vendor_contract_item_id")
     private Long stockVendorContractItemId;
+
+    // Add constructor to accept integer argument
+    public StockPoDetail(Long stockPoDetailId) {
+    this.stockPoDetailId = stockPoDetailId;
+    }
 }

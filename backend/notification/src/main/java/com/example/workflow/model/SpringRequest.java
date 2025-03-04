@@ -24,26 +24,25 @@ import lombok.Setter;
 public class SpringRequest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "stock_request_id", referencedColumnName = "id")
+    @JoinColumn(name = "stock_request_id", referencedColumnName = "request_id")
     private StockRequest stockRequest;
 
     @Column(name = "camunda_task_id")
     private String camundaTaskId;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_approve_id", referencedColumnName = "stockUserId")
-    private StockUser userApprove;
+    @JoinColumn(name = "user_approve_id", referencedColumnName = "id")
+    private UserHospital userApprove;
 
     @Column(name = "approver_approve_status")
     private Boolean approverApproveStatus;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_director_id", referencedColumnName = "stockUserId")
-    private StockUser userDirector;
+    @JoinColumn(name = "user_director_id", referencedColumnName = "id")
+    private UserHospital userDirector;
 
     @Column(name = "director_approve_status")
     private Boolean directorApproveStatus;

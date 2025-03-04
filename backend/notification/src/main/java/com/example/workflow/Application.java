@@ -8,30 +8,30 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.example.workflow.model.Role;
-import com.example.workflow.model.StockUser;
-import com.example.workflow.repository.StockUserRepository;
+import com.example.workflow.model.UserHospital;
+import com.example.workflow.repository.UserHospitalRepository;
 
 @SpringBootApplication
 @EnableScheduling
 public class Application implements CommandLineRunner{
   @Autowired
-  private StockUserRepository stockUserRepository;
+  private UserHospitalRepository userHospitalRepository;
 
   public static void main(String... args) {
     SpringApplication.run(Application.class, args);
   }
 
   public void run(String... args) {
-      StockUser adminAccount = stockUserRepository.findByRole(Role.ADMIN);
+      UserHospital adminAccount = userHospitalRepository.findByRole(Role.ADMIN);
       if(null == adminAccount){
-        StockUser stockUser = new StockUser();
+        UserHospital userHospital = new UserHospital();
 
-        stockUser.setEmail("admin@gmail.com");
-        stockUser.setFirstName("admin");
-        stockUser.setLastName("admin");
-        stockUser.setRole(Role.ADMIN);
-        stockUser.setPassword(new BCryptPasswordEncoder().encode("admin"));
-        stockUserRepository.save(stockUser);
+        userHospital.setEmail("admin@gmail.com");
+        userHospital.setFirstName("admin");
+        userHospital.setLastName("admin");
+        userHospital.setRole(Role.ADMIN);
+        userHospital.setPassword(new BCryptPasswordEncoder().encode("admin"));
+        userHospitalRepository.save(userHospital);
       }
   }
 

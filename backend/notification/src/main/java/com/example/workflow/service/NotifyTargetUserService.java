@@ -1,7 +1,9 @@
 package com.example.workflow.service;
 
 import com.example.workflow.model.NotifyTargetUser;
+import com.example.workflow.model.UserHospital;
 import com.example.workflow.repository.NotifyTargetUserRepository;
+import com.example.workflow.repository.UserHospitalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,9 @@ public class NotifyTargetUserService {
     @Autowired
     private NotifyTargetUserRepository notifyTargetUserRepository;
 
+    @Autowired
+    private UserHospitalRepository userHospitalRepository;
+
     public List<NotifyTargetUser> getAllNotifyTargetUsers() {
         return notifyTargetUserRepository.findAll();
     }
@@ -22,6 +27,16 @@ public class NotifyTargetUserService {
     }
 
     public NotifyTargetUser createNotifyTargetUser(NotifyTargetUser notifyTargetUser) {
+        return notifyTargetUserRepository.save(notifyTargetUser);
+    }
+
+    public NotifyTargetUser createNotifyTargetUser(Long userHospitalId) {
+        UserHospital userHospital = userHospitalRepository.findById(userHospitalId)
+                .orElseThrow(() -> new RuntimeException("UserHospital not found"));
+
+        NotifyTargetUser notifyTargetUser = new NotifyTargetUser();
+        notifyTargetUser.setTargetUser(userHospital);
+
         return notifyTargetUserRepository.save(notifyTargetUser);
     }
 

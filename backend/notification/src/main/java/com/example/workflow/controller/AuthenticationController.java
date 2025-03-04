@@ -13,7 +13,7 @@ import com.example.workflow.dto.RefreshTokenRequest;
 import com.example.workflow.dto.SignUpRequest;
 import com.example.workflow.dto.SigninRequest;
 import com.example.workflow.model.Role;
-import com.example.workflow.model.StockUser;
+import com.example.workflow.model.UserHospital;
 import com.example.workflow.service.AuthenticationService;
 
 import jakarta.servlet.http.Cookie;
@@ -28,12 +28,12 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping(value = "/signup", consumes = {"multipart/form-data"})
-    public ResponseEntity<StockUser> signup(
+    public ResponseEntity<UserHospital> signup(
             @RequestPart("firstName") String firstName,
             @RequestPart("lastName") String lastName,
             @RequestPart("email") String email,
             @RequestPart("lineId") String lineId,
-            @RequestPart("userHospitalId") String userHospitalId,
+            @RequestPart("stockUserId") String stockUserId,
             @RequestPart("password") String password,
             @RequestPart(value = "signature", required = false) MultipartFile signature,
             @RequestPart(value = "role", required = false) String role) {
@@ -45,7 +45,7 @@ public class AuthenticationController {
         signUpRequest.setLastName(lastName);
         signUpRequest.setEmail(email);
         signUpRequest.setPassword(password);
-        signUpRequest.setUserHospitalId(Long.valueOf(userHospitalId));
+        signUpRequest.setStockUserId(Long.valueOf(stockUserId));
         signUpRequest.setLineId(lineId);
         signUpRequest.setSignature(signature);
         signUpRequest.setRole(userRole);

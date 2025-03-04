@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/notify-target-user")
@@ -22,9 +23,9 @@ public class NotifyTargetUserController {
     }
 
     @PostMapping
-    public ResponseEntity<NotifyTargetUser> createNotifyTargetUser(@RequestBody NotifyTargetUser notifyTargetUser) {
-        NotifyTargetUser createdUser = notifyTargetUserService.createNotifyTargetUser(notifyTargetUser);
-        return ResponseEntity.ok(createdUser);
+    public NotifyTargetUser createNotifyTargetUser(@RequestBody Map<String, Long> request) {
+        Long userHospitalId = request.get("targetUser");
+        return notifyTargetUserService.createNotifyTargetUser(userHospitalId);
     }
 
     @GetMapping("/{id}")
@@ -44,4 +45,5 @@ public class NotifyTargetUserController {
         notifyTargetUserService.deleteNotifyTargetUser(id);
         return ResponseEntity.noContent().build();
     }
+    
 }
