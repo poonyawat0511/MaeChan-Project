@@ -77,8 +77,9 @@ export default function AllStockRequest() {
   };
 
   const filteredRequests = requests.filter((request) => {
-    return request.requestId.toLowerCase().includes(searchQuery.toLowerCase());
-  });
+    return (request.requestId?.toString() || "").toLowerCase().includes(searchQuery.toLowerCase());
+});
+
 
   const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
 

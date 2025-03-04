@@ -22,12 +22,11 @@ export const downloadCSV = (requests: StockRequest[]) => {
   ];
 
   const csvRows = requests.map((request) => [
-    request.id,
     request.requestId,
     request.requestDate,
     request.requestNo,
     request.requestReceiveDate,
-    request.requestWarehouseId,
+    request.requestWarehouseId.warehouseId,
     request.requestComplete,
     request.useDate,
     request.stockPoId,
@@ -45,9 +44,9 @@ export const downloadCSV = (requests: StockRequest[]) => {
     request.numberMonth,
     request.stockRequestDocId,
     request.projectId,
-    request.stockUserApprove,
+    request.stockUserApprove.id,
     request.stockApproveDate,
-    request.stockUser,
+    request.stockUser.id,
     request.stockRequestDocumentId,
     request.projectPlanId,
     request.requestAllComplete,

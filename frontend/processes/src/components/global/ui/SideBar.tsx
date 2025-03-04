@@ -22,14 +22,14 @@ interface MenuItem {
   icon: ElementType;
   link: string;
 }
-interface StockUser {
+interface UserHospital {
   role: string;
 }
 
 const SideBar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const [user, setUser] = useState<StockUser | null>(null); 
+  const [user, setUser] = useState<UserHospital | null>(null); 
   const pathname = usePathname();
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const SideBar = () => {
       const token = localStorage.getItem("jwt");
 
       if (token) {
-        const decoded: StockUser = jwtDecode(token);
+        const decoded: UserHospital = jwtDecode(token);
         setUser(decoded);
       }
     } catch (error) {

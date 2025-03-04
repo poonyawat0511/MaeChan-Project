@@ -1,6 +1,6 @@
-import { StockUser } from "./stock-user";
+import { UserHospital } from "./user-hospital";
 
-export interface Target{
-    id:string;
-    targetUser:StockUser
+export interface Target {
+  id: string;
+  targetUser: UserHospital;
 }

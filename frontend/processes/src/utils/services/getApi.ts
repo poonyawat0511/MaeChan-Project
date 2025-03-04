@@ -1,4 +1,4 @@
-import { axiosInstance, dayApi, stockUserApi, targetApi, timeApi } from "../api/api";
+import { axiosInstance, dayApi, targetApi, timeApi, userHospitalApi } from "../api/api";
 import { StockRequest } from "../types/stock-request";
 import { Task } from "../types/task";
 import { jwtDecode } from "jwt-decode";
@@ -9,9 +9,9 @@ import {
   springRequestByTaskApi,
 } from "../api/api";
 import { Days } from "../types/day";
-import { StockUser } from "../types/stock-user";
 import { Times } from "../types/time";
 import { Target } from "../types/target";
+import { userHospital } from "../types/user-hospital";
 
 // Function to get stock requests
 export const getStockRequests = async (): Promise<StockRequest[]> => {
@@ -67,9 +67,9 @@ export const getStockRequestByTaskId = async (
   }
 };
 
-export const getStockUser = async (): Promise<StockUser[]> => {
+export const getUserHospital = async (): Promise<userHospital[]> => {
   try {
-    const response = await axiosInstance.get<StockUser[]>(stockUserApi);
+    const response = await axiosInstance.get<userHospital[]>(userHospitalApi);
     return response.data;
   } catch (error) {
     console.error("Error fetching stock users:", error);

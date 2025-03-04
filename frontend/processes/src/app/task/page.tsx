@@ -68,15 +68,27 @@ export default function TaskPage() {
     processInstanceId: string
   ): Promise<StockRequest | null> => {
     try {
-      const response = await axiosInstance.get<StockRequest>(
+      console.log(`Fetching stock request for processInstanceId: ${processInstanceId}`);
+      
+      // Ensure we fetch the correct structure
+      const response = await axiosInstance.get<{ stockRequest: StockRequest }>(
         springRequestByTaskApi(processInstanceId)
       );
-      return response.data;
+  
+      console.log("Full API Response:", response.data);
+  
+      if (!response.data || !response.data.stockRequest) {
+        console.warn("Stock request is missing or invalid:", response.data);
+        return null;
+      }
+  
+      return response.data.stockRequest;
     } catch (error) {
       console.error("Error fetching stock request:", error);
       return null;
     }
   };
+  
   
   const handleRejecte = (task: Task) => {
     confirmAction(() => executeTaskAction(task, false));
@@ -94,49 +106,48 @@ export default function TaskPage() {
   const executeTaskAction = async (task: Task, approve: boolean) => {
     try {
       const token = localStorage.getItem("jwt");
-
+  
       if (!token) {
         showAlert("You must be logged in to perform this action.", "warning");
         return;
       }
-
-      const stockRequest = await fetchStockRequestByTaskId(
-        task.processInstanceId
-      );
-      if (!stockRequest) {
-        showAlert("Stock request not found.", "danger");
+  
+      const stockRequest = await fetchStockRequestByTaskId(task.processInstanceId);
+      
+      if (!stockRequest || !stockRequest.requestId) {
+        showAlert("Stock request not found or missing requestId.", "danger");
+        console.warn("Stock request is invalid:", stockRequest);
         return;
       }
-
-      const decodedToken = jwtDecode<{ stockUserId?: string; role?: string }>(
-        token
-      );
-      const stockUserId = decodedToken.stockUserId || "unknown";
+  
+      console.log("Executing task with stockRequest:", stockRequest);
+  
+      const decodedToken = jwtDecode<{ userHospitalId?: string; role?: string }>(token);
+      const userHospitalId = decodedToken.userHospitalId || "unknown";
       const userRole = decodedToken.role || "USER";
-
+  
       let requestBody = {};
-
+  
       if (userRole === "DIRECTOR") {
         requestBody = {
           variables: {
-            requestId: { value: stockRequest.id.toString(), type: "String" },
-            stockSubjectPerson: {
-              value: stockUserId.toString(),
-              type: "String",
-            },
+            requestId: { value: stockRequest.requestId.toString(), type: "String" },
+            stockSubjectPerson: { value: userHospitalId.toString(), type: "String" },
             approve: { value: approve, type: "Boolean" },
           },
         };
       } else {
         requestBody = {
           variables: {
-            requestId: { value: stockRequest.id.toString(), type: "String" },
-            stockUserApprove: { value: stockUserId.toString(), type: "String" },
+            requestId: { value: stockRequest.requestId.toString(), type: "String" },
+            stockUserApprove: { value: userHospitalId.toString(), type: "String" },
             requestComplete: { value: approve, type: "Boolean" },
           },
         };
       }
-
+  
+      console.log("Submitting request:", requestBody);
+  
       await axiosInstance.post(
         `${camundaTaskSubmit}/${task.id}/submit-form`,
         requestBody,
@@ -146,7 +157,7 @@ export default function TaskPage() {
           },
         }
       );
-
+  
       showAlert(
         `Task ${approve ? "approved" : "rejected"} successfully!`,
         approve ? "success" : "warning"
@@ -163,7 +174,7 @@ export default function TaskPage() {
     }
     setConfirmModalOpen(false);
   };
-
+  
   const handleTaskClick = async (task: Task) => {
     setSelectedTask(task);
     try {

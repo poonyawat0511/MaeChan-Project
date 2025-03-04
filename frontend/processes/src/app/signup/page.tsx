@@ -14,7 +14,7 @@ export default function SignUpPage() {
     lastName: "",
     email: "",
     password: "",
-    userHospitalId: "",
+    stockUserId: "",
     lineId: "",
     role: undefined,
   });

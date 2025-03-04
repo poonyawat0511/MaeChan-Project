@@ -1,7 +1,7 @@
-
 import { NextRequest } from "next/server";
-import { StockUser } from "../types/stock-user";
+
 import { jwtDecode } from "jwt-decode";
+import { userHospital } from "../types/user-hospital";
 
 export const getToken = (): string | null => {
   return localStorage.getItem("token");
@@ -11,12 +11,12 @@ export const isAuthenticated = (): boolean => {
   return !!getToken();
 };
 
-export const decodeToken = (): StockUser | null => {
+export const decodeToken = (): userHospital | null => {
   const token = getToken();
   if (!token) return null;
 
   try {
-    const decoded = jwtDecode<StockUser & { exp?: number }>(token);
+    const decoded = jwtDecode<userHospital & { exp?: number }>(token);
 
     if (decoded.exp && Date.now() >= decoded.exp * 1000) {
       console.warn("Token expired");
@@ -30,13 +30,14 @@ export const decodeToken = (): StockUser | null => {
   }
 };
 
-
-export const extractUserFromCookie = (request: NextRequest): StockUser | null => {
+export const extractUserFromCookie = (
+  request: NextRequest
+): userHospital | null => {
   const token = request.cookies.get("jwt")?.value;
   if (!token) return null;
 
   try {
-    return jwtDecode<StockUser>(token);
+    return jwtDecode<userHospital>(token);
   } catch (error) {
     console.error("Invalid JWT:", error);
     return null;

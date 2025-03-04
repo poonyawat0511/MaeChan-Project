@@ -20,7 +20,7 @@ import {
 import {
   getNotifyDay,
   getNotifyTime,
-  getStockUser,
+  getUserHospital,
 } from "@/utils/services/getApi";
 import { Days } from "@/utils/types/day";
 import {
@@ -34,15 +34,13 @@ import {
 } from "@heroicons/react/24/outline";
 import { Times } from "@/utils/types/time";
 
-
-import { StockUser } from "@/utils/types/stock-user";
-
 import DayCard from "@/components/global/cards/DayCard";
 import LoadingScreen from "@/components/global/loading/loading";
 import UnauthorizedCard from "@/components/global/cards/UnauthorizedCard";
 import { axiosInstance, dayApi, targetApi, timeApi } from "@/utils/api/api";
 import TimeFormModal from "@/components/global/modals/TimeModalForm";
 import { useAlert } from "@/components/global/alerts/GlobalAlertProvider";
+import { UserHospital } from "@/utils/types/user-hospital";
 
 export default function DayPage() {
   const [days, setDays] = useState<Days[]>([]);
@@ -56,8 +54,8 @@ export default function DayPage() {
   } | null>(null);
   const [selectedTime, setSelectedTime] = useState("Select Time");
   const [times, setTimes] = useState<Times[]>([]);
-  const [users, setUsers] = useState<StockUser[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<StockUser[]>([]);
+  const [users, setUsers] = useState<UserHospital[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<UserHospital[]>([]);
   const [userSearchQuery, setUserSearchQuery] = useState("");
   const LOCAL_STORAGE_KEY = "selectedUsers";
   const { showAlert } = useAlert();
@@ -82,7 +80,7 @@ export default function DayPage() {
       setRefreshing(true);
       const data = await getNotifyDay();
       const time = await getNotifyTime();
-      const user = await getStockUser();
+      const user = await getUserHospital();
       setDays(data);
       setTimes(time);
       setUsers(user);
@@ -111,11 +109,13 @@ export default function DayPage() {
         name: updatedDay.name,
         active: updatedDay.active,
       });
-      showAlert(`Update Active Status Sucessfully!` , `success`)
+      showAlert(`Update Active Status Sucessfully!`, `success`);
       console.log("Updated Response:", response.data);
 
       setDays((prevDays) =>
-        prevDays.map((day) => (day.id === updatedDay.id ? response.data as Days : day))
+        prevDays.map((day) =>
+          day.id === updatedDay.id ? (response.data as Days) : day
+        )
       );
     } catch (error) {
       console.error("Error updating day:", error);
@@ -139,9 +139,9 @@ export default function DayPage() {
       console.log("Response:", response.data);
       fetchData();
       setIsTimeModalOpen(false);
-      showAlert('Time Created Successfully', 'success')
+      showAlert("Time Created Successfully", "success");
     } catch (error) {
-      showAlert('Time Create Failed', 'danger')
+      showAlert("Time Create Failed", "danger");
       console.error("Error submitting time:", error);
     }
   };
@@ -150,7 +150,7 @@ export default function DayPage() {
     try {
       await axiosInstance.delete(`${timeApi}/${id}`);
       setTimes((prevTimes) => prevTimes.filter((time) => time.id !== id));
-      showAlert('Time Deleted Successfully', 'success')
+      showAlert("Time Deleted Successfully", "success");
       console.log("Time deleted successfully");
     } catch (error) {
       console.error("Error deleting time:", error);
@@ -166,17 +166,13 @@ export default function DayPage() {
     console.log("Selected time:", time);
   };
 
-  const handleAddUser = async (user: StockUser) => {
-    if (
-      !selectedUsers.some(
-        (selectedUser) => selectedUser.stockUserId === user.stockUserId
-      )
-    ) {
+  const handleAddUser = async (user: UserHospital) => {
+    if (!selectedUsers.some((selectedUser) => selectedUser.id === user.id)) {
       try {
         const response = await axiosInstance.post(targetApi, {
-          targetUser: user.stockUserId,
+          targetUser: user.id,
         });
-        showAlert('User Added Successfully', 'success')
+        showAlert("User Added Successfully", "success");
         console.log("User added successfully:", response.data);
 
         setSelectedUsers([...selectedUsers, user]);
@@ -186,34 +182,32 @@ export default function DayPage() {
     }
   };
 
-  const handleRemoveUser = async (stockUserId: string) => {
+  const handleRemoveUser = async (id: string) => {
     try {
       const response = await axiosInstance.get(targetApi);
       const targetUsers = response.data;
-      const targetRecord = (targetUsers as { id: string; targetUser: string }[]).find(
-        (record: { id: string; targetUser: string }) =>
-          record.targetUser === stockUserId
-      );
+
+      // Fix: Compare id with targetUser.id instead of targetUser object
+      const targetRecord = (
+        targetUsers as { id: string; targetUser: { id: string } }[]
+      ).find((record) => record.targetUser.id === id);
 
       if (!targetRecord) {
-        console.warn(
-          `No matching target record found for stockUserId: ${stockUserId}`
-        );
+        console.warn(`No matching target record found for UserId: ${id}`);
         return;
       }
 
       await axiosInstance.delete(`${targetApi}/${targetRecord.id}`);
 
-      setSelectedUsers(
-        selectedUsers.filter((user) => user.stockUserId !== stockUserId)
-      );
+      setSelectedUsers(selectedUsers.filter((user) => user.id !== id));
 
-      showAlert('User Removed Successfully', 'success')
+      showAlert("User Removed Successfully", "success");
       console.log(`User with API id ${targetRecord.id} removed successfully`);
     } catch (error) {
       console.error("Error removing user:", error);
-    }
-  };
+    } 
+};
+
 
   const filteredUsers = users.filter(
     (user) =>
@@ -373,10 +367,10 @@ export default function DayPage() {
               <div className="overflow-auto mb-3" style={{ maxHeight: "25%" }}>
                 {selectedUsers.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {selectedUsers.map((user) => (
+                    {selectedUsers.map((user, index) => (
                       <Chip
-                        key={user.stockUserId}
-                        onClose={() => handleRemoveUser(user.stockUserId)}
+                        key={user.id ? user.id : `user-${index}`} // Ensure uniqueness
+                        onClose={() => handleRemoveUser(user.id)}
                         avatar={<Avatar name={user.firstName} size="sm" />}
                         variant="flat"
                         color="primary"
@@ -413,7 +407,7 @@ export default function DayPage() {
                 {filteredUsers.length > 0 ? (
                   filteredUsers.map((user) => (
                     <div
-                      key={user.stockUserId}
+                      key={user.id}
                       className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-md"
                     >
                       <div className="flex items-center gap-2">
@@ -430,13 +424,11 @@ export default function DayPage() {
                         variant="light"
                         onPress={() => handleAddUser(user)}
                         disabled={selectedUsers.some(
-                          (selectedUser) =>
-                            selectedUser.stockUserId === user.stockUserId
+                          (selectedUser) => selectedUser.id === user.id
                         )}
                       >
                         {selectedUsers.some(
-                          (selectedUser) =>
-                            selectedUser.stockUserId === user.stockUserId
+                          (selectedUser) => selectedUser.id === user.id
                         ) ? (
                           <UserMinusIcon className="h-3 w-3" />
                         ) : (

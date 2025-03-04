@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { StockUser } from "@/utils/types/stock-user";
-import { getStockUser } from "@/utils/services/getApi";
 import {
   Input,
   Button,
@@ -25,16 +23,18 @@ import {
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
 
-import { axiosInstance, stockUserApi } from "@/utils/api/api";
+import { axiosInstance, userHospitalApi } from "@/utils/api/api";
 import { useAlert } from "@/components/global/alerts/GlobalAlertProvider";
 import LoadingScreen from "@/components/global/loading/loading";
 import UnauthorizedCard from "@/components/global/cards/UnauthorizedCard";
 import EmptyState from "@/components/global/emptys/EmptyState";
-import StockUserTable from "@/components/global/tables/stockUserTable";
 import BlurModal from "@/components/global/modals/BlurModal";
+import { getUserHospital } from "@/utils/services/getApi";
+import { UserHospital } from "@/utils/types/user-hospital";
+import UserHospitalTable from "@/components/global/tables/UserHospitalTable";
 
 export default function UserPage() {
-  const [users, setUsers] = useState<StockUser[]>([]);
+  const [users, setUsers] = useState<UserHospital[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -51,7 +51,7 @@ export default function UserPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const userData = await getStockUser();
+      const userData = await getUserHospital();
       setUsers(userData);
       setError(null);
     } catch {
@@ -70,9 +70,9 @@ export default function UserPage() {
   const handleDelete = async () => {
     if (!selectedUserId) return;
     try {
-      await axiosInstance.delete(`${stockUserApi}/${selectedUserId}`);
+      await axiosInstance.delete(`${userHospitalApi}/${selectedUserId}`);
       setUsers((prevUsers) =>
-        prevUsers.filter((user) => user.stockUserId !== selectedUserId)
+        prevUsers.filter((user) => user.id !== selectedUserId)
       );
       showAlert(`Deteletd user successfully!`, `success`);
     } catch (error) {
@@ -193,11 +193,11 @@ export default function UserPage() {
               onClear={() => setSearchQuery("")}
             />
           ) : (
-            <StockUserTable
-              stockUsers={paginatedUsers}
-              currentPage={currentPage}
-              onDelete={handleConfirmDelete}
-            />
+            <UserHospitalTable
+            UserHospitals={paginatedUsers}
+            currentPage={currentPage}
+            onDelete={handleConfirmDelete}
+          />          
           )}
         </CardBody>
 

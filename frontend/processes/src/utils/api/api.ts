@@ -27,7 +27,7 @@ export const camundaTaskSubmit = "/engine-rest/task";
 export const springRequestByTaskApi = (processInstanceId: string) =>
   `/spring-requests/task/${processInstanceId}`;
 export const requestApi = "/stock-requests";
-export const stockUserApi = "/stock-user";
+export const userHospitalApi = "/user-hospital";
 export const dayApi = "/notify-days";
 export const timeApi = "/notify-time"
 export const targetApi = "/notify-target-user"
