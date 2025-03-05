@@ -32,7 +32,7 @@ function thaitext(doc: jsPDF, str: string, x: number, y: number) {
   doc.text(base, x, y);
 }
 
-export default function generatePDF(stockRequest: StockRequest,stockRequestList: StockRequestList[]): string {
+export default function generatePDF(stockRequest: StockRequest, stockRequestList: StockRequestList[]): string {
   const doc = new jsPDF("p", "mm", "a4");
 
   addThaiFont(doc);
@@ -85,7 +85,7 @@ export default function generatePDF(stockRequest: StockRequest,stockRequestList:
   thaitext(doc, "เพื่อสำรองจ่ายในคลังพัสดุกลางประจำเดือน ", margin , margin + 80);
   thaitext(doc, "เพื่อให้แต่ละหน่วยงานสามารถเบิกใช้ได้อย่างเหมาะสม จึงขออนุมัติตามรายการดังนี้", margin, margin + 90);
 
-  const tableColumn = [
+  const itemColumn = [
     "ลำดับ",
     "รายการ",
     "จำนวน",
@@ -95,31 +95,33 @@ export default function generatePDF(stockRequest: StockRequest,stockRequestList:
     "ราคาหลังสุด",
     "กำหนดเวลาใช้พัสดุ",
   ];
+
   // Table Rows (Stock Request List Data)
-  const tableRows = stockRequestList.map((item, index) => [
+  const itemRows = stockRequestList.map((item, index) => [
     index + 1,
     item.tradeName || "-",
     item.requestQty,
-    item.requestListUnitPrice,
-    item.requestListTotalPrice,
     item.stockItemUnitStandardPrice || "-",
+    item.totalPrice,
+    "-",
     item.lastPrice || "-",
-    item.requestDate,
+    stockRequest.transportDay,
   ]);
 
   doc.autoTable({
     startY: margin + 100,
-    head: [tableColumn],
-    body: tableRows,
-    styles: { font: "Sarabun-Thin", fontSize: 9 },
-    columnStyles: { 0: { cellWidth: 12 }, 1: { cellWidth: 80 } },
+    head: [itemColumn],
+    body: itemRows,
+    styles: { font: "Sarabun-Thin", fontSize: 10 },
+    columnStyles: { 0: { cellWidth: 12 }, 1: { cellWidth: 50 } },
   });
 
   const finalY = doc.lastAutoTable?.finalY ?? margin + 120;
 
+  //table summary
   const summaryColumns = ["รายการ", "จำนวนเงิน (บาท)"];
   const summaryRows = [
-    ["รวมเป็นเงิน", stockRequest.requestTotalPrice, "บาท"],
+    ["รวมเป็นเงิน", stockRequest.stockBudgetUse, "บาท"],
     ["ยอดเงินที่ได้รับจัดสรร", stockRequest.stockBudgetTotal, "บาท"],
     ["ยอดเงินที่เหลือ", stockRequest.stockBudgetRemain, "บาท"],
   ];
@@ -134,6 +136,7 @@ export default function generatePDF(stockRequest: StockRequest,stockRequestList:
 
   const finalY2 = doc.lastAutoTable?.finalY ?? finalY + 30;
 
+  //line 8
   thaitext(
     doc,
     `ด้วยวิธี ${stockRequest.note} และขอแต่งตั้งคณะกรรมการตรวจรับพัสดุ ตามารายนามดังนี้`,
@@ -142,14 +145,20 @@ export default function generatePDF(stockRequest: StockRequest,stockRequestList:
   );
   thaitext(doc, `${stockRequest.stockUser} ตำแหน่ง `, margin, finalY2 + 20);
 
-  thaitext(doc, "▢ อนุมัติ    ▢ ไม่อนุมัติ", margin, finalY2 + 30);
+  doc.text('อนุมัติ:', margin, finalY2 + 30);
+
+  doc.text('ไม่อนุมัติ:', margin + 40, finalY2 + 30);
 
   thaitext(doc, "ลงชื่อ ____________________ ผู้ตรวจสอบ", pageWidth - margin - 80, finalY2 + 40);
-  thaitext(doc, "(นายวิสุทธิ์ แก้วประกาย)", pageWidth - margin - 80, finalY2 + 50);
+  thaitext(doc, `${stockRequest.stockUserApprove.firstName} ${stockRequest.stockUserApprove.lastName}`, pageWidth - margin - 80, finalY2 + 50);
   thaitext(doc, "ผู้ตรวจสอบ", pageWidth - margin - 80, finalY2 + 60);
 
   thaitext(doc, "ลงชื่อ ____________________ ผู้ขออนุมัติ", margin, finalY2 + 40);
-  thaitext(doc, "(นายอธิวัฒน์ สุวรรณปัญญา)", margin, finalY2 + 50);
+  if (stockRequest.stockUser) {
+    thaitext(doc, `${stockRequest.stockUser.firstName} ${stockRequest.stockUser.lastName}`, margin, finalY2 + 50);
+  }else{
+    thaitext(doc, `-`, margin, finalY2 + 50);
+  }
   thaitext(doc, "เจ้าหน้าที่พัสดุ", margin, finalY2 + 60);
 
   thaitext(doc, "ลงชื่อ ____________________", pageWidth / 2 - 30, finalY2 + 80);
