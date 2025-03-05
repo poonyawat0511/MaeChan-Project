@@ -121,8 +121,8 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
   //table summary
   const summaryColumns = ["รายการ", "จำนวนเงิน (บาท)"];
   const summaryRows = [
-    ["รวมเป็นเงิน", stockRequest.stockBudgetUse, "บาท"],
     ["ยอดเงินที่ได้รับจัดสรร", stockRequest.stockBudgetTotal, "บาท"],
+    ["ยอดเงินที่ซื้อแล้ว", stockRequest.stockBudgetUse, "บาท"],
     ["ยอดเงินที่เหลือ", stockRequest.stockBudgetRemain, "บาท"],
   ];
 
