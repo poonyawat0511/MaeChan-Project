@@ -51,6 +51,10 @@ public class StockWarehouseController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteStockWarehouseById(@PathVariable Long id) {
+        StockWarehouse stockWarehouse = stockWarehouseService.findStockWarehouseById(id);
+        if (stockWarehouse == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         String result = stockWarehouseService.deleteStockWarehouseById(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

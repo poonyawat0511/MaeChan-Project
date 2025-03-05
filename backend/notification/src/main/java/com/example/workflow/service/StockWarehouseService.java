@@ -30,6 +30,6 @@ public class StockWarehouseService {
 
     public String deleteStockWarehouseById(Long id) {
         stockWarehouseRepository.deleteById(id);
-        return "StockWarehouse deleted successfully";
+        return "StockWarehouse id : " + id + " deleted successfully";
     }
 }
