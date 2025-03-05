@@ -15,7 +15,7 @@ import {
   Pagination,
 } from "@heroui/react";
 import { downloadCSV } from "@/utils/services/csv";
-import { getStockRequests } from "@/utils/services/getApi";
+import { getStockRequestList, getStockRequests } from "@/utils/services/getApi";
 import StockRequestTable from "@/components/global/tables/StockRequest.table";
 import PdfPreview from "@/components/global/pdf/PdfPreview";
 import LoadingScreen from "@/components/global/loading/loading";
@@ -27,9 +27,11 @@ import {
   DocumentChartBarIcon,
 } from "@heroicons/react/24/outline";
 import EmptyStateMessage from "@/components/global/emptys/EmptyStateMessage";
+import { StockRequestList } from "@/utils/types/stock-request-list";
 
 export default function AllStockRequest() {
   const [requests, setRequests] = useState<StockRequest[]>([]);
+  const [requestList , setRequestList ] = useState<StockRequestList[]> ([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +45,9 @@ export default function AllStockRequest() {
     try {
       setRefreshing(true);
       const data = await getStockRequests();
+      const stockRequestList = await getStockRequestList();
       setRequests(data);
+      setRequestList(stockRequestList);
       setError(null);
     } catch {
       console.log("Session expired. Redirecting to sign-in...");
@@ -60,7 +64,17 @@ export default function AllStockRequest() {
 
   const handleTaskClick = async (request: StockRequest) => {
     try {
-      const pdfUrl = generatePDF(request);
+      // Fetch stock request list related to this request
+      const stockRequestList = requestList.filter(
+        (item) => item.requestId.requestId === request.requestId
+      );
+  
+      if (!stockRequestList || stockRequestList.length === 0) {
+        console.warn("No stock request list found for this request.");
+      }
+  
+      // Generate PDF with request & request list
+      const pdfUrl = generatePDF(request, stockRequestList);
       setSelectedPdfUrl(pdfUrl);
       setError(null);
       setOpenPdfModal(true);
@@ -70,7 +84,7 @@ export default function AllStockRequest() {
       setError("Failed to generate PDF. Please try again.");
     }
   };
-
+  
   const handleClosePreview = () => {
     setOpenPdfModal(false);
     setSelectedPdfUrl(null);
