@@ -150,8 +150,12 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
   doc.text('ไม่อนุมัติ:', margin + 40, finalY2 + 30);
 
   thaitext(doc, "ลงชื่อ ____________________ ผู้ตรวจสอบ", pageWidth - margin - 80, finalY2 + 40);
-  thaitext(doc, `${stockRequest.stockUserApprove.firstName} ${stockRequest.stockUserApprove.lastName}`, pageWidth - margin - 80, finalY2 + 50);
-  thaitext(doc, "ผู้ตรวจสอบ", pageWidth - margin - 80, finalY2 + 60);
+  if(stockRequest.stockUserApprove){
+    thaitext(doc, `${stockRequest.stockUserApprove.firstName} ${stockRequest.stockUserApprove.lastName}`, pageWidth - margin - 80, finalY2 + 50);
+  }else{
+    thaitext(doc, `-`, margin, finalY2 + 40);
+  }
+    thaitext(doc, "ผู้ตรวจสอบ", pageWidth - margin - 80, finalY2 + 60);
 
   thaitext(doc, "ลงชื่อ ____________________ ผู้ขออนุมัติ", margin, finalY2 + 40);
   if (stockRequest.stockUser) {
