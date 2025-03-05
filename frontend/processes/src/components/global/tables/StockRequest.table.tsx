@@ -68,57 +68,63 @@ export default function StockRequestTable({
   };
 
   return (
-    <div className="bg-white p-4 max-w-7xl w-full h-full flex flex-col">
-      <div className="flex-1 overflow-auto max-h-[calc(100vh-250px)] scrollbar-hide">
-        <Table aria-label="Stock Requests Table" className="w-full min-w-max">
-          <TableHeader columns={columns}>
-            {(column) => (
-              <TableColumn
-                key={column.key}
-                className="sticky top-0 bg-white z-10"
-              >
-                {column.label}
-              </TableColumn>
-            )}
-          </TableHeader>
+    <div className="bg-white p-4 w-full h-full flex flex-col">
+      <Table aria-label="Stock Requests Table" className="w-full min-w-max">
+        <TableHeader columns={columns}>
+          {(column) => (
+            <TableColumn
+              key={column.key}
+              className="sticky top-0 bg-white z-10"
+            >
+              {column.label}
+            </TableColumn>
+          )}
+        </TableHeader>
 
-          <TableBody items={stockRequests}>
-            {(item) => (
-              <TableRow
-                key={item.id}
-                className={
-                  stockRequests.indexOf(item) % 2 === 0
-                    ? "bg-white"
-                    : "bg-[#F7F6FE]"
-                }
-              >
-                {(columnKey) => (
-                  <TableCell>
-                    {columnKey === "actions" ? (
-                      <Button
-                        className="px-3 py-1 rounded hover:text-red-400 border-none rounded-full hover:bg-transparent !hover:bg-transparent bg-transparent"
-                        onPress={() => onRequestClick(item)}
-                      >
-                        <ArrowLeftIcon />
-                      </Button>
-                    ) : columnKey === "requestComplete" ? (
-                      <Chip
-                        style={
-                          getStatus(item.requestComplete, item.approve).style
-                        }
-                      >
-                        {getStatus(item.requestComplete, item.approve).label}
-                      </Chip>
+        <TableBody items={stockRequests}>
+          {(item) => (
+            <TableRow
+              key={item.requestId}
+              className={
+                stockRequests.indexOf(item) % 2 === 0
+                  ? "bg-white"
+                  : "bg-[#F7F6FE]"
+              }
+            >
+              {(columnKey) => (
+                <TableCell>
+                  {columnKey === "actions" ? (
+                    <Button
+                      className="px-3 py-1 rounded hover:text-red-400 border-none rounded-full hover:bg-transparent !hover:bg-transparent bg-transparent"
+                      onPress={() => onRequestClick(item)}
+                    >
+                      <ArrowLeftIcon />
+                    </Button>
+                  ) : columnKey === "requestComplete" ? (
+                    <Chip
+                      style={
+                        getStatus(item.requestComplete, item.approve).style
+                      }
+                    >
+                      {getStatus(item.requestComplete, item.approve).label}
+                    </Chip>
+                  ) : columnKey === "stockUserApprove" ? (
+                    item.stockUserApprove ? (
+                      `${item.stockUserApprove.firstName}`
                     ) : (
-                      getKeyValue(item, columnKey)
-                    )}
-                  </TableCell>
-                )}
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+                      "N/A"
+                    )
+                  ) : columnKey === "requestWarehouseId" ? (
+                    item.requestWarehouseId?.warehouseName || "N/A"
+                  ) : (
+                    getKeyValue(item, columnKey)
+                  )}
+                </TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 }

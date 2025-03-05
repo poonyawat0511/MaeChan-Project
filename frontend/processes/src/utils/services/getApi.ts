@@ -1,4 +1,4 @@
-import axiosInstance from "../api/api";
+import { axiosInstance, dayApi, targetApi, timeApi, userHospitalApi } from "../api/api";
 import { StockRequest } from "../types/stock-request";
 import { Task } from "../types/task";
 import { jwtDecode } from "jwt-decode";
@@ -8,6 +8,10 @@ import {
   requestApi,
   springRequestByTaskApi,
 } from "../api/api";
+import { Days } from "../types/day";
+import { Times } from "../types/time";
+import { Target } from "../types/target";
+import { userHospital } from "../types/user-hospital";
 
 // Function to get stock requests
 export const getStockRequests = async (): Promise<StockRequest[]> => {
@@ -62,3 +66,44 @@ export const getStockRequestByTaskId = async (
     return null;
   }
 };
+
+export const getUserHospital = async (): Promise<userHospital[]> => {
+  try {
+    const response = await axiosInstance.get<userHospital[]>(userHospitalApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching stock users:", error);
+    throw error;
+  }
+};
+
+export const getNotifyDay = async (): Promise<Days[]> => {
+  try {
+    const response = await axiosInstance.get<Days[]>(dayApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Days :", error);
+    throw error;
+  }
+};
+
+export const getNotifyTime = async (): Promise<Times[]> => {
+  try {
+    const response = await axiosInstance.get<Times[]>(timeApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Time :", error);
+    throw error;
+  }
+};
+
+export const getNotifyTarget = async (): Promise<Target[]> => {
+  try {
+    const response = await axiosInstance.get<Target[]>(targetApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Target :", error);
+    throw error;
+  }
+};
+

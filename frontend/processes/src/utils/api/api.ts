@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
   baseURL: "http://localhost:8081",
   withCredentials: true,
   headers: {
@@ -8,17 +8,15 @@ const axiosInstance = axios.create({
   },
 });
 
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      window.location.href = "/signin";
-    }
-    return Promise.reject(error);
-  }
-);
-
-export default axiosInstance;
+// axiosInstance.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (error.response?.status === 401 || error.response?.status === 403) {
+//       window.location.href = "/signin";
+//     }
+//     return Promise.reject(error);
+//   }
+// );
 
 // API Endpoints
 export const camundaTaksApiApprover =
@@ -29,3 +27,7 @@ export const camundaTaskSubmit = "/engine-rest/task";
 export const springRequestByTaskApi = (processInstanceId: string) =>
   `/spring-requests/task/${processInstanceId}`;
 export const requestApi = "/stock-requests";
+export const userHospitalApi = "/user-hospital";
+export const dayApi = "/notify-days";
+export const timeApi = "/notify-time"
+export const targetApi = "/notify-target-user"
