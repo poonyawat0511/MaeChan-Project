@@ -43,33 +43,46 @@ export default function generatePDF(stockRequest: StockRequest): string {
   const logo = imageData.myImage;
   doc.addImage(logo, 'JPEG', margin, margin, 16, 18);
 
+  //line 1
   doc.setFontSize(19);
   doc.text("บันทึกข้อความ", pageWidth / 2, margin + 20, { align: "center" });
 
-
+  //line 2
   doc.setFontSize(10);
   thaitext(doc, "ส่วนราชการ", margin, margin + 30);
-  thaitext(doc, "โรงพยาบาลแม่จัน   อ.แม่จัน จ.เชียงราย", pageWidth / 3, margin + 30);
+  thaitext(doc, "โรงพยาบาลแม่จัน   อ.แม่จัน จ.เชียงราย", margin + 70, margin + 30);
 
-  thaitext(doc, `ที่ ชร 033.301/ ${stockRequest.requestNo}`, margin, margin + 40);
-  thaitext(doc, `ลงวันที่ ${stockRequest.requestDate}`, pageWidth - margin - 40, margin + 40);
+  //line 3
+  thaitext(doc, `ที่ ชร 033.301/ `, margin, margin + 40);
+  
+  thaitext(doc, ` ${stockRequest.requestNo}`, margin + 26, margin + 40);
+  doc.line(margin + 25, margin + 41, margin + 50, margin + 41); // Add bottom line
 
-  thaitext(doc, "เรื่อง ขออนุมัติซื้อวัสดุ", margin, margin + 50);
+  thaitext(doc, `ลงวันที่ `, margin + 70, margin + 40);
+
+  thaitext(doc, ` ${stockRequest.requestDate}`, margin + 86, margin + 40);
+  doc.line(margin + 85, margin + 41, margin + 185, margin + 41); // Add bottom line
+
+  //line 4
+  thaitext(doc, "เรื่อง ", margin, margin + 50);
+
+  thaitext(doc, ` ${stockRequest.stockSubject}`, margin + 11, margin + 50);
+  doc.line(margin + 10, margin + 51, margin + 185, margin + 51); // Add bottom line
+
+  //line 5
   thaitext(doc, "เรียน ผู้อำนวยการโรงพยาบาลแม่จัน", margin, margin + 60);
 
-  thaitext(
-    doc,
-    `ด้วย ${stockRequest.requestWarehouseId} โรงพยาบาลแม่จันมีความประสงค์ ขออนุมัติสั่งซื้อวัสดุ`,
-    margin,
-    margin + 70
-  );
-  thaitext(
-    doc,
-    "เพื่อสำรองจ่ายในคลังพัสดุกลางประจำเดือน และเพื่อให้แต่ละหน่วยงานสามารถเบิกใช้ได้อย่างเหมาะสม",
-    margin,
-    margin + 80
-  );
-  thaitext(doc, "จึงขออนุมัติตามรายการดังนี้", margin, margin + 90);
+  //line 6
+  thaitext(doc, "ด้วย ", margin, margin + 70);
+  
+  thaitext(doc, stockRequest.requestWarehouseId.warehouseName, margin + 11, margin + 70);
+  doc.line(margin + 10, margin + 71, margin + 80, margin + 71); // Add bottom line
+  
+  thaitext(doc, "โรงพยาบาลแม่จันมีความประสงค์ ขออนุมัติสั่งซื้อวัสดุ ", margin + 82, margin + 70);
+
+  //line 7
+  thaitext(doc, "เพื่อสำรองจ่ายในคลังพัสดุกลางประจำเดือน ", margin , margin + 80);
+  thaitext(doc, "เพื่อให้แต่ละหน่วยงานสามารถเบิกใช้ได้อย่างเหมาะสม จึงขออนุมัติตามรายการดังนี้", margin, margin + 90);
 
   const tableColumn = [
     "ลำดับ",
