@@ -3,6 +3,7 @@ import "jspdf-autotable";
 import addThaiFont from "../Sarabun-Thin-normal";
 import { StockRequest } from "../types/stock-request";
 import imageData from "../imageData.json";
+import { StockRequestList } from "../types/stock-request-list";
 
 function thaitext(doc: jsPDF, str: string, x: number, y: number) {
   const sara = ['่', '้', '๊', '๋', '์'];
@@ -31,7 +32,7 @@ function thaitext(doc: jsPDF, str: string, x: number, y: number) {
   doc.text(base, x, y);
 }
 
-export default function generatePDF(stockRequest: StockRequest): string {
+export default function generatePDF(stockRequest: StockRequest,stockRequestList: StockRequestList[]): string {
   const doc = new jsPDF("p", "mm", "a4");
 
   addThaiFont(doc);
@@ -81,18 +82,17 @@ export default function generatePDF(stockRequest: StockRequest): string {
     "ราคาหลังสุด",
     "กำหนดเวลาใช้พัสดุ",
   ];
-  const tableRows = [
-    [
-      stockRequest.supplierId,
-      stockRequest.stockSubject,
-      stockRequest.requestItemCount,
-      stockRequest.requestTotalPrice,
-      stockRequest.requestTotalPrice,
-      "-",
-      "-",
-      stockRequest.useDate,
-    ],
-  ];
+  // Table Rows (Stock Request List Data)
+  const tableRows = stockRequestList.map((item, index) => [
+    index + 1,
+    item.tradeName || "-",
+    item.requestQty,
+    item.requestListUnitPrice,
+    item.requestListTotalPrice,
+    item.stockItemUnitStandardPrice || "-",
+    item.lastPrice || "-",
+    item.requestDate,
+  ]);
 
   doc.autoTable({
     startY: margin + 100,

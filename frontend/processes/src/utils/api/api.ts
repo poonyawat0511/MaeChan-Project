@@ -31,3 +31,4 @@ export const userHospitalApi = "/user-hospital";
 export const dayApi = "/notify-days";
 export const timeApi = "/notify-time"
 export const targetApi = "/notify-target-user"
+export const stockRequestListApi = "/stock-request-list"

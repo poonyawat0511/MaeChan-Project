@@ -1,12 +1,12 @@
 import { StockUser } from "./stock-user";
-import { StockWareHouse } from "./stock-warehouse";
+import { StockWarehouse } from "./stock-warehouse";
 
 export interface StockRequest {
   requestId: string;
   requestDate: string;
   requestNo: string;
   requestReceiveDate: string;
-  requestWarehouseId: StockWareHouse;
+  requestWarehouseId: StockWarehouse;
   requestComplete: boolean;
   useDate: string;
   stockPoId: string;

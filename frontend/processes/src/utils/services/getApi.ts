@@ -1,4 +1,11 @@
-import { axiosInstance, dayApi, targetApi, timeApi, userHospitalApi } from "../api/api";
+import {
+  axiosInstance,
+  dayApi,
+  stockRequestListApi,
+  targetApi,
+  timeApi,
+  userHospitalApi,
+} from "../api/api";
 import { StockRequest } from "../types/stock-request";
 import { Task } from "../types/task";
 import { jwtDecode } from "jwt-decode";
@@ -11,7 +18,8 @@ import {
 import { Days } from "../types/day";
 import { Times } from "../types/time";
 import { Target } from "../types/target";
-import { userHospital } from "../types/user-hospital";
+import { UserHospital } from "../types/user-hospital";
+import { StockRequestList } from "../types/stock-request-list";
 
 // Function to get stock requests
 export const getStockRequests = async (): Promise<StockRequest[]> => {
@@ -67,9 +75,9 @@ export const getStockRequestByTaskId = async (
   }
 };
 
-export const getUserHospital = async (): Promise<userHospital[]> => {
+export const getUserHospital = async (): Promise<UserHospital[]> => {
   try {
-    const response = await axiosInstance.get<userHospital[]>(userHospitalApi);
+    const response = await axiosInstance.get<UserHospital[]>(userHospitalApi);
     return response.data;
   } catch (error) {
     console.error("Error fetching stock users:", error);
@@ -107,3 +115,12 @@ export const getNotifyTarget = async (): Promise<Target[]> => {
   }
 };
 
+export const getStockRequestList = async (): Promise<StockRequestList[]> => {
+  try {
+    const response = await axiosInstance.get<StockRequestList[]>(stockRequestListApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Stock Request List :", error);
+    throw error;
+  }
+};

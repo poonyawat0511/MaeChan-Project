@@ -1,4 +1,4 @@
-export interface StockWareHouse {
+export interface StockWarehouse {
   warehouseId: string;
   warehouseName: string;
   warehouseLocation: string;
