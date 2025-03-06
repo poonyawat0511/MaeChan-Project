@@ -23,12 +23,14 @@ import{
   springRequestByTaskApi,
 } from "@/utils/api/api";
 import { jwtDecode } from "jwt-decode";
-import { getCamundaTasks } from "@/utils/services/getApi";
+import { getCamundaTasks, getStockRequestList } from "@/utils/services/getApi";
 import PdfPreview from "@/components/global/pdf/PdfPreview";
 import LoadingScreen from "@/components/global/loading/loading";
+import { StockRequestList } from "@/utils/types/stock-request-list";
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [requestList , setRequestList] = useState<StockRequestList[]>([]);
   const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -53,7 +55,9 @@ export default function TaskPage() {
     const fetchTasks = async () => {
       try {
         const tasksData = await getCamundaTasks();
+        const RequestList = await getStockRequestList();
         setTasks(tasksData);
+        setRequestList(RequestList);
       } catch {
         setError("Error fetching tasks. Please try again later.");
       } finally {
@@ -187,7 +191,7 @@ export default function TaskPage() {
         return;
       }
 
-      const pdfUrl = generatePDF(stockRequest);
+      const pdfUrl = generatePDF(stockRequest , requestList);
       setSelectedPdfUrl(pdfUrl);
       setError(null);
     } catch (err) {

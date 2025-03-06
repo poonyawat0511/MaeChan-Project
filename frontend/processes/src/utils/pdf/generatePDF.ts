@@ -136,28 +136,54 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
 
   const finalY2 = doc.lastAutoTable?.finalY ?? finalY + 30;
 
-  //line 8
-  thaitext(
-    doc,
-    `ด้วยวิธี ${stockRequest.note} และขอแต่งตั้งคณะกรรมการตรวจรับพัสดุ ตามารายนามดังนี้`,
-    margin,
-    finalY2 + 10
-  );
-  thaitext(doc, `${stockRequest.stockUser} ตำแหน่ง `, margin, finalY2 + 20);
+  //line 8 //stockRequest.purchaseType relation needed
+  thaitext(doc, `ด้วยวิธี ${stockRequest.purchaseType} และขอแต่งตั้งคณะกรรมการตรวจรับพัสดุ ตามารายนามดังนี้`, margin, finalY2 + 10);
 
-  doc.text('อนุมัติ:', margin, finalY2 + 30);
 
-  doc.text('ไม่อนุมัติ:', margin + 40, finalY2 + 30);
-
-  thaitext(doc, "ลงชื่อ ____________________ ผู้ตรวจสอบ", pageWidth - margin - 80, finalY2 + 40);
+  //line 9
+  doc.text('สถานะ __________________________________', margin +100, finalY2 + 30);
   if(stockRequest.stockUserApprove){
-    thaitext(doc, `${stockRequest.stockUserApprove.firstName} ${stockRequest.stockUserApprove.lastName}`, pageWidth - margin - 80, finalY2 + 50);
+    thaitext(doc, `ผ่านการตรวจสอบ`, margin +115, finalY2 + 30);
   }else{
-    thaitext(doc, `-`, margin, finalY2 + 40);
+    thaitext(doc, `รอตรวจสอบ`, margin +115, finalY2 + 30);
   }
-    thaitext(doc, "ผู้ตรวจสอบ", pageWidth - margin - 80, finalY2 + 60);
+      
 
-  thaitext(doc, "ลงชื่อ ____________________ ผู้ขออนุมัติ", margin, finalY2 + 40);
+  /*
+
+  var {
+    ComboBox,
+    ListBox,
+    CheckBox,
+    PushButton,
+    TextField,
+    PasswordField,
+    RadioButton,
+    Appearance
+  } = jsPDF.AcroForm;
+
+  doc.text("CheckBox:", margin + 60, finalY2 + 30);
+  const checkBox = new CheckBox();
+  checkBox.fieldName = "CheckBox1";
+  checkBox.Rect = [margin + 80, finalY2 + 25, 10, 10];
+  checkBox.noToggleToOff = true;
+  checkBox.value = true;
+  checkBox.color = "red";
+  doc.addField(checkBox);
+  */
+
+
+  //line 10
+
+  thaitext(doc, "ลงชื่อ ___________________________________ ผู้ตรวจสอบ", margin +100, finalY2 + 40);
+  if(stockRequest.stockUserApprove){
+    thaitext(doc, `${stockRequest.stockUserApprove.firstName} ${stockRequest.stockUserApprove.lastName}`, margin +100, finalY2 + 50);
+  }else{
+    thaitext(doc, `-`, margin +100, finalY2 + 50);
+  }
+    thaitext(doc, "ผู้ตรวจสอบ", margin +100, finalY2 + 60);
+
+  thaitext(doc, "ลงชื่อ ___________________________________ ผู้ขออนุมัติ", margin, finalY2 + 40);
   if (stockRequest.stockUser) {
     thaitext(doc, `${stockRequest.stockUser.firstName} ${stockRequest.stockUser.lastName}`, margin, finalY2 + 50);
   }else{
@@ -165,9 +191,18 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
   }
   thaitext(doc, "เจ้าหน้าที่พัสดุ", margin, finalY2 + 60);
 
-  thaitext(doc, "ลงชื่อ ____________________", pageWidth / 2 - 30, finalY2 + 80);
-  thaitext(doc, "(นายฐิติวัฒน์ ปาระมี)", pageWidth / 2 - 30, finalY2 + 90);
-  thaitext(doc, "ผู้อำนวยการโรงพยาบาลแม่จัน", pageWidth / 2 - 30, finalY2 + 100);
+  //line 11
+  doc.text('สถานะ __________________________________', pageWidth / 2 - 30, finalY2 + 80);
+  if(stockRequest.requestComplete){
+    thaitext(doc, `อนุมัติ`, pageWidth / 2 -15, finalY2 + 80);
+  }else{
+    thaitext(doc, `รออนุมัติ`, pageWidth / 2 -15, finalY2 + 80);
+  }
+
+  //line 12
+  thaitext(doc, "ลงชื่อ ___________________________________", pageWidth / 2 - 30, finalY2 + 90);
+  thaitext(doc, "(นายฐิติวัฒน์ ปาระมี)", pageWidth / 2 - 30, finalY2 + 100);
+  thaitext(doc, "ผู้อำนวยการโรงพยาบาลแม่จัน", pageWidth / 2 - 30, finalY2 + 110);
 
   try {
     const pdfBlob = doc.output("blob");
