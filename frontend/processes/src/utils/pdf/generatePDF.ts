@@ -44,6 +44,9 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
   const logo = imageData.myImage;
   doc.addImage(logo, 'JPEG', margin, margin, 16, 18);
 
+  doc.addImage("examples/images/Octonyan.jpg", "JPEG", 15, 40, 180, 180);
+
+
   //line 1
   doc.setFontSize(19);
   doc.text("บันทึกข้อความ", pageWidth / 2, margin + 20, { align: "center" });
@@ -96,8 +99,11 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
     "กำหนดเวลาใช้พัสดุ",
   ];
 
+  // Filter stockRequestList to only include items that match the stockRequest
+  const filteredStockRequestList = stockRequestList.filter(item => item.requestId.requestId  === stockRequest.requestId);
+
   // Table Rows (Stock Request List Data)
-  const itemRows = stockRequestList.map((item, index) => [
+  const itemRows = filteredStockRequestList.map((item, index) => [
     index + 1,
     item.tradeName || "-",
     item.requestQty,
@@ -142,10 +148,12 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
 
   //line 9
   doc.text('สถานะ __________________________________', margin +100, finalY2 + 30);
-  if(stockRequest.stockUserApprove){
-    thaitext(doc, `ผ่านการตรวจสอบ`, margin +115, finalY2 + 30);
+  if(stockRequest.requestComplete == true){
+    thaitext(doc, `ผ่านการตรวจสอบ true`, margin +115, finalY2 + 30);
+  }else if(stockRequest.requestComplete == null){
+    thaitext(doc, `รอตรวจสอบ null`, margin +115, finalY2 + 30);
   }else{
-    thaitext(doc, `รอตรวจสอบ`, margin +115, finalY2 + 30);
+    thaitext(doc, `ไม่ผ่านการตรวจสอบ false`, margin +115, finalY2 + 30);
   }
       
 
@@ -193,10 +201,12 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
 
   //line 11
   doc.text('สถานะ __________________________________', pageWidth / 2 - 30, finalY2 + 80);
-  if(stockRequest.requestComplete){
-    thaitext(doc, `อนุมัติ`, pageWidth / 2 -15, finalY2 + 80);
+  if(stockRequest.approve == true){
+    thaitext(doc, `อนุมัติ true`, pageWidth / 2 -15, finalY2 + 80);
+  }else if(stockRequest.approve == null){
+    thaitext(doc, `รออนุมัติ null`, pageWidth / 2 -15, finalY2 + 80);
   }else{
-    thaitext(doc, `รออนุมัติ`, pageWidth / 2 -15, finalY2 + 80);
+    thaitext(doc, `ไม่อนุมัติ false`, pageWidth / 2 -15, finalY2 + 80);
   }
 
   //line 12
