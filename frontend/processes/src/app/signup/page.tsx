@@ -14,7 +14,7 @@ export default function SignUpPage() {
     lastName: "",
     email: "",
     password: "",
-    stockUserId: "",
+    stockUserId: undefined,
     lineId: "",
     role: undefined,
   });
@@ -170,9 +170,9 @@ export default function SignUpPage() {
           />
           <Input
             type="text"
-            name="userHospitalId"
+            name="stockUserId"
             label="รหัสประจำตัวโรงพยาบาล"
-            value={formData.userHospitalId}
+            value={formData.stockUserId?.toString() || ""}
             onChange={handleChange}
           />
           <Input

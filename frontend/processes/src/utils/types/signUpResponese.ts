@@ -1,13 +1,12 @@
 import { Role } from "./role";
-
 export interface signUpResponse {
-  stockUserId: string;
+  userHospitalId: string;
   firstName: string;
   lastName: string;
   email: string;
   password: string;
   signature: string;
-  userHospitalId: string;
+  stockUserId: number;
   lineId: string;
   role: Role;
 }
