@@ -47,7 +47,7 @@ export default function StockRequestTable({
         style: { backgroundColor: "#D1D5FA", color: "#000" },
       };
 
-    if (requestComplete && !approve)
+    if (requestComplete && approve == null)
       return {
         label: "ผ่านการตรวจสอบ",
         style: { backgroundColor: "#FEF2E5", color: "#000" },
