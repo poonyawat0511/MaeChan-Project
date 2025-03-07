@@ -592,7 +592,7 @@ export default function Dashboard() {
         {/* Page navigation */}
         <div className="flex justify-between mb-6">
           <h1 className="text-2xl font-semibold text-gray-800">
-            Dashboard Inventory
+          แดชบอร์ดสินค้าคงคลัง
           </h1>
           <div className="flex space-x-2">
             <button

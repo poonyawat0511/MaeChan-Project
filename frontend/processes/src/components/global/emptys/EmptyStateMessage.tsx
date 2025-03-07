@@ -9,8 +9,8 @@ interface EmptyStateMessageProps {
 }
 
 const EmptyStateMessage: React.FC<EmptyStateMessageProps> = ({
-  message = "No matching requests found",
-  subMessage = "Try adjusting your search criteria or refresh the page",
+  message = "ไม่พบคำขอที่ตรงกัน",
+  subMessage = "ลองปรับเกณฑ์การค้นหาของคุณหรือรีเฟรชหน้า",
   onClearFilters,
 }) => {
   return (
@@ -26,7 +26,7 @@ const EmptyStateMessage: React.FC<EmptyStateMessageProps> = ({
           className="mt-4"
           onPress={onClearFilters}
         >
-          Clear filters
+          ล้างการค้นหา
         </Button>
       )}
     </div>

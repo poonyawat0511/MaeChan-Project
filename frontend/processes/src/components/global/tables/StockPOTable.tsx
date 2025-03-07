@@ -17,12 +17,12 @@ interface StockPoTableProps {
 
 export default function StockPoTable({ stockPo }: StockPoTableProps) {
   const columns = [
-    { key: "stockPoNo", label: "Order ID" },
-    { key: "stockPoDate", label: "Order Date" },
-    { key: "warehouseName", label: "Warehouse" },
-    { key: "poItemAmount", label: "Item Count" },
-    { key: "poDeliverAmount", label: "Total Price" },
-    { key: "deliverComplete", label: "Status" },
+    { key: "stockPoNo", label: "ใบสั่งซื้อที่" },
+    { key: "stockPoDate", label: "วันที่ออกใบสั่งซื้อ" },
+    { key: "warehouseName", label: "คลัง" },
+    { key: "poItemAmount", label: "จำนวนรายการ" },
+    { key: "poDeliverAmount", label: "มูลค่า" },
+    { key: "deliverComplete", label: "สถานะ" },
   ];
 
   const getStatus = (deliverComplete: boolean) => {
@@ -57,9 +57,13 @@ export default function StockPoTable({ stockPo }: StockPoTableProps) {
                   ) : columnKey === "warehouseName" ? (
                     po.warehouseId?.warehouseName || "N/A"
                   ) : columnKey === "stockPoDate" ? (
-                    po.stockPoDate instanceof Date
-                      ? po.stockPoDate.toLocaleDateString("th-TH")
-                      : "N/A"
+                    po.stockPoDate
+                      ? new Date(po.stockPoDate).toLocaleDateString("th-TH", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })
+                      : "-"
                   ) : columnKey === "poAmount" ? (
                     `฿ ${po.poAmount.toLocaleString()}`
                   ) : (

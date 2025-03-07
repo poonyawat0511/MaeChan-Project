@@ -123,10 +123,10 @@ export default function UserPage() {
             </div>
             <div>
               <h1 className="text-xl font-semibold text-gray-800">
-                User Management
+                ผู้ใช้ทั้งหมด
               </h1>
               <p className="text-gray-500 text-sm">
-                {filteredUsers.length} users found
+                {filteredUsers.length} ผู้ใช้ทั้งหมด
               </p>
             </div>
           </div>
@@ -138,7 +138,7 @@ export default function UserPage() {
                 inputWrapper:
                   "bg-gray-50 hover:bg-gray-100 focus-within:bg-white border-2 border-gray-200",
               }}
-              placeholder="Search users..."
+              placeholder="ค้นหาผู้ใช้ ..."
               size="sm"
               startContent={
                 <MagnifyingGlassIcon className="h-4 w-4 text-gray-400" />
@@ -166,13 +166,13 @@ export default function UserPage() {
                     key="export-users"
                     startContent={<ArrowDownTrayIcon className="h-4 w-4" />}
                   >
-                    Export Users
+                    ดาวน์โหลดข้อมูล
                   </DropdownItem>
                   <DropdownItem
                     key="filter-options"
                     startContent={<FunnelIcon className="h-4 w-4" />}
                   >
-                    Filter Options
+                    การกรอง
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
@@ -183,11 +183,11 @@ export default function UserPage() {
         <CardBody className="p-0 overflow-auto flex-grow">
           {filteredUsers.length === 0 ? (
             <EmptyState
-              message="No users found"
+              message="ไม่พบผู้ใช้"
               subMessage={
                 searchQuery
-                  ? `No results matching "${searchQuery}". Try a different search term.`
-                  : "There are no users available. Add a new user to get started."
+                  ? `ไม่พบผลลัพธ์ที่ตรงกับ "${searchQuery}"ลองใช้คำค้นหาอื่น`
+                  : "ไม่มีผู้ใช้ที่พร้อมใช้งาน เพิ่มผู้ใช้ใหม่เพื่อเริ่มต้น"
               }
               showClearButton={!!searchQuery}
               onClear={() => setSearchQuery("")}
@@ -250,13 +250,12 @@ export default function UserPage() {
       <BlurModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Confirm Deletion"
+        title="ยืนยันการลบผู้ใช้"
         onAction={handleDelete}
-        actionLabel="Delete"
+        actionLabel="ยืนยัน"
       >
         <p>
-          Are you sure you want to delete this user? This action cannot be
-          undone.
+        คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้รายนี้ การกระทำนี้ไม่สามารถย้อนกลับได้
         </p>
       </BlurModal>
     </div>

@@ -13,7 +13,6 @@ import {
 } from "@heroui/react";
 import ArrowLeftIcon from "../icons/arrowLeft.icon";
 
-
 interface StockRequestTableProps {
   stockRequests: StockRequest[];
   onRequestClick: (stockRequest: StockRequest) => void;
@@ -27,42 +26,47 @@ export default function StockRequestTable({
   onRequestClick,
 }: StockRequestTableProps) {
   const columns = [
-    { key: "requestId", label: "Request ID" },
-    { key: "requestNo", label: "Document Number" },
-    { key: "requestDate", label: "Request Date" },
-    { key: "requestReceiveDate", label: "Due Date" },
-    { key: "stockApproveDate", label: "Approval Date" },
-    { key: "stockUserApprove", label: "Approver" },
-    { key: "requestWarehouseId", label: "Main Inventory" },
-    { key: "requestItemCount", label: "Item Count" },
-    { key: "requestTotalPrice", label: "Total Price" },
-    { key: "requestComplete", label: "Status" },
-    { key: "actions", label: "Actions" },
+    { key: "requestId", label: "ลำดับ" },
+    { key: "requestNo", label: "เลขที่เอกสาร" },
+    { key: "requestDate", label: "วันที่ออกใบซื้อ" },
+    { key: "requestReceiveDate", label: "วันที่ต้องการ" },
+    { key: "stockApproveDate", label: "วันที่อนุมัติ" },
+    { key: "stockUserApprove", label: "ผู้อนุมัติ" },
+    { key: "requestWarehouseId", label: "คลังที่ขอซื้อ" },
+    { key: "requestItemCount", label: "จำนวนรายการ" },
+    { key: "requestTotalPrice", label: "มูลค่า" },
+    { key: "requestComplete", label: "สถานะ" },
+    { key: "stockPoId", label: "ออกใบสั่งซื้อ" },
+    { key: "actions", label: "รายละเอียด" },
   ];
 
   const getStatus = (requestComplete: boolean, approve: boolean) => {
-    if (!requestComplete && !approve)
+    if (requestComplete == null && approve == null)
       return {
-        label: "Request Failed",
-        style: { backgroundColor: "#FDB3CA", color: "#000" },
-      };
-    if (!requestComplete)
-      return {
-        label: "Pending",
-        style: { backgroundColor: "#FEF2E5", color: "#000" },
-      };
-    if (requestComplete && !approve)
-      return {
-        label: "Pending Approval",
+        label: "รอดำเนินการ",
         style: { backgroundColor: "#D1D5FA", color: "#000" },
       };
+
+    if (requestComplete && !approve)
+      return {
+        label: "ผ่านการตรวจสอบ",
+        style: { backgroundColor: "#FEF2E5", color: "#000" },
+      };
+
+    if (!requestComplete && !approve)
+      return {
+        label: "ไม่ผ่านการตรวจสอบ",
+        style: { backgroundColor: " #FDB3CA", color: "#000" },
+      };
+
     if (requestComplete && approve)
       return {
-        label: "Approved",
+        label: "อนุมัติ",
         style: { backgroundColor: "#A9DFE2", color: "#000" },
       };
+
     return {
-      label: "Rejected",
+      label: "ไม่อนุมัติ",
       style: { backgroundColor: "#FBE7E8", color: "#000" },
     };
   };
@@ -112,10 +116,32 @@ export default function StockRequestTable({
                     item.stockUserApprove ? (
                       `${item.stockUserApprove.firstName}`
                     ) : (
-                      "N/A"
+                      "-"
                     )
                   ) : columnKey === "requestWarehouseId" ? (
-                    item.requestWarehouseId?.warehouseName || "N/A"
+                    item.requestWarehouseId?.warehouseName || "-"
+                  ) : columnKey === "stockPoId" ? ( // ✅ เพิ่มเงื่อนไขสำหรับ StockPo
+                    item.stockPoId ? (
+                      <Chip
+                        style={{ backgroundColor: "#A9DFE2", color: "#000" }}
+                      >
+                        ออกแล้ว
+                      </Chip>
+                    ) : (
+                      "-"
+                    )
+                  ) : columnKey === "requestDate" ||
+                    columnKey === "requestReceiveDate" ||
+                    columnKey === "stockApproveDate" ? ( // ✅ แก้ไขการแสดงวันที่
+                    item[columnKey] ? (
+                      new Date(item[columnKey]).toLocaleDateString("th-TH", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })
+                    ) : (
+                      "N/A"
+                    )
                   ) : (
                     getKeyValue(item, columnKey)
                   )}

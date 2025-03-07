@@ -14,16 +14,16 @@ import {
   }
   
   export const userMenuItems: MenuItem[] = [
-    { id: "all-stock-requests", label: "All Stock Requests", icon: HomeIcon, link: "/all-stock-requests" },
-    { id: "task", label: "Task", icon: ShieldCheckIcon, link: "/task" },
+    { id: "all-stock-requests", label: "คำขอสั่งซื้อทั้งหมด", icon: HomeIcon, link: "/all-stock-requests" },
+    { id: "task", label: "ภาระงาน", icon: ShieldCheckIcon, link: "/task" },
   ];
   
   export const adminMenuItems: MenuItem[] = [
-    { id: "users", label: "User Management", icon: UserIcon, link: "/users" },
-    { id: "days", label: "Day Management", icon: CalendarDaysIcon, link: "/days" },
+    { id: "users", label: "จัดการผู้ใช้", icon: UserIcon, link: "/users" },
+    { id: "days", label: "จัดการการแจ้งเตือน", icon: CalendarDaysIcon, link: "/days" },
   ];
   
   export const recentItems: MenuItem[] = [
-    { id: "dashboard", label: "Dashboard", icon: ChartPieIcon, link: "/dashboard" },
+    { id: "dashboard", label: "แดชบอร์ด", icon: ChartPieIcon, link: "/dashboard" },
   ];
   

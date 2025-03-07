@@ -52,7 +52,7 @@ export default function DayPage() {
     id?: string;
     time: string;
   } | null>(null);
-  const [selectedTime, setSelectedTime] = useState("Select Time");
+  const [selectedTime, setSelectedTime] = useState("รายการเวลาที่แจ้งเตือน");
   const [times, setTimes] = useState<Times[]>([]);
   const [users, setUsers] = useState<UserHospital[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<UserHospital[]>([]);
@@ -205,9 +205,8 @@ export default function DayPage() {
       console.log(`User with API id ${targetRecord.id} removed successfully`);
     } catch (error) {
       console.error("Error removing user:", error);
-    } 
-};
-
+    }
+  };
 
   const filteredUsers = users.filter(
     (user) =>
@@ -245,10 +244,10 @@ export default function DayPage() {
                   />
                   <div>
                     <h2 className="text-white font-bold m-0 text-lg sm:text-xl">
-                      Schedule Management
+                      จัดการตารางเวลา
                     </h2>
                     <p className="text-primary-100 text-xs sm:text-sm">
-                      Configure and manage your weekly schedule
+                      กำหนดค่าและจัดการตารางงานรายสัปดาห์ของคุณ
                     </p>
                   </div>
                 </div>
@@ -261,7 +260,7 @@ export default function DayPage() {
                     onPress={fetchData}
                     size="sm"
                   >
-                    Refresh Data
+                    รีเฟรชข้อมูล
                   </Button>
                 </div>
               </CardBody>
@@ -270,12 +269,12 @@ export default function DayPage() {
             {/* Time Selection Card */}
             <Card className="w-full sm:w-auto sm:min-w-[220px] lg:max-w-[250px]">
               <CardHeader className="px-3 py-2">
-                <h4 className="text-base font-semibold">Time Selector</h4>
+                <h4 className="text-base font-semibold">เวลาที่แจ้งเตือน</h4>
               </CardHeader>
               <Divider />
               <CardBody className="p-3">
                 <p className="text-gray-600 mb-2 text-xs sm:text-sm">
-                  Add a time slot for your schedule:
+                เพิ่มเวลาสำหรับตารางงานของคุณ:
                 </p>
                 <Dropdown>
                   <DropdownTrigger>
@@ -315,7 +314,7 @@ export default function DayPage() {
                   size="sm"
                   onPress={handleCreateTime}
                 >
-                  Add New Time
+                 เพิ่มเวลาการแจ้งเตือน
                 </Button>
               </CardBody>
             </Card>
@@ -325,10 +324,10 @@ export default function DayPage() {
           <Card className="flex-1 min-h-0 overflow-auto">
             <CardHeader className="flex justify-between items-center px-3 py-2">
               <h3 className="text-base sm:text-lg font-semibold">
-                Weekly Schedule
+              ตารางรายสัปดาห์
               </h3>
               <Badge color="primary" variant="flat">
-                {days.length} Days Configured
+                {days.length} วันที่กำหนดไว้
               </Badge>
             </CardHeader>
             <Divider />
@@ -351,9 +350,9 @@ export default function DayPage() {
           <Card className="h-full flex flex-col">
             <CardHeader className="px-3 py-2 flex-shrink-0">
               <div className="flex justify-between items-center">
-                <h4 className="text-base font-semibold">Target Users</h4>
+                <h4 className="text-base font-semibold">ผู้ใช้สำหรับการแจ้งเตือน</h4>
                 <Badge color="secondary" variant="flat">
-                  {selectedUsers.length} Selected
+                  {selectedUsers.length} คน
                 </Badge>
               </div>
             </CardHeader>
@@ -362,7 +361,7 @@ export default function DayPage() {
             {/* Selected Users Section */}
             <CardBody className="p-3 flex-1 overflow-hidden flex flex-col">
               <h5 className="text-xs font-medium text-gray-700 mb-2">
-                Selected Users
+                เลือกผู้ใช้
               </h5>
               <div className="overflow-auto mb-3" style={{ maxHeight: "25%" }}>
                 {selectedUsers.length > 0 ? (
@@ -381,7 +380,7 @@ export default function DayPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-xs">No users selected</p>
+                  <p className="text-gray-500 text-xs">ไม่มีผู้ใช้ที่เลือก</p>
                 )}
               </div>
 
@@ -389,10 +388,10 @@ export default function DayPage() {
 
               {/* User Search */}
               <h5 className="text-xs font-medium text-gray-700 mb-2">
-                Add Users
+                เพิ่มผู้ใช้รับการแจ้งเตือน
               </h5>
               <Input
-                placeholder="Search users..."
+                placeholder="ค้นหาผู้ใช้ ..."
                 startContent={
                   <MagnifyingGlassIcon className="h-3 w-3 text-gray-400" />
                 }
@@ -439,7 +438,7 @@ export default function DayPage() {
                   ))
                 ) : (
                   <p className="text-gray-500 text-xs text-center py-2">
-                    No users found
+                   ไม่พบผู้ใช้ที่ตรงกับคำค้นหา
                   </p>
                 )}
               </div>
@@ -451,7 +450,7 @@ export default function DayPage() {
       <TimeFormModal
         isOpen={isTimeModalOpen}
         onClose={() => setIsTimeModalOpen(false)}
-        title="Create new time"
+        title="เพิ่มเวลาการแจ้งเตือน"
         onSubmit={handleSubmitTime}
       />
     </div>

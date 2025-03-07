@@ -205,7 +205,7 @@ const SideBar = () => {
             }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            Sign Out
+           ลงชื่อออก
           </motion.span>
         </motion.button>
       </motion.div>

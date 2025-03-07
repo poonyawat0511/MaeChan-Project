@@ -28,7 +28,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       )}
       {showClearButton && onClear && (
         <Button color="primary" variant="flat" className="mt-4" onPress={onClear}>
-          Clear Search
+          ล้างการค้นหา
         </Button>
       )}
     </div>

@@ -1,3 +1,4 @@
+import { StockPo } from "./stock-po";
 import { StockUser } from "./stock-user";
 import { StockWarehouse } from "./stock-warehouse";
 
@@ -9,7 +10,7 @@ export interface StockRequest {
   requestWarehouseId: StockWarehouse;
   requestComplete: boolean;
   useDate: string;
-  stockPoId: string;
+  stockPoId: StockPo;
   hosGuid: string;
   budgetYear: number;
   stockSubject: string;
