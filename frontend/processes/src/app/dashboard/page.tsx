@@ -36,8 +36,6 @@ import CustomCard from "@/components/global/cards/CustomCard";
 import FilterButton from "@/components/global/buttons/FilterButton";
 import StatCard from "@/components/global/cards/StatCard";
 
-// Define types
-
 interface PRPOData {
   month: string;
   pr: number;
@@ -50,14 +48,13 @@ interface DepartmentData {
   po: number;
 }
 
-// สีที่ใช้ในระบบ - โทนสีสะอาดและเรียบง่าย
 const colors = {
-  primary: "#3b82f6", // สีหลัก
-  secondary: "#64748b", // สีรอง
-  accent: "#0ea5e9", // สีเน้น
-  background: "#f8fafc", // สีพื้นหลัง
-  card: "#ffffff", // สีการ์ด
-  border: "#e2e8f0", // สีขอบ
+  primary: "#3b82f6",
+  secondary: "#64748b",
+  accent: "#0ea5e9",
+  background: "#f8fafc",
+  card: "#ffffff",
+  border: "#e2e8f0",
   text: {
     primary: "#0f172a",
     secondary: "#64748b",
@@ -77,9 +74,6 @@ const colors = {
   ],
 };
 
-// Mock data - ในการใช้งานจริงควรดึงจาก API
-
-
 const mockDepartmentData: DepartmentData[] = [
   { department: "แผนกยา", pr: 420000, po: 380000 },
   { department: "แผนกเวชภัณฑ์", pr: 380000, po: 350000 },
@@ -88,16 +82,33 @@ const mockDepartmentData: DepartmentData[] = [
   { department: "แผนกอื่นๆ", pr: 150000, po: 130000 },
 ];
 
+const months = [
+  { label: "มกราคม", value: "ม.ค." },
+  { label: "กุมภาพันธ์", value: "ก.พ." },
+  { label: "มีนาคม", value: "มี.ค." },
+  { label: "เมษายน", value: "เม.ย." },
+  { label: "พฤษภาคม", value: "พ.ค." },
+  { label: "มิถุนายน", value: "มิ.ย." },
+  { label: "กรกฎาคม", value: "ก.ค." },
+  { label: "สิงหาคม", value: "ส.ค." },
+  { label: "กันยายน", value: "ก.ย." },
+  { label: "ตุลาคม", value: "ต.ค." },
+  { label: "พฤศจิกายน", value: "พ.ย." },
+  { label: "ธันวาคม", value: "ธ.ค." },
+];
+
 export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [filterWarehouse] = useState<string>("ทั้งหมด");
   const [loading, setLoading] = useState<boolean>(true);
-  const [filterMonth] = useState<string>("ทั้งหมด");
   const [error, setError] = useState<string | null>(null);
   const [StockRequest, setRequests] = useState<StockRequest[]>([]);
   const [po, setPo] = useState<StockPo[]>([]);
   const [filterYear, setFilterYear] = useState<number>(
     new Date().getFullYear()
+  );
+  const [filterMonth, setFilterMonth] = useState<string>(
+    new Date().toLocaleString("th-TH", { month: "short" })
   );
 
   const fetchRequests = async () => {
@@ -128,14 +139,13 @@ export default function Dashboard() {
       setFilterYear(availableYears[availableYears.length - 1]);
     }
   }, [availableYears, filterYear]);
-
-  const filteredPo = po.filter(
-    (po) => new Date(po.stockPoDate).getFullYear() === filterYear
-  );
-
-  const currentMonth = new Date().getMonth();
-  const monthlyPurchases = filteredPo
-    .filter((po) => new Date(po.stockPoDate).getMonth() === currentMonth)
+  const monthlyPurchases = po
+    .filter(
+      (po) =>
+        new Date(po.stockPoDate).getFullYear() === filterYear &&
+        new Date(po.stockPoDate).toLocaleString("th-TH", { month: "short" }) ===
+          filterMonth
+    )
     .reduce((sum, po) => sum + (po.stockBudgetUse || 0), 0);
 
   const formattedInventoryData = po
@@ -158,9 +168,13 @@ export default function Dashboard() {
     }, [] as { month: string; value: number }[]);
 
   const formattedWarehouseData = po
-    .filter((po) => po.warehouseId)
+    .filter(
+      (po) =>
+        new Date(po.stockPoDate).toLocaleString("th-TH", { month: "short" }) ===
+        filterMonth
+    )
     .reduce((acc, po) => {
-      const warehouseName = po.warehouseId.warehouseName || "Unknown";
+      const warehouseName = po.warehouseId?.warehouseName || "Unknown";
       const existingWarehouse = acc.find((w) => w.name === warehouseName);
 
       if (existingWarehouse) {
@@ -195,6 +209,69 @@ export default function Dashboard() {
     return { month, pr: prTotal, po: poTotal };
   });
 
+  const totalStockPo = po.length;
+
+  const totalStockPoValue = po.reduce(
+    (sum, poItem) => sum + (poItem.stockBudgetUse || 0),
+    0
+  );
+
+  const avgStockPoValue = totalStockPoValue / 12;
+
+  const highestStockPo = po.reduce(
+    (max, poItem) =>
+      poItem.stockBudgetUse && poItem.stockBudgetUse > max
+        ? poItem.stockBudgetUse
+        : max,
+    0
+  );
+
+  const totalStockRequests = StockRequest.length;
+  const totalStockRequestValue = StockRequest.reduce(
+    (sum, req) => sum + (req.requestTotalPrice || 0),
+    0
+  );
+  const avgStockRequestValue = totalStockRequestValue / 12;
+
+  const highestStockRequest = StockRequest.reduce(
+    (max, req) =>
+      req.requestTotalPrice && req.requestTotalPrice > max
+        ? req.requestTotalPrice
+        : max,
+    0
+  );
+
+  const poPrRatio =
+    totalStockRequests > 0 ? (totalStockPo / totalStockRequests) * 100 : 0;
+
+  const totalPrValue = StockRequest.reduce(
+    (sum, req) => sum + (req.requestTotalPrice || 0),
+    0
+  );
+  const totalPoValue = po.reduce(
+    (sum, poItem) => sum + (poItem.poDeliverAmount || 0),
+    0
+  );
+  const budgetSaved = totalPrValue - totalPoValue;
+
+  const totalProcessingTime = po.reduce((sum, poItem) => {
+    const request = StockRequest.find(
+      (req) => req.requestId === poItem.refRequestId.requestId
+    );
+    if (!request) return sum;
+    const prDate = new Date(request.requestDate);
+    const poDate = new Date(poItem.stockPoDate);
+    return sum + (poDate.getTime() - prDate.getTime()) / (1000 * 60 * 60 * 24);
+  }, 0);
+
+  const avgProcessingTime =
+    totalStockPo > 0 ? (totalProcessingTime / totalStockPo).toFixed(1) : 0;
+
+  const pendingPr = StockRequest.filter(
+    (req) =>
+      !po.some((poItem) => poItem.refRequestId.requestId === req.requestId)
+  ).length;
+
   const handleSignIn = () => {
     window.location.href = "/signin";
   };
@@ -225,12 +302,19 @@ export default function Dashboard() {
           onClick={() => setFilterYear(filterYear === 2025 ? 2024 : 2025)}
           isActive={true}
         />
-        <FilterButton
-          icon={Calendar}
-          label={`เดือน: ${filterMonth}`}
-          onClick={() => {}}
-          isActive={false}
-        />
+        <div className="relative">
+          <select
+            value={filterMonth}
+            onChange={(e) => setFilterMonth(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            {months.map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {/* Stats row */}
@@ -421,19 +505,25 @@ export default function Dashboard() {
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-gray-600">จำนวน PR ทั้งหมด:</span>
-              <span className="font-medium">358 รายการ</span>
+              <span className="font-medium">{totalStockRequests} รายการ</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">มูลค่า PR รวม:</span>
-              <span className="font-medium">฿ 1,680,000</span>
+              <span className="font-medium">
+                ฿ {totalStockRequestValue.toLocaleString()}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">มูลค่า PR เฉลี่ยต่อเดือน:</span>
-              <span className="font-medium">฿ 140,000</span>
+              <span className="font-medium">
+                ฿ {avgStockRequestValue.toLocaleString()}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">มูลค่า PR สูงสุด:</span>
-              <span className="font-medium">฿ 165,000 (ธ.ค.)</span>
+              <span className="font-medium">
+                ฿ {highestStockRequest.toLocaleString()}
+              </span>
             </div>
           </div>
         </CustomCard>
@@ -442,19 +532,25 @@ export default function Dashboard() {
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-gray-600">จำนวน PO ทั้งหมด:</span>
-              <span className="font-medium">324 รายการ</span>
+              <span className="font-medium">{totalStockPo} รายการ</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">มูลค่า PO รวม:</span>
-              <span className="font-medium">฿ 1,550,000</span>
+              <span className="font-medium">
+                ฿ {totalStockPoValue.toLocaleString()}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">มูลค่า PO เฉลี่ยต่อเดือน:</span>
-              <span className="font-medium">฿ 129,167</span>
+              <span className="font-medium">
+                ฿ {avgStockPoValue.toLocaleString()}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">มูลค่า PO สูงสุด:</span>
-              <span className="font-medium">฿ 150,000 (ธ.ค.)</span>
+              <span className="font-medium">
+                ฿ {highestStockPo.toLocaleString()}
+              </span>
             </div>
           </div>
         </CustomCard>
@@ -463,21 +559,25 @@ export default function Dashboard() {
           <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-gray-600">อัตราเฉลี่ย PO/PR:</span>
-              <span className="font-medium">92.3%</span>
+              <span className="font-medium">{poPrRatio.toFixed(1)}%</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">ประหยัดงบประมาณ:</span>
-              <span className="font-medium text-green-600">฿ 130,000</span>
+              <span className="font-medium text-green-600">
+                ฿ {budgetSaved.toLocaleString()}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">เวลาดำเนินการเฉลี่ย:</span>
-              <span className="font-medium">5.2 วัน</span>
+              <span className="font-medium">{avgProcessingTime} วัน</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">
                 จำนวน PR ที่ไม่ได้ดำเนินการ:
               </span>
-              <span className="font-medium text-orange-600">8 รายการ</span>
+              <span className="font-medium text-orange-600">
+                {pendingPr} รายการ
+              </span>
             </div>
           </div>
         </CustomCard>
