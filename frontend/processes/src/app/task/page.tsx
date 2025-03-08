@@ -30,7 +30,6 @@ import { StockRequestList } from "@/utils/types/stock-request-list";
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [requestList , setRequestList] = useState<StockRequestList[]>([]);
   const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -39,6 +38,7 @@ export default function TaskPage() {
   const [modalAction, setModalAction] = useState<() => void>(() => () => {});
   const { showAlert } = useAlert();
   const [userRole, setUserRole] = useState<string>("USER");
+  const [requestList , setRequestList ] = useState<StockRequestList[]> ([]);
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
@@ -55,9 +55,9 @@ export default function TaskPage() {
     const fetchTasks = async () => {
       try {
         const tasksData = await getCamundaTasks();
-        const RequestList = await getStockRequestList();
+         const stockRequestList = await getStockRequestList();
         setTasks(tasksData);
-        setRequestList(RequestList);
+        setRequestList(stockRequestList);
       } catch {
         setError("Error fetching tasks. Please try again later.");
       } finally {
@@ -244,7 +244,7 @@ export default function TaskPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 flex items-center">
-              Task Management
+              ภาระงาน
               <Chip 
                 color="secondary" 
                 variant="flat" 
@@ -255,7 +255,7 @@ export default function TaskPage() {
                 {userRole}
               </Chip>
             </h1>
-            <p className="text-gray-500 mt-1">Review and approve pending requests</p>
+            <p className="text-gray-500 mt-1">ตรวจสอบเอกสารทุกครั้งเพื่อความถูกต้อง</p>
           </div>
           
           <Tooltip content={`Logged in as ${userRole}`}>
@@ -280,22 +280,22 @@ export default function TaskPage() {
               ) : (
                 <ArrowDownIcon className="h-4 w-4" />
               )}
-              <span>Sort by Date</span>
+              <span>เรียงตามวันที่</span>
             </Button>
             
             <Chip className="ml-4" variant="flat" color="primary">
-              {tasks.length} Pending
+              {tasks.length} งานที่รอดำเนินการ
             </Chip>
           </div>
           
-          <Tooltip content="View completed tasks">
+          <Tooltip content="ดูประวัติงานที่เสร็จสิ้น">
             <Button
               variant="light"
               size="sm"
               className="text-gray-600"
               startContent={<ClockIcon className="h-4 w-4" />}
             >
-              History
+              ประวัติงานที่เสร็จสิ้น
             </Button>
           </Tooltip>
         </div>
@@ -311,7 +311,7 @@ export default function TaskPage() {
                     variant="dot"
                     className="border-none"
                   />
-                  <p>Pending Tasks</p>
+                  <p>ภาระงานที่รอดำเนินการ</p>
                   <Chip radius="full" color="default" size="sm" className="ml-2">
                     {tasks.length}
                   </Chip>
@@ -339,7 +339,7 @@ export default function TaskPage() {
                   <h3 className="font-medium text-gray-700">
                     {selectedTask?.name || "Document Preview"}
                   </h3>
-                  <Chip color="warning" size="sm" variant="flat">Review Required</Chip>
+                  <Chip color="warning" size="sm" variant="flat">จำเป็นต้องตรวจสอบ</Chip>
                 </div>
                 
                 <div className="flex-grow overflow-hidden rounded-md border border-gray-200">
@@ -353,7 +353,7 @@ export default function TaskPage() {
                     size="sm"
                     startContent={<XMarkIcon className="h-4 w-4" />}
                   >
-                    Close
+                    ปิด
                   </Button>
                   
                   <div className="flex gap-3">
@@ -363,7 +363,7 @@ export default function TaskPage() {
                       size="sm"
                       onPress={() => selectedTask && handleRejecte(selectedTask)}
                     >
-                      Reject
+                      ไม่อนุมัติ
                     </Button>
                     
                     <Button
@@ -372,7 +372,7 @@ export default function TaskPage() {
                       size="sm"
                       onPress={() => selectedTask && handleApprove(selectedTask)}
                     >
-                      Approve
+                      อนุมัติ
                     </Button>
                   </div>
                 </div>
@@ -380,8 +380,8 @@ export default function TaskPage() {
             ) : (
               <div className="flex flex-col items-center justify-center text-gray-400">
                 <DocumentIcon className="h-16 w-16 mb-3 opacity-20" />
-                <p className="text-lg font-medium text-gray-500 mb-1">No document selected</p>
-                <p className="text-sm text-gray-400">Select a task from the list to view details</p>
+                <p className="text-lg font-medium text-gray-500 mb-1">ไม่มีเอกสารที่เลือก</p>
+                <p className="text-sm text-gray-400">เลือกงานจากรายการเพื่อดูรายละเอียด</p>
               </div>
             )}
           </div>
@@ -394,9 +394,9 @@ export default function TaskPage() {
         onClose={() => setConfirmModalOpen(false)}
         onAction={modalAction}
         title="Decision Confirm"
-        actionLabel="Confirm"
+        actionLabel="ยืนยัน"
       >
-        <p>Are you sure you want to proceed with this action?</p>
+        <p>คุณแน่ใจว่าต้องการดำเนินการนี้หรือไม่?</p>
       </BlurModal>
     </div>
   );

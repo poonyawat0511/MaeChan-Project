@@ -1,10 +1,12 @@
 import {
   axiosInstance,
   dayApi,
+  stockPoApi,
   stockRequestListApi,
   targetApi,
   timeApi,
   userHospitalApi,
+  warehouseApi,
 } from "../api/api";
 import { StockRequest } from "../types/stock-request";
 import { Task } from "../types/task";
@@ -20,6 +22,8 @@ import { Times } from "../types/time";
 import { Target } from "../types/target";
 import { UserHospital } from "../types/user-hospital";
 import { StockRequestList } from "../types/stock-request-list";
+import { StockPo } from "../types/stock-po";
+import { StockWarehouse } from "../types/stock-warehouse";
 
 // Function to get stock requests
 export const getStockRequests = async (): Promise<StockRequest[]> => {
@@ -121,6 +125,26 @@ export const getStockRequestList = async (): Promise<StockRequestList[]> => {
     return response.data;
   } catch (error) {
     console.error("Error fetching Stock Request List :", error);
+    throw error;
+  }
+};
+
+export const getStockPo = async (): Promise<StockPo[]> => {
+  try {
+    const response = await axiosInstance.get<StockPo[]>(stockPoApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Stock Po :", error);
+    throw error;
+  }
+};
+
+export const getStockWarehouse = async (): Promise<StockWarehouse[]> => {
+  try {
+    const response = await axiosInstance.get<StockWarehouse[]>(warehouseApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Stock Warehouse :", error);
     throw error;
   }
 };

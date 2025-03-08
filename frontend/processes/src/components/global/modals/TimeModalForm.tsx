@@ -52,7 +52,7 @@ const TimeFormModal: React.FC<FormModalProps> = ({
               label="Time"
               labelPlacement="outside"
               name="time"
-              placeholder="Enter name"
+              placeholder="ใส่เวลาที่ต้องการ"
               type="text"
               value={formData.time}
               onChange={handleChange}
@@ -61,10 +61,10 @@ const TimeFormModal: React.FC<FormModalProps> = ({
             {/* Action Buttons */}
             <div className="flex justify-end gap-3 mt-4">
               <Button color="danger" variant="light" onPress={onClose}>
-                Cancel
+                ยกเลิก
               </Button>
               <Button type="submit" color="primary">
-                Confirm
+                ยืนยัน
               </Button>
             </div>
           </Form>

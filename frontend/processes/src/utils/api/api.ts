@@ -32,3 +32,7 @@ export const dayApi = "/notify-days";
 export const timeApi = "/notify-time"
 export const targetApi = "/notify-target-user"
 export const stockRequestListApi = "/stock-request-list"
+export const stockPoApi = "/stock-po"
+export const warehouseApi = "/stock-warehouse"
+export const signOutApi = "/auth/signout"
+export const signInApi = "/auth/signin"

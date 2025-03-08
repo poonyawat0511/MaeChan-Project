@@ -27,14 +27,14 @@ export default function UserHospitalTable({
 }: UserHospitalTableProps) {
   const columns = [
     { key: "id", label: "ID" },
-    { key: "firstName", label: "First Name" },
-    { key: "lastName", label: "Last Name" },
-    { key: "email", label: "Email" },
-    { key: "role", label: "Role" },
-    { key: "stockUserId", label: "Hospital ID" },
+    { key: "firstName", label: "ขื่อ" },
+    { key: "lastName", label: "นามสกุล" },
+    { key: "email", label: "อีเมล" },
+    { key: "role", label: "ตำแหน่ง" },
+    { key: "stockUserId", label: "รหัสประจำตัวโรงพยาบาล" },
     { key: "lineId", label: "Line UID" },
-    { key: "signaturePath", label: "Signature" },
-    { key: "actions", label: "Actions" },
+    { key: "signaturePath", label: "ลายเซ็น" },
+    { key: "actions", label: "ลบ" },
   ];
 
   return (
@@ -57,7 +57,7 @@ export default function UserHospitalTable({
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={UserHospitals} emptyContent={"No users found"}>
+        <TableBody items={UserHospitals} emptyContent={"ไม่พบผู้ใช้"}>
           {(user) => (
             <TableRow
               key={user.id}
@@ -118,13 +118,18 @@ export default function UserHospitalTable({
                         </div>
                       ) : (
                         <span className="text-gray-400 italic text-sm">
-                          No Signature
+                          ไม่มีลายเซ็น
                         </span>
                       );
                     }
+                    if (columnKey === "stockUserId") {
+                      return user.stockUserId
+                        ? `${user.stockUserId.id}`
+                        : "-";
+                    }
                     if (columnKey === "actions") {
                       return (
-                        <Tooltip content="Delete user">
+                        <Tooltip content="ลบผู้ใช้">
                           <Button
                             size="sm"
                             color="danger"
@@ -139,7 +144,6 @@ export default function UserHospitalTable({
                       );
                     }
 
-                    // Ensure only valid ReactNode values are rendered
                     return typeof value === "string" ||
                       typeof value === "number" ? (
                       value

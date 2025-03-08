@@ -34,7 +34,7 @@ const BlurModal: React.FC<BlurModalProps> = ({
             <ModalBody className="h-[80vh] overflow-auto">{children}</ModalBody>
             <ModalFooter>
               <Button color="danger" variant="light" onPress={onClose}>
-                Close
+                ยกเลิก
               </Button>
               {onAction && (
                 <Button color="primary" onPress={onAction}>

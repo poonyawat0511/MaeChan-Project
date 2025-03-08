@@ -133,11 +133,11 @@ export default function AllStockRequest() {
             <DocumentChartBarIcon className="h-8 w-8 text-violet-500" />
             <div>
               <h1 className="text-2xl font-bold text-gray-800">
-                Purchase Requests
+                ใบขอซื้อสินค้า
               </h1>
               <div className="flex items-center mt-1">
                 <p className="text-gray-500 text-sm">
-                  Total requests: {requests.length}
+                  จำนวนใบทั้งสิ้น: {requests.length}
                 </p>
                 <Divider orientation="vertical" className="h-4 mx-2" />
                 <Chip size="sm" color="secondary" variant="flat">
@@ -154,7 +154,7 @@ export default function AllStockRequest() {
                 inputWrapper:
                   "bg-default-100 border-1 hover:bg-default-200/70 transition-all",
               }}
-              placeholder="Search by request ID..."
+              placeholder="ค้นหาด้วยเลขที่ใบขอซื้อ"
               size="sm"
               startContent={
                 <MagnifyingGlassIcon className="h-4 w-4 text-gray-400" />
@@ -188,7 +188,7 @@ export default function AllStockRequest() {
                 className="bg-violet-50 hover:bg-violet-100 text-violet-700 transition-all whitespace-nowrap"
                 onPress={() => downloadCSV(requests)}
               >
-                Export CSV
+                ดาวน์โหลด CSV
               </Button>
             </div>
           </div>
@@ -267,7 +267,7 @@ export default function AllStockRequest() {
       <BlurModal
         isOpen={openPdfModal}
         onClose={handleClosePreview}
-        title="Purchase Request Details"
+        title="รายละเอียดการขอสั่งซื้อ"
       >
         {selectedPdfUrl ? (
           <div className="h-[65vh] w-full">
