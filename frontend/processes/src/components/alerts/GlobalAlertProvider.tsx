@@ -2,6 +2,7 @@
 
 import React, { createContext, useState, useContext, ReactNode } from "react";
 import { Alert } from "@heroui/react";
+import { motion, AnimatePresence } from "framer-motion";
 
 type AlertType = "default" | "primary" | "secondary" | "success" | "warning" | "danger";
 
@@ -34,11 +35,19 @@ export const GlobalAlertProvider: React.FC<{ children: ReactNode }> = ({ childre
   return (
     <AlertContext.Provider value={{ showAlert, hideAlert }}>
       {children}
-      {alert.visible && (
-        <div className="fixed top-5 right-5 w-auto z-50">
-          <Alert color={alert.type} title={alert.message} />
-        </div>
-      )}
+      <AnimatePresence>
+        {alert.visible && (
+          <motion.div
+            className="fixed top-5 right-5 w-auto z-50"
+            initial={{ x: 100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -100, opacity: 0 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+          >
+            <Alert color={alert.type} title={alert.message} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </AlertContext.Provider>
   );
 };
