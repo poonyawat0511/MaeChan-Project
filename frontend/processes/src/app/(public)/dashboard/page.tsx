@@ -35,6 +35,7 @@ import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import CustomCard from "@/components/cards/CustomCard";
 import FilterButton from "@/components/buttons/FilterButton";
 import StatCard from "@/components/cards/StatCard";
+import { Pagination } from "@heroui/react";
 
 interface PRPOData {
   month: string;
@@ -104,6 +105,8 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [StockRequest, setRequests] = useState<StockRequest[]>([]);
   const [po, setPo] = useState<StockPo[]>([]);
+  const [stockPoPage, setStockPoPage] = useState(1);
+  const itemsPerPage = 5;
   const [filterYear, setFilterYear] = useState<number>(
     new Date().getFullYear()
   );
@@ -291,6 +294,11 @@ export default function Dashboard() {
     );
   }
 
+  const paginatedStockPo = po.slice(
+    (stockPoPage - 1) * itemsPerPage,
+    stockPoPage * itemsPerPage
+  );
+
   // Pages
   const Page1: React.FC = () => (
     <div className="space-y-6">
@@ -412,7 +420,16 @@ export default function Dashboard() {
 
       {/* Recent POs section */}
       <CustomCard title="ใบสั่งซื้อล่าสุด">
-        <StockPoTable stockPo={po} />
+      <StockPoTable stockPo={paginatedStockPo} />
+
+        <div className="flex justify-center mt-4">
+      <Pagination
+        total={Math.ceil(po.length / itemsPerPage)}
+        page={stockPoPage}
+        onChange={setStockPoPage}
+        showControls
+      />
+    </div>
       </CustomCard>
     </div>
   );
@@ -592,7 +609,7 @@ export default function Dashboard() {
         {/* Page navigation */}
         <div className="flex justify-between mb-6">
           <h1 className="text-2xl font-semibold text-gray-800">
-          แดชบอร์ดสินค้าคงคลัง
+            แดชบอร์ดสินค้าคงคลัง
           </h1>
           <div className="flex space-x-2">
             <button
