@@ -45,7 +45,13 @@ export default function AllStockRequest() {
       setRefreshing(true);
       const data = await getStockRequests();
       const stockRequestList = await getStockRequestList();
-      setRequests(data);
+  
+      // Sort requests by date (newest first)
+      const sortedData = data.sort((a: StockRequest, b: StockRequest) =>
+        new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime()
+      );
+  
+      setRequests(sortedData);
       setRequestList(stockRequestList);
       setError(null);
     } catch {
@@ -56,6 +62,7 @@ export default function AllStockRequest() {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchRequests();

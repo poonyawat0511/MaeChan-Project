@@ -16,7 +16,7 @@ import {
 } from "@heroicons/react/24/solid";
 import BlurModal from "@/components/modals/BlurModal";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
-import{
+import {
   axiosInstance,
   camundaTaskSubmit,
   springRequestByTaskApi,
@@ -38,7 +38,7 @@ export default function TaskPage() {
   const [modalAction, setModalAction] = useState<() => void>(() => () => {});
   const { showAlert } = useAlert();
   const [userRole, setUserRole] = useState<string>("USER");
-  const [requestList , setRequestList ] = useState<StockRequestList[]> ([]);
+  const [requestList, setRequestList] = useState<StockRequestList[]>([]);
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
@@ -55,8 +55,15 @@ export default function TaskPage() {
     const fetchTasks = async () => {
       try {
         const tasksData = await getCamundaTasks();
-         const stockRequestList = await getStockRequestList();
-        setTasks(tasksData);
+        const stockRequestList = await getStockRequestList();
+
+        // Sort tasks by 'created' date in descending order (newest first)
+        const sortedTasks = tasksData.sort(
+          (a: Task, b: Task) =>
+            new Date(b.created).getTime() - new Date(a.created).getTime()
+        );
+
+        setTasks(sortedTasks);
         setRequestList(stockRequestList);
       } catch {
         setError("Error fetching tasks. Please try again later.");
@@ -72,28 +79,29 @@ export default function TaskPage() {
     processInstanceId: string
   ): Promise<StockRequest | null> => {
     try {
-      console.log(`Fetching stock request for processInstanceId: ${processInstanceId}`);
-      
+      console.log(
+        `Fetching stock request for processInstanceId: ${processInstanceId}`
+      );
+
       // Ensure we fetch the correct structure
       const response = await axiosInstance.get<{ stockRequest: StockRequest }>(
         springRequestByTaskApi(processInstanceId)
       );
-  
+
       console.log("Full API Response:", response.data);
-  
+
       if (!response.data || !response.data.stockRequest) {
         console.warn("Stock request is missing or invalid:", response.data);
         return null;
       }
-  
+
       return response.data.stockRequest;
     } catch (error) {
       console.error("Error fetching stock request:", error);
       return null;
     }
   };
-  
-  
+
   const handleRejecte = (task: Task) => {
     confirmAction(() => executeTaskAction(task, false));
   };
@@ -110,48 +118,65 @@ export default function TaskPage() {
   const executeTaskAction = async (task: Task, approve: boolean) => {
     try {
       const token = localStorage.getItem("jwt");
-  
+
       if (!token) {
         showAlert("You must be logged in to perform this action.", "warning");
         return;
       }
-  
-      const stockRequest = await fetchStockRequestByTaskId(task.processInstanceId);
-      
+
+      const stockRequest = await fetchStockRequestByTaskId(
+        task.processInstanceId
+      );
+
       if (!stockRequest || !stockRequest.requestId) {
         showAlert("Stock request not found or missing requestId.", "danger");
         console.warn("Stock request is invalid:", stockRequest);
         return;
       }
-  
+
       console.log("Executing task with stockRequest:", stockRequest);
-  
-      const decodedToken = jwtDecode<{ userHospitalId?: string; role?: string }>(token);
+
+      const decodedToken = jwtDecode<{
+        userHospitalId?: string;
+        role?: string;
+      }>(token);
       const userHospitalId = decodedToken.userHospitalId || "unknown";
       const userRole = decodedToken.role || "USER";
-  
+
       let requestBody = {};
-  
+
       if (userRole === "DIRECTOR") {
         requestBody = {
           variables: {
-            requestId: { value: stockRequest.requestId.toString(), type: "String" },
-            stockSubjectPerson: { value: userHospitalId.toString(), type: "String" },
+            requestId: {
+              value: stockRequest.requestId.toString(),
+              type: "String",
+            },
+            stockSubjectPerson: {
+              value: userHospitalId.toString(),
+              type: "String",
+            },
             approve: { value: approve, type: "Boolean" },
           },
         };
       } else {
         requestBody = {
           variables: {
-            requestId: { value: stockRequest.requestId.toString(), type: "String" },
-            stockUserApprove: { value: userHospitalId.toString(), type: "String" },
+            requestId: {
+              value: stockRequest.requestId.toString(),
+              type: "String",
+            },
+            stockUserApprove: {
+              value: userHospitalId.toString(),
+              type: "String",
+            },
             requestComplete: { value: approve, type: "Boolean" },
           },
         };
       }
-  
+
       console.log("Submitting request:", requestBody);
-  
+
       await axiosInstance.post(
         `${camundaTaskSubmit}/${task.id}/submit-form`,
         requestBody,
@@ -161,7 +186,7 @@ export default function TaskPage() {
           },
         }
       );
-  
+
       showAlert(
         `Task ${approve ? "approved" : "rejected"} successfully!`,
         approve ? "success" : "warning"
@@ -178,7 +203,7 @@ export default function TaskPage() {
     }
     setConfirmModalOpen(false);
   };
-  
+
   const handleTaskClick = async (task: Task) => {
     setSelectedTask(task);
     try {
@@ -191,7 +216,7 @@ export default function TaskPage() {
         return;
       }
 
-      const pdfUrl = generatePDF(stockRequest , requestList);
+      const pdfUrl = generatePDF(stockRequest, requestList);
       setSelectedPdfUrl(pdfUrl);
       setError(null);
     } catch (err) {
@@ -245,19 +270,21 @@ export default function TaskPage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-800 flex items-center">
               ภาระงาน
-              <Chip 
-                color="secondary" 
-                variant="flat" 
+              <Chip
+                color="secondary"
+                variant="flat"
                 radius="sm"
-                size="sm" 
+                size="sm"
                 className="ml-4 font-medium text-xs py-1 capitalize bg-violet-100 text-violet-700"
               >
                 {userRole}
               </Chip>
             </h1>
-            <p className="text-gray-500 mt-1">ตรวจสอบเอกสารทุกครั้งเพื่อความถูกต้อง</p>
+            <p className="text-gray-500 mt-1">
+              ตรวจสอบเอกสารทุกครั้งเพื่อความถูกต้อง
+            </p>
           </div>
-          
+
           <Tooltip content={`Logged in as ${userRole}`}>
             <Avatar
               size="md"
@@ -266,7 +293,7 @@ export default function TaskPage() {
             />
           </Tooltip>
         </div>
-        
+
         <div className="flex items-center justify-between gap-4 mb-6 pb-3 border-b border-gray-200">
           <div className="flex items-center">
             <Button
@@ -282,12 +309,12 @@ export default function TaskPage() {
               )}
               <span>เรียงตามวันที่</span>
             </Button>
-            
+
             <Chip className="ml-4" variant="flat" color="primary">
               {tasks.length} งานที่รอดำเนินการ
             </Chip>
           </div>
-          
+
           <Tooltip content="ดูประวัติงานที่เสร็จสิ้น">
             <Button
               variant="light"
@@ -312,7 +339,12 @@ export default function TaskPage() {
                     className="border-none"
                   />
                   <p>ภาระงานที่รอดำเนินการ</p>
-                  <Chip radius="full" color="default" size="sm" className="ml-2">
+                  <Chip
+                    radius="full"
+                    color="default"
+                    size="sm"
+                    className="ml-2"
+                  >
                     {tasks.length}
                   </Chip>
                 </div>
@@ -339,13 +371,15 @@ export default function TaskPage() {
                   <h3 className="font-medium text-gray-700">
                     {selectedTask?.name || "Document Preview"}
                   </h3>
-                  <Chip color="warning" size="sm" variant="flat">จำเป็นต้องตรวจสอบ</Chip>
+                  <Chip color="warning" size="sm" variant="flat">
+                    จำเป็นต้องตรวจสอบ
+                  </Chip>
                 </div>
-                
+
                 <div className="flex-grow overflow-hidden rounded-md border border-gray-200">
                   <PdfPreview pdfUrl={selectedPdfUrl} />
                 </div>
-                
+
                 <div className="flex justify-between items-center mt-4 pt-2 border-t border-gray-100">
                   <Button
                     className="rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700"
@@ -355,22 +389,26 @@ export default function TaskPage() {
                   >
                     ปิด
                   </Button>
-                  
+
                   <div className="flex gap-3">
                     <Button
                       className="rounded-md bg-red-50 hover:bg-red-100 text-red-600 transition-all"
                       startContent={<XCircleIcon className="h-4 w-4" />}
                       size="sm"
-                      onPress={() => selectedTask && handleRejecte(selectedTask)}
+                      onPress={() =>
+                        selectedTask && handleRejecte(selectedTask)
+                      }
                     >
                       ไม่อนุมัติ
                     </Button>
-                    
+
                     <Button
                       className="rounded-md bg-green-50 hover:bg-green-100 text-green-600 transition-all"
                       endContent={<CheckCircleIcon className="h-4 w-4" />}
                       size="sm"
-                      onPress={() => selectedTask && handleApprove(selectedTask)}
+                      onPress={() =>
+                        selectedTask && handleApprove(selectedTask)
+                      }
                     >
                       อนุมัติ
                     </Button>
@@ -380,14 +418,18 @@ export default function TaskPage() {
             ) : (
               <div className="flex flex-col items-center justify-center text-gray-400">
                 <DocumentIcon className="h-16 w-16 mb-3 opacity-20" />
-                <p className="text-lg font-medium text-gray-500 mb-1">ไม่มีเอกสารที่เลือก</p>
-                <p className="text-sm text-gray-400">เลือกงานจากรายการเพื่อดูรายละเอียด</p>
+                <p className="text-lg font-medium text-gray-500 mb-1">
+                  ไม่มีเอกสารที่เลือก
+                </p>
+                <p className="text-sm text-gray-400">
+                  เลือกงานจากรายการเพื่อดูรายละเอียด
+                </p>
               </div>
             )}
           </div>
         </div>
       </div>
-      
+
       {/* Confirmation Modal */}
       <BlurModal
         isOpen={isConfirmModalOpen}
