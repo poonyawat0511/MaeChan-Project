@@ -1,7 +1,9 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import SideBar from "@/components/global/ui/SideBar";
+import SideBar from "@/components/ui/SideBar";
+
+const AUTH_PAGES = ["/signin", "/signup"];
 
 export default function RootLayoutClient({
   children,
@@ -9,16 +11,14 @@ export default function RootLayoutClient({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-
-  // Hide sidebar on sign-in and sign-up pages
-  const hideSidebar = pathname === "/signin" || pathname === "/signup";
+  const isAuthPage = AUTH_PAGES.includes(pathname);
 
   return (
     <div className="flex h-screen">
-      <div className="flex w-full h-full">
-        {!hideSidebar && <SideBar />}
-        <main className="flex-1">{children}</main>
-      </div>
+      {!isAuthPage && <SideBar />}
+      <main className={`flex-1`}>
+        {children}
+      </main>
     </div>
   );
 }

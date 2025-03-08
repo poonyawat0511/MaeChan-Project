@@ -29,12 +29,12 @@ import {
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockPo } from "@/utils/types/stock-po";
 import { getStockPo, getStockRequests } from "@/utils/services/getApi";
-import StockPoTable from "@/components/global/tables/StockPOTable";
-import LoadingScreen from "@/components/global/loading/loading";
-import UnauthorizedCard from "@/components/global/cards/UnauthorizedCard";
-import CustomCard from "@/components/global/cards/CustomCard";
-import FilterButton from "@/components/global/buttons/FilterButton";
-import StatCard from "@/components/global/cards/StatCard";
+import StockPoTable from "@/app/(public)/dashboard/_components/StockPOTable";
+import LoadingScreen from "@/components/loading/loading";
+import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
+import CustomCard from "@/components/cards/CustomCard";
+import FilterButton from "@/components/buttons/FilterButton";
+import StatCard from "@/components/cards/StatCard";
 
 interface PRPOData {
   month: string;

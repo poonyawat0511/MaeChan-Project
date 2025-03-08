@@ -3,18 +3,13 @@ import { Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 import RootLayoutClient from "./RootLayoutClient";
 import { Providers } from "./providers";
-import { GlobalAlertProvider } from "@/components/global/alerts/GlobalAlertProvider";
+import { GlobalAlertProvider } from "@/components/alerts/GlobalAlertProvider";
 
 const Noto_Sans_ThaiSans = Noto_Sans_Thai({
   variable: "--font-geist-sans",
   subsets: ["latin"],
   weight: ["100", "300", "400", "500", "700", "900"],
 });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
 
 export const metadata: Metadata = {
   title: "Create Next App",

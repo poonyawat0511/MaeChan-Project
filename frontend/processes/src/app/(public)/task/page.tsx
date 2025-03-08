@@ -1,9 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Task } from "@/utils/types/task";
-import TaskCard from "@/components/global/cards/Task.Card";
 import { StockRequest } from "@/utils/types/stock-request";
-import generatePDF from "@/utils/pdf/generatePDF";
+import generatePDF from "@/utils/services/generatePDF";
 import { Button, Chip, Avatar, Tooltip } from "@heroui/react";
 import {
   ArrowDownIcon,
@@ -15,8 +14,8 @@ import {
   ClockIcon,
   XMarkIcon,
 } from "@heroicons/react/24/solid";
-import BlurModal from "@/components/global/modals/BlurModal";
-import { useAlert } from "@/components/global/alerts/GlobalAlertProvider";
+import BlurModal from "@/components/modals/BlurModal";
+import { useAlert } from "@/components/alerts/GlobalAlertProvider";
 import{
   axiosInstance,
   camundaTaskSubmit,
@@ -24,9 +23,10 @@ import{
 } from "@/utils/api/api";
 import { jwtDecode } from "jwt-decode";
 import { getCamundaTasks, getStockRequestList } from "@/utils/services/getApi";
-import PdfPreview from "@/components/global/pdf/PdfPreview";
-import LoadingScreen from "@/components/global/loading/loading";
+import PdfPreview from "@/components/pdf/PdfPreview";
+import LoadingScreen from "@/components/loading/loading";
 import { StockRequestList } from "@/utils/types/stock-request-list";
+import TaskCard from "./_components/Task.Card";
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
