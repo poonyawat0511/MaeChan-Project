@@ -36,7 +36,7 @@ import { Times } from "@/utils/types/time";
 import LoadingScreen from "@/components/loading/loading";
 import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import { axiosInstance, dayApi, targetApi, timeApi } from "@/utils/api/api";
-import TimeFormModal from "@/components/modals/TimeModalForm";
+import TimeFormModal from "@/app/(admin)/days/_components/TimeModalForm";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
 import { UserHospital } from "@/utils/types/user-hospital";
 import DayCard from "./_components/DayCard";

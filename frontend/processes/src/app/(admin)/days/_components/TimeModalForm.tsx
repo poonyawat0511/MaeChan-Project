@@ -6,8 +6,9 @@ import {
   ModalBody,
   Button,
   Form,
-  Input,
+  TimeInput,
 } from "@heroui/react";
+import { Time } from "@internationalized/date";
 
 interface FormModalProps {
   isOpen: boolean;
@@ -19,19 +20,22 @@ interface FormModalProps {
 const TimeFormModal: React.FC<FormModalProps> = ({
   isOpen,
   onClose,
-  title = "Create Item",
+  title = "เลือกเวลา",
   onSubmit,
 }) => {
-  const [formData, setFormData] = useState({ time: "" });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // State to store Time object
+  const [time, setTime] = useState(new Time(0, 0)); // Default to 12:00
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.time.trim()) return;
-    onSubmit(formData);
+    if (!time) return;
+
+    // Convert Time object to a string format HH:mm
+    const formattedTime = `${String(time.hour).padStart(2, "0")}:${String(
+      time.minute
+    ).padStart(2, "0")}`;
+
+    onSubmit({ time: formattedTime });
     onClose();
   };
 
@@ -41,21 +45,14 @@ const TimeFormModal: React.FC<FormModalProps> = ({
         <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
         <ModalBody>
           <Form onSubmit={handleSubmit}>
-            {/* Name Input */}
-            <Input
+            {/* Time Input */}
+            <TimeInput
               isRequired
-              errorMessage={({ validationDetails }) =>
-                validationDetails.valueMissing
-                  ? "Please enter a name"
-                  : undefined
-              }
-              label="Time"
+              label="เลือกเวลา"
               labelPlacement="outside"
-              name="time"
-              placeholder="ใส่เวลาที่ต้องการ"
-              type="text"
-              value={formData.time}
-              onChange={handleChange}
+              value={time}
+              onChange={(value) => value && setTime(value)}
+              hourCycle={24} // Ensure 24-hour format
             />
 
             {/* Action Buttons */}
