@@ -33,14 +33,13 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import { Times } from "@/utils/types/time";
-
-import DayCard from "@/components/global/cards/DayCard";
-import LoadingScreen from "@/components/global/loading/loading";
-import UnauthorizedCard from "@/components/global/cards/UnauthorizedCard";
+import LoadingScreen from "@/components/loading/loading";
+import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import { axiosInstance, dayApi, targetApi, timeApi } from "@/utils/api/api";
-import TimeFormModal from "@/components/global/modals/TimeModalForm";
-import { useAlert } from "@/components/global/alerts/GlobalAlertProvider";
+import TimeFormModal from "@/components/modals/TimeModalForm";
+import { useAlert } from "@/components/alerts/GlobalAlertProvider";
 import { UserHospital } from "@/utils/types/user-hospital";
+import DayCard from "./_components/DayCard";
 
 export default function DayPage() {
   const [days, setDays] = useState<Days[]>([]);

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SignInResponse } from "@/utils/types/signInResponse";
 import styles from "./styles.module.css";
-import logo from "../../../public/logo66.png";
+import logo from "../../../../public/logo66.png";
 
 import {
   EnvelopeIcon,

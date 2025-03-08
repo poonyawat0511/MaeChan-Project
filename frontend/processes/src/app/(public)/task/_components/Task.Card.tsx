@@ -8,7 +8,8 @@ import {
   Chip,
 } from "@heroui/react";
 import { Task } from "@/utils/types/task";
-import FolderIcon from "../icons/folder.icon";
+import { FolderMinusIcon } from "@heroicons/react/24/outline";
+
 
 interface TaskCardProps {
   tasks: Task[];
@@ -47,7 +48,7 @@ export default function TaskCard({ tasks, onTaskClick }: TaskCardProps) {
               color="default"
               onPress={() => onTaskClick(task)}
             >
-              <FolderIcon className="w-4 h-4" />
+              <FolderMinusIcon className="w-4 h-4" />
             </Button>
           </CardFooter>
         </Card>

@@ -1,12 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import generatePDF from "@/utils/pdf/generatePDF";
+import generatePDF from "@/utils/services/generatePDF";
 import { StockRequest } from "@/utils/types/stock-request";
-
 import { Input } from "@heroui/input";
-import DownloadIcon from "@/components/global/icons/download.icon";
 import { Button, Chip, Tooltip, Divider } from "@heroui/react";
-import BlurModal from "@/components/global/modals/BlurModal";
+import BlurModal from "@/components/modals/BlurModal";
 import {
   Card,
   CardBody,
@@ -16,17 +14,18 @@ import {
 } from "@heroui/react";
 import { downloadCSV } from "@/utils/services/csv";
 import { getStockRequestList, getStockRequests } from "@/utils/services/getApi";
-import StockRequestTable from "@/components/global/tables/StockRequest.table";
-import PdfPreview from "@/components/global/pdf/PdfPreview";
-import LoadingScreen from "@/components/global/loading/loading";
-import UnauthorizedCard from "@/components/global/cards/UnauthorizedCard";
+import StockRequestTable from "@/app/(public)/all-stock-requests/_components/StockRequest.table";
+import PdfPreview from "@/components/pdf/PdfPreview";
+import LoadingScreen from "@/components/loading/loading";
+import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import {
   MagnifyingGlassIcon,
   DocumentTextIcon,
   ArrowPathIcon,
   DocumentChartBarIcon,
+  ArrowDownTrayIcon,
 } from "@heroicons/react/24/outline";
-import EmptyStateMessage from "@/components/global/emptys/EmptyStateMessage";
+import EmptyStateMessage from "@/components/emptys/EmptyStateMessage";
 import { StockRequestList } from "@/utils/types/stock-request-list";
 
 export default function AllStockRequest() {
@@ -182,7 +181,7 @@ export default function AllStockRequest() {
 
               <Button
                 color="secondary"
-                startContent={<DownloadIcon />}
+                startContent={<ArrowDownTrayIcon />}
                 variant="flat"
                 size="sm"
                 className="bg-violet-50 hover:bg-violet-100 text-violet-700 transition-all whitespace-nowrap"

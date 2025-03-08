@@ -11,7 +11,8 @@ import {
   Button,
   Chip,
 } from "@heroui/react";
-import ArrowLeftIcon from "../icons/arrowLeft.icon";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
+
 
 interface StockRequestTableProps {
   stockRequests: StockRequest[];
@@ -102,7 +103,7 @@ export default function StockRequestTable({
                       className="px-3 py-1 rounded hover:text-red-400 border-none rounded-full hover:bg-transparent !hover:bg-transparent bg-transparent"
                       onPress={() => onRequestClick(item)}
                     >
-                      <ArrowLeftIcon />
+                      <ChevronRightIcon />
                     </Button>
                   ) : columnKey === "requestComplete" ? (
                     <Chip

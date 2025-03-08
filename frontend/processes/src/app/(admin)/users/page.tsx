@@ -24,14 +24,14 @@ import {
 } from "@heroicons/react/24/outline";
 
 import { axiosInstance, userHospitalApi } from "@/utils/api/api";
-import { useAlert } from "@/components/global/alerts/GlobalAlertProvider";
-import LoadingScreen from "@/components/global/loading/loading";
-import UnauthorizedCard from "@/components/global/cards/UnauthorizedCard";
-import EmptyState from "@/components/global/emptys/EmptyState";
-import BlurModal from "@/components/global/modals/BlurModal";
+import { useAlert } from "@/components/alerts/GlobalAlertProvider";
+import LoadingScreen from "@/components/loading/loading";
+import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
+import EmptyState from "@/components/emptys/EmptyState";
+import BlurModal from "@/components/modals/BlurModal";
 import { getUserHospital } from "@/utils/services/getApi";
 import { UserHospital } from "@/utils/types/user-hospital";
-import UserHospitalTable from "@/components/global/tables/UserHospitalTable";
+import UserHospitalTable from "@/app/(admin)/users/_components/UserHospitalTable";
 
 export default function UserPage() {
   const [users, setUsers] = useState<UserHospital[]>([]);
