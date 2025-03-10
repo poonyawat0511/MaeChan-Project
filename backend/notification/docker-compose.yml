@@ -1,13 +1,13 @@
 services:
   backend:
-    image: mfu-tidloop-backend:latest
+    image: osathi/mfu-tidloop-backend:latest
     ports:
       - "8081:8081"
     environment:
       IPADDRESS: ${IPADDRESS}
 
   frontend:
-    image: mfu-tidloop-frontend:latest
+    image: osathi/mfu-tidloop-frontend:latest
     ports:
       - "3000:3000"
 
