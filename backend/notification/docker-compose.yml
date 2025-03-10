@@ -36,6 +36,7 @@ services:
     ports:
       - "8083:8083"
     environment:
+      BOOTSTRAP_SERVERS: "kafka:9092"
       GROUP_ID: "1"
       CONFIG_STORAGE_TOPIC: "my_connect_configs"
       OFFSET_STORAGE_TOPIC: "my_connect_offsets"
@@ -43,21 +44,23 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: host.docker.internal:9092
       POSTGRES_HOST: ${IPADDRESS}
       POSTGRES_PORT: 5432
-      POSTGRES_USER: postgres
+      POSTGRES_USER: Postgres
       POSTGRES_PASSWORD: user1234
 
   register-connector:
-    image: curlimages/curl:7.78.0
-    entrypoint: ["/bin/sh", "-c"]
-    command: >
-      "until curl -f http://connect:8083/; do echo 'Waiting for Kafka Connect...'; sleep 5; done;
-      echo 'Registering Debezium connector...';
+    image: curlimages/curl:latest
+    depends_on:
+      - connect
+    entrypoint: >
+      sh -c "
+      echo 'Waiting for Kafka Connect to be ready...' &&
+      sleep 10 &&
       curl -i -X POST -H 'Accept:application/json' -H 'Content-Type:application/json' http://connect:8083/connectors/ -d '{
         \"name\": \"inventory-connector\",
         \"config\": {
           \"connector.class\": \"io.debezium.connector.postgresql.PostgresConnector\",
           \"tasks.max\": \"1\",
-          \"database.hostname\": \"${IPADDRESS}\",
+          \"database.hostname\": \"host.docker.internal\",
           \"database.port\": \"5432\",
           \"database.user\": \"postgres\",
           \"database.password\": \"user1234\",
@@ -70,10 +73,12 @@ services:
           \"schema.history.internal.kafka.bootstrap.servers\": \"kafka:9092\",
           \"schema.history.internal.kafka.topic\": \"schemahistory.inventory\"
         }
-      }'"
+      }'
+      "
+    
   redpanda:
     image: docker.redpanda.com/redpandadata/console:latest
     ports:
       - "8080:8080"
     environment:
-      KAFKA_BROKERS: kafka:9092
+      KAFKA_BROKERS: host.docker.internal:9092
