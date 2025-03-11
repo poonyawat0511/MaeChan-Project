@@ -11,7 +11,7 @@ export default function RootLayoutClient({
   const pathname = usePathname();
 
   // Hide sidebar on sign-in and sign-up pages
-  const hideSidebar = pathname === "/signin" || pathname === "/signup";
+  const hideSidebar = pathname === "/signin" || pathname === "/signup" || pathname === "/";
 
   return (
     <div className="flex h-screen">

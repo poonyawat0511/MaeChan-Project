@@ -23,3 +23,7 @@ body {
 .icon {
   @apply size-6 text-gray-600;
 }
+
+@keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.8; } }
+@keyframes moveLeft { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-100px); } }
+@keyframes moveRight { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(100px); } }
