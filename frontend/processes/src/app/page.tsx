@@ -1,9 +1,17 @@
 "use client";
 
-import React from 'react';
-import { Bell, BarChart2, ClipboardList, DollarSign, LucideIcon, ArrowRight, Star, Users } from 'lucide-react';
+import React from "react";
+import {
+  Bell,
+  BarChart2,
+  ClipboardList,
+  DollarSign,
+  LucideIcon,
+  ArrowRight,
+  Star,
+  Users,
+} from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 interface FeatureCardProps {
   icon: LucideIcon;
@@ -11,7 +19,11 @@ interface FeatureCardProps {
   description: string;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, description }) => {
+const FeatureCard: React.FC<FeatureCardProps> = ({
+  icon: Icon,
+  title,
+  description,
+}) => {
   return (
     <div className="relative p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-gray-700 hover:border-blue-500/50 transition-all duration-500 group overflow-hidden">
       <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-blue-300/20 blur-xl group-hover:opacity-100 opacity-0 transition-opacity duration-700 -z-10" />
@@ -23,7 +35,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, descriptio
       <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
       <p className="text-gray-400">{description}</p>
       <div className="mt-4 flex items-center text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-        <span className="text-sm">Learn more</span>
+        <span className="text-sm">เรียนรู้เพิ่มเติม</span>
         <ArrowRight className="w-4 h-4 ml-2" />
       </div>
     </div>
@@ -38,29 +50,32 @@ const StatsCard = ({ number, label }: { number: string; label: string }) => (
   </div>
 );
 
-
 export default function LandingPage() {
   const features = [
     {
       icon: DollarSign,
-      title: "Purchase Review",
-      description: "Track and manage all your purchase activities efficiently with real-time updates and insights."
+      title: "รีวิวการออกใบขอสั่งซื้อ",
+      description:
+        "ติดตามและจัดการกิจกรรมการซื้อทั้งหมดของคุณอย่างมีประสิทธิภาพด้วยการอัปเดตและข้อมูลเชิงลึกแบบเรียลไทม์",
     },
     {
       icon: ClipboardList,
-      title: "Task Management",
-      description: "Organize and prioritize all your team's work in one place with intuitive workflows."
+      title: "การจัดการงาน",
+      description:
+        "จัดระเบียบและกำหนดลำดับความสำคัญของงานทั้งหมดของทีมของคุณในที่เดียวด้วยเวิร์กโฟลว์ที่ใช้งานง่าย",
     },
     {
       icon: BarChart2,
-      title: "Analytics Dashboard",
-      description: "Get detailed insights into your team's performance with beautiful visualizations and reports."
+      title: "แผงข้อมูลวิเคราะห์",
+      description:
+        "รับข้อมูลเชิงลึกโดยละเอียดเกี่ยวกับประสิทธิภาพของทีมของคุณด้วยภาพและรายงานที่สวยงาม",
     },
     {
       icon: Bell,
-      title: "Task Notifications",
-      description: "Stay updated with smart notifications and never miss important updates or deadlines."
-    }
+      title: "การแจ้งเตือนงาน",
+      description:
+        "อัปเดตข้อมูลด้วยการแจ้งเตือนอัจฉริยะ และไม่พลาดการอัปเดตหรือกำหนดงานที่สำคัญ",
+    },
   ];
 
   const testimonials = [
@@ -68,14 +83,16 @@ export default function LandingPage() {
       name: "Sarah Johnson",
       role: "Product Manager",
       company: "Tech Co",
-      content: "This platform has transformed how our team collaborates and manages tasks."
+      content:
+        "This platform has transformed how our team collaborates and manages tasks.",
     },
     {
       name: "Mark Chen",
       role: "Team Lead",
       company: "Innovation Labs",
-      content: "The analytics features have helped us optimize our workflow significantly."
-    }
+      content:
+        "The analytics features have helped us optimize our workflow significantly.",
+    },
   ];
 
   return (
@@ -93,24 +110,6 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="fixed w-full top-0 z-50 bg-white/5 backdrop-blur-md border-b border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-center h-20">
-            <div className="flex justify-center relative group">
-              <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-300 blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-500" />
-              <Image 
-                src="/logo66.png" 
-                alt="Taskk Logo" 
-                width={48} 
-                height={48} 
-                className="h-12 w-auto relative" 
-              />
-            </div>
-          </div>
-        </div>
-      </nav>
-
       {/* Hero Section */}
       <div className="relative pt-48 pb-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -119,26 +118,27 @@ export default function LandingPage() {
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-300/5 rounded-full -ml-32 -mb-32" />
             <div className="relative">
               <span className="inline-block px-4 py-2 rounded-full bg-blue-500/10 text-blue-400 text-sm mb-4">
-                New Feature Release
+                เปิดตัวระบบเสริมใหม่
               </span>
               <h1 className="text-4xl sm:text-6xl font-bold text-white mb-6 relative">
                 <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-300 blur-3xl opacity-20 animate-pulse" />
-                Manage Your Work Efficiently
+                จัดการงานของคุณอย่างมีประสิทธิภาพ
               </h1>
               <p className="max-w-2xl mx-auto text-lg text-gray-400 mb-10">
-                Keep track of tasks, management work, and stay productive with our intelligent workspace solution.
+                ติดตามงานบริหารจัดการงาน
+                และทำงานอย่างมีประสิทธิผลด้วยโซลูชันพื้นที่ทำงานอัจฉริยะของเรา
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Link href="/all-stock-requests" className="w-48">
                   <button className="px-8 py-4 rounded-full bg-blue-500 text-white hover:bg-blue-600 relative group transition-colors duration-500 w-full">
                     <span className="absolute inset-0 bg-blue-400 blur-md opacity-0 group-hover:opacity-50 transition-opacity duration-500" />
-                    <span className="relative">stock requests</span>
+                    <span className="relative">ใบคำขอสั่งซื้อ</span>
                   </button>
                 </Link>
                 <Link href="/task" className="w-48">
                   <button className="px-8 py-4 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 relative group transition-all duration-500 w-full">
                     <span className="absolute inset-0 bg-blue-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <span className="relative">Explore task</span>
+                    <span className="relative">ภาระงาน</span>
                   </button>
                 </Link>
               </div>
@@ -159,7 +159,7 @@ export default function LandingPage() {
               Powerful Features
             </h2>
             <p className="mt-4 text-gray-400 max-w-2xl mx-auto">
-              Everything you need to manage your work efficiently and boost productivity
+            ทุกสิ่งที่คุณต้องการเพื่อจัดการงานของคุณอย่างมีประสิทธิภาพและเพิ่มประสิทธิภาพให้กับทีมของคุณ
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -196,7 +196,10 @@ export default function LandingPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="relative p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-gray-700">
+              <div
+                key={index}
+                className="relative p-6 rounded-xl bg-white/5 backdrop-blur-sm border border-gray-700"
+              >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16" />
                 <div className="relative">
                   <div className="flex items-center mb-4">
@@ -204,8 +207,12 @@ export default function LandingPage() {
                       <Users className="w-6 h-6 text-blue-400" />
                     </div>
                     <div>
-                      <h4 className="text-white font-semibold">{testimonial.name}</h4>
-                      <p className="text-gray-400 text-sm">{testimonial.role} at {testimonial.company}</p>
+                      <h4 className="text-white font-semibold">
+                        {testimonial.name}
+                      </h4>
+                      <p className="text-gray-400 text-sm">
+                        {testimonial.role} at {testimonial.company}
+                      </p>
                     </div>
                   </div>
                   <p className="text-gray-300">{testimonial.content}</p>
@@ -222,4 +229,4 @@ export default function LandingPage() {
       </div>
     </div>
   );
-} 
+}
