@@ -88,6 +88,7 @@ const SideBar = () => {
         }}
         transition={{ duration: 0.3 }}
       >
+        <Link href="/">
         <Image
           src="/logo66.png"
           alt="Logo"
@@ -96,6 +97,7 @@ const SideBar = () => {
           priority
           className="object-contain"
         />
+        </Link>
       </motion.div>
 
       {/* Menu Section with Hover & Animation */}
