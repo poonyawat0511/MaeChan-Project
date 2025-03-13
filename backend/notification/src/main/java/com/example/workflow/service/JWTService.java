@@ -15,4 +15,6 @@ public interface JWTService {
     String generateRefreshToken(Map<String , Object> extraClaim ,UserDetails userDetails);
 
     String extractRole(String token);
+
+    Long extractStockUserId(String token);
 }

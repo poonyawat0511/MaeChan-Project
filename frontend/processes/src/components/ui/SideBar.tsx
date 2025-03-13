@@ -8,11 +8,11 @@ import {
   ChevronRightIcon,
   PowerIcon,
 } from "@heroicons/react/24/outline";
-import { jwtDecode } from "jwt-decode";
+import { axiosInstance, signOutApi } from "@/utils/api/api";
 import { userMenuItems, adminMenuItems, recentItems } from "./menu";
 import { motion } from "framer-motion";
-import { axiosInstance, signOutApi } from "@/utils/api/api";
 
+// ✅ Interface for user data
 interface UserHospital {
   role: string;
 }
@@ -22,16 +22,20 @@ const SideBar = () => {
   const [user, setUser] = useState<UserHospital | null>(null);
   const pathname = usePathname();
 
+  // ✅ Fetch user info from backend
   useEffect(() => {
-    try {
-      const token = localStorage.getItem("jwt");
-      if (token) {
-        const decoded: UserHospital = jwtDecode(token);
-        setUser(decoded);
+    const fetchUser = async () => {
+      try {
+        const response = await axiosInstance.get<UserHospital>("/auth/me", {
+          withCredentials: true, // ✅ Ensure cookies are sent
+        });
+        setUser(response.data);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
       }
-    } catch (error) {
-      console.error("Error decoding JWT:", error);
-    }
+    };
+    
+    fetchUser();
   }, []);
 
   useEffect(() => {
@@ -49,9 +53,8 @@ const SideBar = () => {
 
   const handleSignout = async () => {
     try {
-      await axiosInstance.post(signOutApi);
-      localStorage.removeItem("jwt");
-      window.location.href = "/signin";
+      await axiosInstance.post(signOutApi, {}, { withCredentials: true });
+      window.location.href = "/signin"; // ✅ Redirect after logout
     } catch (error) {
       console.error("Sign out failed:", error);
     }
@@ -64,7 +67,7 @@ const SideBar = () => {
       animate={{ width: isCollapsed ? "5rem" : "16rem" }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
     >
-      {/* Collapse Button with Animation */}
+      {/* Collapse Button */}
       <motion.button
         className="absolute top-4 -right-3 p-2 rounded-full bg-purple-500 text-white shadow-lg hover:bg-white hover:text-purple-500 transition-all transform hover:scale-110"
         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -78,7 +81,7 @@ const SideBar = () => {
         )}
       </motion.button>
 
-      {/* Logo with Animated Transition */}
+      {/* Logo */}
       <motion.div
         className="flex justify-center items-center mb-6 h-12"
         initial={{ opacity: 1, scale: 1 }}
@@ -89,18 +92,18 @@ const SideBar = () => {
         transition={{ duration: 0.3 }}
       >
         <Link href="/">
-        <Image
-          src="/logo66.png"
-          alt="Logo"
-          width={isCollapsed ? 32 : 120}
-          height={48}
-          priority
-          className="object-contain"
-        />
+          <Image
+            src="/logo66.png"
+            alt="Logo"
+            width={isCollapsed ? 32 : 120}
+            height={48}
+            priority
+            className="object-contain"
+          />
         </Link>
       </motion.div>
 
-      {/* Menu Section with Hover & Animation */}
+      {/* Menu Items */}
       <nav className="mb-4">
         <motion.h2
           className="text-xs font-semibold text-gray-400 mb-2"
@@ -126,7 +129,6 @@ const SideBar = () => {
             >
               <item.icon className="h-6 w-6 shrink-0 transition-transform duration-300 group-hover:rotate-6" />
 
-              {/* Smooth hide/show with animation */}
               <motion.span
                 className="ml-3 overflow-hidden whitespace-nowrap transition-all"
                 initial={{ opacity: 0, width: 0 }}
@@ -197,7 +199,6 @@ const SideBar = () => {
         >
           <PowerIcon className="h-6 w-6 shrink-0 transition-all duration-300 group-hover:rotate-12" />
 
-          {/* Smooth hide/show with animation */}
           <motion.span
             className="overflow-hidden whitespace-nowrap transition-all min-w-0"
             initial={{ opacity: 0, width: 0 }}
@@ -207,7 +208,7 @@ const SideBar = () => {
             }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-           ลงชื่อออก
+            ลงชื่อออก
           </motion.span>
         </motion.button>
       </motion.div>

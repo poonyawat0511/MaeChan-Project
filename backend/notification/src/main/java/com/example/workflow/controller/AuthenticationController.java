@@ -50,6 +50,7 @@ public class AuthenticationController {
             response.put("role", jwtService.extractRole(token));
             response.put("firstName", jwtService.extractUserName(token));
             response.put("lastName", jwtService.extractUserName(token));
+            response.put("id", jwtService.extractStockUserId(token));
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
