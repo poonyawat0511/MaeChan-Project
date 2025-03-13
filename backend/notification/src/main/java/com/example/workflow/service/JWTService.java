@@ -17,4 +17,8 @@ public interface JWTService {
     String extractRole(String token);
 
     Long extractStockUserId(String token);
+    
+    String extractFirstName(String token);
+
+    String extractLastName(String token);
 }

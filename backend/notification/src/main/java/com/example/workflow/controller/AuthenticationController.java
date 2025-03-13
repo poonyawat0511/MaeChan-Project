@@ -48,8 +48,8 @@ public class AuthenticationController {
             Map<String, Object> response = new HashMap<>();
             response.put("email", jwtService.extractUserName(token));
             response.put("role", jwtService.extractRole(token));
-            response.put("firstName", jwtService.extractUserName(token));
-            response.put("lastName", jwtService.extractUserName(token));
+            response.put("firstName", jwtService.extractFirstName(token));
+            response.put("lastName", jwtService.extractLastName(token));
             response.put("id", jwtService.extractStockUserId(token));
 
             return ResponseEntity.ok(response);
