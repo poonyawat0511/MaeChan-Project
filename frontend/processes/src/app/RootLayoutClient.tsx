@@ -18,12 +18,12 @@ export default function RootLayoutClient({
   const isLandingPage = pathname === LANDING_PAGE;
 
   return (
-    <div className="flex h-screen">
-      {!isAuthPage && !isLandingPage && <SideBar />}
-      <main className="flex-1">
-        {isLandingPage && <Header />}
-        {children}
-      </main>
-    </div>
-  );
+    <div className="flex h-screen overflow-hidden">
+    {!isAuthPage && !isLandingPage && <SideBar />}
+    <main className="flex-1 h-screen overflow-auto">
+      {isLandingPage && <Header />}
+      {children}
+    </main>
+  </div>
+);
 }
