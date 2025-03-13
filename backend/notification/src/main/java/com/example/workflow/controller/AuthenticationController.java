@@ -1,6 +1,12 @@
 package com.example.workflow.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +21,7 @@ import com.example.workflow.dto.SigninRequest;
 import com.example.workflow.model.Role;
 import com.example.workflow.model.UserHospital;
 import com.example.workflow.service.AuthenticationService;
+import com.example.workflow.service.JWTService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +33,29 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+    private final JWTService jwtService;
+
+    // ✅ API to get user details from JWT
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, Object>> getUserInfo(
+            @CookieValue(name = "jwt", required = false) String token) {
+
+        if (token == null || token.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        try {
+            Map<String, Object> response = new HashMap<>();
+            response.put("email", jwtService.extractUserName(token));
+            response.put("role", jwtService.extractRole(token));
+            response.put("firstName", jwtService.extractUserName(token));
+            response.put("lastName", jwtService.extractUserName(token));
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
 
     @PostMapping(value = "/signup", consumes = {"multipart/form-data"})
     public ResponseEntity<UserHospital> signup(
@@ -61,7 +91,7 @@ public class AuthenticationController {
         // Set JWT token in a cookie
         Cookie jwtCookie = new Cookie("jwt", jwtResponse.getToken());
         jwtCookie.setHttpOnly(true); // Prevent client-side script access
-        jwtCookie.setSecure(true); // Use with HTTPS
+        jwtCookie.setSecure(false); // Use with HTTPS
         jwtCookie.setPath("/"); // Accessible across the entire application
         jwtCookie.setMaxAge(24 * 60 * 60); // 24 hours in seconds
         response.addCookie(jwtCookie);
