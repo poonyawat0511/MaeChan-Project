@@ -37,7 +37,7 @@ public class JWTServiceImpl implements JWTService {
         UserHospital user = (UserHospital) userDetails;
 
         Map<String, Object> claims = Map.of(
-            "userHospitalId", user.getId(),
+            "id", user.getId(),
             "firstName", user.getFirstName(),
             "lastName", user.getLastName(),
             "role", user.getRole().name()
@@ -56,7 +56,7 @@ public class JWTServiceImpl implements JWTService {
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // 24 ชั่วโมง
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 ชั่วโมง
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -85,8 +85,9 @@ public class JWTServiceImpl implements JWTService {
     }
 
     public Long extractStockUserId(String token) {
-        return extractClaim(token, claims -> claims.get("Id", Long.class));
+        return extractClaim(token, claims -> claims.get("id", Long.class)); // ✅ Ensure claim name matches
     }
+    
 
     public String extractFirstName(String token) {
         return extractClaim(token, claims -> claims.get("firstName", String.class));

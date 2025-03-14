@@ -44,7 +44,7 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
   const logo = imageData.myImage;
   doc.addImage(logo, 'JPEG', margin, margin, 16, 18);
 
-  doc.addImage("examples/images/Octonyan.jpg", "JPEG", 15, 40, 180, 180);
+  // doc.addImage("examples/images/Octonyan.jpg", "JPEG", 15, 40, 180, 180);
 
 
   //line 1

@@ -21,12 +21,12 @@ import {
   camundaTaskSubmit,
   springRequestByTaskApi,
 } from "@/utils/api/api";
-import { jwtDecode } from "jwt-decode";
 import { getCamundaTasks, getStockRequestList } from "@/utils/services/getApi";
 import PdfPreview from "@/components/pdf/PdfPreview";
 import LoadingScreen from "@/components/loading/loading";
 import { StockRequestList } from "@/utils/types/stock-request-list";
 import TaskCard from "./_components/Task.Card";
+import { getAuthenticatedUser } from "@/utils/auth/auth";
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -41,16 +41,17 @@ export default function TaskPage() {
   const [requestList, setRequestList] = useState<StockRequestList[]>([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("jwt");
-    if (token) {
+    const fetchUserRole = async () => {
       try {
-        const decodedToken = jwtDecode<{ role?: string }>(token);
-        setUserRole(decodedToken.role || "USER");
+        const user = await getAuthenticatedUser();
+        if (user) {
+          setUserRole(user.role || "USER");
+        }
       } catch (error) {
-        console.error("Invalid token", error);
+        console.error("Error fetching user role:", error);
         setUserRole("USER");
       }
-    }
+    };
 
     const fetchTasks = async () => {
       try {
@@ -72,6 +73,7 @@ export default function TaskPage() {
       }
     };
 
+    fetchUserRole();
     fetchTasks();
   }, []);
 
@@ -117,16 +119,13 @@ export default function TaskPage() {
 
   const executeTaskAction = async (task: Task, approve: boolean) => {
     try {
-      const token = localStorage.getItem("jwt");
-
-      if (!token) {
-        showAlert("You must be logged in to perform this action.", "warning");
+      const user = await getAuthenticatedUser();
+      if (!user || !user.id) {  // ✅ Ensure user ID is not null
+        showAlert("User ID not found. Please log in again.", "warning");
         return;
       }
 
-      const stockRequest = await fetchStockRequestByTaskId(
-        task.processInstanceId
-      );
+      const stockRequest = await fetchStockRequestByTaskId(task.processInstanceId);
 
       if (!stockRequest || !stockRequest.requestId) {
         showAlert("Stock request not found or missing requestId.", "danger");
@@ -136,12 +135,8 @@ export default function TaskPage() {
 
       console.log("Executing task with stockRequest:", stockRequest);
 
-      const decodedToken = jwtDecode<{
-        userHospitalId?: string;
-        role?: string;
-      }>(token);
-      const userHospitalId = decodedToken.userHospitalId || "unknown";
-      const userRole = decodedToken.role || "USER";
+      const userHospitalId = user.id.toString();  // ✅ Correct field
+      const userRole = user.role || "USER";
 
       let requestBody = {};
 
@@ -152,8 +147,8 @@ export default function TaskPage() {
               value: stockRequest.requestId.toString(),
               type: "String",
             },
-            stockSubjectPerson: {
-              value: userHospitalId.toString(),
+            stockSubjectPerson: {  // ✅ Correct field
+              value: userHospitalId,
               type: "String",
             },
             approve: { value: approve, type: "Boolean" },
@@ -166,8 +161,8 @@ export default function TaskPage() {
               value: stockRequest.requestId.toString(),
               type: "String",
             },
-            stockUserApprove: {
-              value: userHospitalId.toString(),
+            stockUserApprove: {  // ✅ Correct field
+              value: userHospitalId,
               type: "String",
             },
             requestComplete: { value: approve, type: "Boolean" },
@@ -179,12 +174,7 @@ export default function TaskPage() {
 
       await axiosInstance.post(
         `${camundaTaskSubmit}/${task.id}/submit-form`,
-        requestBody,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        requestBody
       );
 
       showAlert(
@@ -203,6 +193,7 @@ export default function TaskPage() {
     }
     setConfirmModalOpen(false);
   };
+
 
   const handleTaskClick = async (task: Task) => {
     setSelectedTask(task);

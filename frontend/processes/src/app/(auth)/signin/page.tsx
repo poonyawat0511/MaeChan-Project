@@ -2,7 +2,6 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { SignInResponse } from "@/utils/types/signInResponse";
 import styles from "./styles.module.css";
 import logo from "../../../../public/logo66.png";
 
@@ -39,19 +38,15 @@ const SignInPage = () => {
       });
 
       if (!response.ok) {
-        throw new Error("An error occurred");
+        throw new Error("Invalid email or password.");
       }
-
-      const data: SignInResponse = await response.json();
-
-      localStorage.setItem("jwt", data.token);
 
       router.push("/all-stock-requests");
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError("An unexpected error occurred");
+        setError("An unexpected error occurred.");
       }
     }
   };

@@ -40,6 +40,7 @@ import TimeFormModal from "@/app/(admin)/days/_components/TimeModalForm";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
 import { UserHospital } from "@/utils/types/user-hospital";
 import DayCard from "./_components/DayCard";
+import { Target } from "@/utils/types/target";
 
 export default function DayPage() {
   const [days, setDays] = useState<Days[]>([]);
@@ -56,23 +57,24 @@ export default function DayPage() {
   const [users, setUsers] = useState<UserHospital[]>([]);
   const [selectedUsers, setSelectedUsers] = useState<UserHospital[]>([]);
   const [userSearchQuery, setUserSearchQuery] = useState("");
-  const LOCAL_STORAGE_KEY = "selectedUsers";
   const { showAlert } = useAlert();
 
   useEffect(() => {
-    const storedUsers = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (storedUsers) {
-      setSelectedUsers(JSON.parse(storedUsers));
-    }
-  }, []);
+    const fetchSelectedUsers = async () => {
+      try {
+        const response = await axiosInstance.get<Target[]>(targetApi);
 
-  useEffect(() => {
-    if (selectedUsers.length > 0) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(selectedUsers));
-    } else {
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
-    }
-  }, [selectedUsers]);
+        // Extract the actual user data from the targetUser field
+        const users = response.data.map((record) => record.targetUser);
+
+        setSelectedUsers(users);
+      } catch (error) {
+        console.error("Error fetching selected users:", error);
+      }
+    };
+
+    fetchSelectedUsers();
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -171,10 +173,11 @@ export default function DayPage() {
         const response = await axiosInstance.post(targetApi, {
           targetUser: user.id,
         });
+
         showAlert("User Added Successfully", "success");
         console.log("User added successfully:", response.data);
 
-        setSelectedUsers([...selectedUsers, user]);
+        setSelectedUsers((prevUsers) => [...prevUsers, user]);
       } catch (error) {
         console.error("Error adding user:", error);
       }
@@ -183,22 +186,26 @@ export default function DayPage() {
 
   const handleRemoveUser = async (id: string) => {
     try {
-      const response = await axiosInstance.get(targetApi);
+      const response = await axiosInstance.get<Target[]>(targetApi);
       const targetUsers = response.data;
 
-      // Fix: Compare id with targetUser.id instead of targetUser object
-      const targetRecord = (
-        targetUsers as { id: string; targetUser: { id: string } }[]
-      ).find((record) => record.targetUser.id === id);
+      // Find the target record that matches the user ID
+      const targetRecord = targetUsers.find(
+        (record) => record.targetUser.id === id
+      );
 
       if (!targetRecord) {
         console.warn(`No matching target record found for UserId: ${id}`);
         return;
       }
 
+      // Remove from API
       await axiosInstance.delete(`${targetApi}/${targetRecord.id}`);
 
-      setSelectedUsers(selectedUsers.filter((user) => user.id !== id));
+      // Remove from state
+      setSelectedUsers((prevUsers) =>
+        prevUsers.filter((user) => user.id !== id)
+      );
 
       showAlert("User Removed Successfully", "success");
       console.log(`User with API id ${targetRecord.id} removed successfully`);
@@ -273,7 +280,7 @@ export default function DayPage() {
               <Divider />
               <CardBody className="p-3">
                 <p className="text-gray-600 mb-2 text-xs sm:text-sm">
-                เพิ่มเวลาสำหรับตารางงานของคุณ:
+                  เพิ่มเวลาสำหรับตารางงานของคุณ:
                 </p>
                 <Dropdown>
                   <DropdownTrigger>
@@ -313,7 +320,7 @@ export default function DayPage() {
                   size="sm"
                   onPress={handleCreateTime}
                 >
-                 เพิ่มเวลาการแจ้งเตือน
+                  เพิ่มเวลาการแจ้งเตือน
                 </Button>
               </CardBody>
             </Card>
@@ -323,7 +330,7 @@ export default function DayPage() {
           <Card className="flex-1 min-h-0 overflow-auto">
             <CardHeader className="flex justify-between items-center px-3 py-2">
               <h3 className="text-base sm:text-lg font-semibold">
-              ตารางรายสัปดาห์
+                ตารางรายสัปดาห์
               </h3>
               <Badge color="primary" variant="flat">
                 {days.length} วันที่กำหนดไว้
@@ -349,7 +356,9 @@ export default function DayPage() {
           <Card className="h-full flex flex-col">
             <CardHeader className="px-3 py-2 flex-shrink-0">
               <div className="flex justify-between items-center">
-                <h4 className="text-base font-semibold">ผู้ใช้สำหรับการแจ้งเตือน</h4>
+                <h4 className="text-base font-semibold">
+                  ผู้ใช้สำหรับการแจ้งเตือน
+                </h4>
                 <Badge color="secondary" variant="flat">
                   {selectedUsers.length} คน
                 </Badge>
@@ -365,9 +374,9 @@ export default function DayPage() {
               <div className="overflow-auto mb-3" style={{ maxHeight: "25%" }}>
                 {selectedUsers.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {selectedUsers.map((user, index) => (
+                    {selectedUsers.map((user) => (
                       <Chip
-                        key={user.id ? user.id : `user-${index}`} // Ensure uniqueness
+                        key={user.id}
                         onClose={() => handleRemoveUser(user.id)}
                         avatar={<Avatar name={user.firstName} size="sm" />}
                         variant="flat"
@@ -437,7 +446,7 @@ export default function DayPage() {
                   ))
                 ) : (
                   <p className="text-gray-500 text-xs text-center py-2">
-                   ไม่พบผู้ใช้ที่ตรงกับคำค้นหา
+                    ไม่พบผู้ใช้ที่ตรงกับคำค้นหา
                   </p>
                 )}
               </div>

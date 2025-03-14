@@ -13,4 +13,12 @@ public interface JWTService {
     boolean isTokenValid(String token, UserDetails userDetails);
 
     String generateRefreshToken(Map<String , Object> extraClaim ,UserDetails userDetails);
+
+    String extractRole(String token);
+
+    Long extractStockUserId(String token);
+    
+    String extractFirstName(String token);
+
+    String extractLastName(String token);
 }

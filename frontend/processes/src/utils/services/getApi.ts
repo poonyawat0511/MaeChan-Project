@@ -10,7 +10,6 @@ import {
 } from "../api/api";
 import { StockRequest } from "../types/stock-request";
 import { Task } from "../types/task";
-import { jwtDecode } from "jwt-decode";
 import {
   camundaTaksApiApprover,
   camundaTaksApiDirector,
@@ -24,6 +23,7 @@ import { UserHospital } from "../types/user-hospital";
 import { StockRequestList } from "../types/stock-request-list";
 import { StockPo } from "../types/stock-po";
 import { StockWarehouse } from "../types/stock-warehouse";
+import { getAuthenticatedUser } from "../auth/auth";
 
 // Function to get stock requests
 export const getStockRequests = async (): Promise<StockRequest[]> => {
@@ -39,28 +39,28 @@ export const getStockRequests = async (): Promise<StockRequest[]> => {
 // Function to get Camunda tasks based on user role
 export const getCamundaTasks = async (): Promise<Task[]> => {
   try {
-    const token = localStorage.getItem("jwt");
-    if (!token) {
+    // ✅ Fetch user role from `/auth/me`
+    const user = await getAuthenticatedUser();
+    if (!user) {
       throw new Error("User is not authenticated.");
     }
 
-    const decodedToken = jwtDecode<{ role?: string }>(token);
-    const role = decodedToken.role || "USER";
-    let apiUrl = "";
-
-    if (role === "APPROVER") {
-      apiUrl = camundaTaksApiApprover;
-    } else if (role === "DIRECTOR") {
-      apiUrl = camundaTaksApiDirector;
-    }
+    const role = user.role || "USER";
+    const apiUrl =
+      role === "APPROVER"
+        ? camundaTaksApiApprover
+        : role === "DIRECTOR"
+        ? camundaTaksApiDirector
+        : "";
 
     if (!apiUrl) return [];
 
+    // ✅ Fetch tasks based on role
     const response = await axiosInstance.get<Task[]>(apiUrl);
     return response.data;
   } catch (error) {
     console.error("Error fetching Camunda tasks:", error);
-    throw error;
+    return [];
   }
 };
 
