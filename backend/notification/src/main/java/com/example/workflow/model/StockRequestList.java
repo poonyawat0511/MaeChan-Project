@@ -17,6 +17,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -63,7 +65,7 @@ public class StockRequestList {
     private Long departmentId;
 
     @Column(name = "request_date")
-    private String requestDate;
+    private Date requestDate;
 
     @Column(name = "supplier_id")
     private Long supplierId;
@@ -117,7 +119,7 @@ public class StockRequestList {
     private String itemBarcode;
 
     @Column(name = "unit_qty")
-    private Double unitQty;
+    private int unitQty;
 
     @Column(name = "stock_po_item_type_id")
     private Long stockPoItemTypeId;
@@ -129,7 +131,7 @@ public class StockRequestList {
     private Double stockRequestItemMoneyDiscount;
 
     @Column(name = "rate_3_month")
-    private Double rate3Month;
+    private int rate3Month;
 
     @Column(name = "trade_name")
     private String tradeName;
@@ -141,10 +143,10 @@ public class StockRequestList {
     private int totalPoQty;
 
     @Column(name = "plan_remain_qty")
-    private Double planRemainQty;
+    private int planRemainQty;
 
     @Column(name = "forcast_month")
-    private Integer forcastMonth;
+    private Double forcastMonth;
 
     @Column(name = "stock_vendor_id")
     private Long stockVendorId;
@@ -159,25 +161,25 @@ public class StockRequestList {
     private Long stockPoPcTypeId;
 
     @Column(name = "trimester")
-    private Integer trimester;
+    private int trimester;
 
     @Column(name = "trimester_plan_qty")
     private int trimesterPlanQty;
 
     @Column(name = "trimester_plan_amount")
-    private int trimesterPlanAmount;
+    private Double trimesterPlanAmount;
 
     @Column(name = "trimester_plan_use_qty")
     private int trimesterPlanUseQty;
 
     @Column(name = "trimester_plan_use_amount")
-    private int trimesterPlanUseAmount;
+    private Double trimesterPlanUseAmount;
 
     @Column(name = "trimester_plan_remain_qty")
     private int trimesterPlanRemainQty;
 
     @Column(name = "trimester_plan_remain_amount")
-    private int trimesterPlanRemainAmount;
+    private Double trimesterPlanRemainAmount;
 
     @Column(name = "vat_price")
     private Double vatPrice;
@@ -202,6 +204,6 @@ public class StockRequestList {
 
     // Add constructor to handle deserialization from number value
     public StockRequestList(long requestListId) {
-    this.requestListId = requestListId;
+        this.requestListId = requestListId;
     }
 }

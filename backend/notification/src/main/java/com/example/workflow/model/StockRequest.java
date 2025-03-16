@@ -2,6 +2,7 @@ package com.example.workflow.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -33,24 +34,6 @@ public class StockRequest {
     @Column(name = "request_id")
     private Long requestId;
 
-    // Add relation 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "request_warehouse_id", referencedColumnName = "warehouse_id")
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "warehouseId")
-    private StockWarehouse requestWarehouseId;  
-
-    // Add relation to StockPo
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "stock_po_id", referencedColumnName = "stock_po_id")
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "stockPoId")
-    private StockPo stockPoId;
-
-    // Add relation to Stock budget
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "budget_id", referencedColumnName = "budget_id")
-    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "budgetId")
-    private StockBudget budgetId;
-
     @Column(name = "request_date")
     private LocalDate requestDate;
 
@@ -60,11 +43,21 @@ public class StockRequest {
     @Column(name = "request_receive_date")
     private LocalDate requestReceiveDate;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "request_warehouse_id", referencedColumnName = "warehouse_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "warehouseId")
+    private StockWarehouse requestWarehouseId;
+
     @Column(name = "request_complete")
     private Boolean requestComplete;
 
     @Column(name = "use_date")
     private LocalDate useDate;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "stock_po_id", referencedColumnName = "stock_po_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "stockPoId")
+    private StockPo stockPoId;
 
     @Column(name = "hos_guid")
     private String hosGuid;
@@ -79,32 +72,36 @@ public class StockRequest {
     private String stockSubjectPerson;
 
     @Column(name = "supplier_id")
-    private String supplierId;
+    private Long supplierId;
 
     @Column(name = "department_id")
-    private String departmentId;
+    private Long departmentId;
 
     private String note;
 
     @Column(name = "transport_day")
     private Integer transportDay;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "budget_id", referencedColumnName = "budget_id")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "budgetId")
+    private StockBudget budgetId;
+
     @Column(name = "runnumber")
     private Integer runNumber;
 
     @Column(name = "number_year")
-    private Integer numberYear;
+    private String numberYear;
 
     @Column(name = "number_month")
-    private Integer numberMonth;
+    private String numberMonth;
 
     @Column(name = "stock_request_doc_id")
-    private String stockRequestDocId;
+    private Long stockRequestDocId;
 
     @Column(name = "project_id")
-    private String projectId;
+    private Long projectId;
 
-    // Add relation to StockUser
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_user_approve_id", referencedColumnName = "id")
     private StockUser stockUserApprove;
@@ -112,22 +109,21 @@ public class StockRequest {
     @Column(name = "stock_approve_date")
     private LocalDate stockApproveDate;
 
-    // Add relation to StockUser
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_user_id", referencedColumnName = "id")
     private StockUser stockUser;
 
     @Column(name = "stock_request_document_id")
-    private String stockRequestDocumentId;
+    private Long stockRequestDocumentId;
 
     @Column(name = "project_plan_id")
-    private String projectPlanId;
+    private Long projectPlanId;
 
     @Column(name = "request_all_complete")
     private Boolean requestAllComplete;
 
     @Column(name = "budget_runno")
-    private String budgetRunNo;
+    private Integer budgetRunNo;
 
     private Boolean approve;
 
@@ -135,10 +131,10 @@ public class StockRequest {
     private String requestTagNo;
 
     @Column(name = "request_time")
-    private String requestTime;
+    private LocalTime requestTime;
 
     @Column(name = "purchase_type")
-    private String purchaseType;
+    private Long purchaseType;
 
     @Column(name = "stock_budget_total")
     private BigDecimal stockBudgetTotal;
@@ -181,8 +177,8 @@ public class StockRequest {
     @Column(name = "dep_request_no_list")
     private String depRequestNoList;
 
-     // Add constructor to accept integer argument
+    // Add constructor to accept Long argument
     public StockRequest(Long requestId) {
         this.requestId = requestId;
-}
+    }
 }

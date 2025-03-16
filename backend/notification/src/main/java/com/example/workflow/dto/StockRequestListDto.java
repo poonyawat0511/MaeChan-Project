@@ -1,5 +1,7 @@
 package com.example.workflow.dto;
 
+import java.util.Date;
+
 import com.example.workflow.model.StockItem;
 import com.example.workflow.model.StockRequest;
 
@@ -23,7 +25,7 @@ public class StockRequestListDto {
     private Double requestListTotalPrice;
     private Boolean requestComplete;
     private Long departmentId;
-    private String requestDate;
+    private Date requestDate;
     private Long supplierId;
     private String remark;
     private Long stockItemUnitId;
@@ -41,27 +43,27 @@ public class StockRequestListDto {
     private Double stockPlanOutgoingAmount;
     private Double totalPrice;
     private String itemBarcode;
-    private Double unitQty;
+    private int unitQty;
     private Long stockPoItemTypeId;
     private Double stockRequestItemDiscount;
     private Double stockRequestItemMoneyDiscount;
-    private Double rate3Month;
+    private int rate3Month;
     private String tradeName;
     private int totalPlanQty;
     private int totalPoQty;
-    private Double planRemainQty;
-    private Integer forcastMonth;
+    private int planRemainQty;
+    private double forcastMonth;
     private Long stockVendorId;
     private Long supplierItemId;
     private Long stockDepRequestListId;
     private Long stockPoPcTypeId;
-    private Integer trimester;
+    private int trimester;
     private int trimesterPlanQty;
-    private int trimesterPlanAmount;
+    private double trimesterPlanAmount;
     private int trimesterPlanUseQty;
-    private int trimesterPlanUseAmount;
+    private double trimesterPlanUseAmount;
     private int trimesterPlanRemainQty;
-    private int trimesterPlanRemainAmount;
+    private double trimesterPlanRemainAmount;
     private Double vatPrice;
     private Double totalPriceBeforeVat;
     private Long lastWarehouseId;

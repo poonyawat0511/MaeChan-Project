@@ -1,6 +1,7 @@
 package com.example.workflow.dto;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import com.example.workflow.model.StockBudget;
 import com.example.workflow.model.StockPo;
@@ -29,27 +30,27 @@ public class StockRequestDto {
     private Integer budgetYear;
     private String stockSubject;
     private String stockSubjectPerson;
-    private String supplierId;
-    private String departmentId;
+    private Long supplierId;
+    private Long departmentId;
     private String note;
     private Integer transportDay;
     private StockBudget budgetId; //relation
     private Integer runNumber;
-    private Integer numberYear;
-    private Integer numberMonth;
-    private String stockRequestDocId;
-    private String projectId;
+    private String numberYear;
+    private String numberMonth;
+    private Long stockRequestDocId;
+    private Long projectId;
     private StockUser stockUserApprove; // relation
     private LocalDate stockApproveDate;
     private StockUser stockUser; // relation
-    private String stockRequestDocumentId;
-    private String projectPlanId;
+    private Long stockRequestDocumentId;
+    private Long projectPlanId;
     private Boolean requestAllComplete;
-    private String budgetRunNo;
+    private Integer budgetRunNo;
     private Boolean approve;
     private String requestTagNo;
-    private String requestTime;
-    private String purchaseType;
+    private LocalTime requestTime;
+    private Long purchaseType;
     private Double stockBudgetTotal;
     private Double stockBudgetUse;
     private Double stockBudgetRemain;
