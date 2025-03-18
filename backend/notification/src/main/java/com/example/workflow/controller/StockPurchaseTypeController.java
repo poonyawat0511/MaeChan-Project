@@ -18,12 +18,6 @@ public class StockPurchaseTypeController {
     @Autowired
     private StockPurchaseTypeService stockPurchaseTypeService;
 
-    @PostMapping
-    public ResponseEntity<StockPurchaseType> createStockPurchaseType(@RequestBody StockPurchaseType stockPurchaseType) {
-        StockPurchaseType createdStockPurchaseType = stockPurchaseTypeService.createStockPurchaseType(stockPurchaseType);
-        return new ResponseEntity<>(createdStockPurchaseType, HttpStatus.CREATED);
-    }
-
     @GetMapping
     public ResponseEntity<List<StockPurchaseType>> getAllStockPurchaseTypes() {
         List<StockPurchaseType> stockPurchaseTypes = stockPurchaseTypeService.findAllStockPurchaseTypes();
@@ -35,6 +29,13 @@ public class StockPurchaseTypeController {
         Optional<StockPurchaseType> stockPurchaseType = stockPurchaseTypeService.findStockPurchaseTypeById(id);
         return stockPurchaseType.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    /* 
+    @PostMapping
+    public ResponseEntity<StockPurchaseType> createStockPurchaseType(@RequestBody StockPurchaseType stockPurchaseType) {
+        StockPurchaseType createdStockPurchaseType = stockPurchaseTypeService.createStockPurchaseType(stockPurchaseType);
+        return new ResponseEntity<>(createdStockPurchaseType, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
@@ -49,4 +50,5 @@ public class StockPurchaseTypeController {
         stockPurchaseTypeService.deleteStockPurchaseTypeById(id);
         return ResponseEntity.noContent().build();
     }
+    */
 }

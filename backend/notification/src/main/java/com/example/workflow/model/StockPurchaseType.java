@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -31,7 +29,7 @@ public class StockPurchaseType {
     private String hosGuid;
 
     @Column(name = "check_max_total")
-    private boolean checkMaxTotal;
+    private Character checkMaxTotal;
 
     @Column(name = "max_total")
     private BigDecimal maxTotal;
@@ -40,10 +38,4 @@ public class StockPurchaseType {
     public StockPurchaseType(long purchaseType) {
         this.purchaseType = purchaseType;
     }
- 
-        public StockPurchaseType(long purchaseType, String purchaseTypeName) {
-            this.purchaseType = purchaseType;
-            this.purchaseTypeName = purchaseTypeName;
-        }
-
 }

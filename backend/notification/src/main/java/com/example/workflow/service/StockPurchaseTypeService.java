@@ -15,9 +15,7 @@ public class StockPurchaseTypeService {
     @Autowired
     private StockPurchaseTypeRepository stockPurchaseTypeRepository;
 
-    public StockPurchaseType createStockPurchaseType(StockPurchaseType stockPurchaseType) {
-        return stockPurchaseTypeRepository.save(stockPurchaseType);
-    }
+
 
     public List<StockPurchaseType> findAllStockPurchaseTypes() {
         return stockPurchaseTypeRepository.findAll();
@@ -25,6 +23,12 @@ public class StockPurchaseTypeService {
 
     public Optional<StockPurchaseType> findStockPurchaseTypeById(Long id) {
         return stockPurchaseTypeRepository.findById(id);
+    }
+    
+    /* 
+
+    public StockPurchaseType createStockPurchaseType(StockPurchaseType stockPurchaseType) {
+        return stockPurchaseTypeRepository.save(stockPurchaseType);
     }
 
     public StockPurchaseType updateStockPurchaseType(StockPurchaseType stockPurchaseType) {
@@ -34,4 +38,6 @@ public class StockPurchaseTypeService {
     public void deleteStockPurchaseTypeById(Long id) {
         stockPurchaseTypeRepository.deleteById(id);
     }
+        
+    */
 }
