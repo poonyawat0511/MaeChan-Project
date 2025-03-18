@@ -1,5 +1,8 @@
 package com.example.workflow.model;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -32,24 +35,28 @@ public class StockPoDetail {
     // Add relation to StockPo
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_po_id", referencedColumnName = "stock_po_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "stockPoId")
     private StockPo stockPoId;
 
     // Add relation to stock item
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id", referencedColumnName = "item_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "itemId")
     private StockItem itemId;
 
     // Add relation
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "request_list_id", referencedColumnName = "request_list_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "requestListId")
     private StockRequestList requestListId;
     
     // Add relation
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "last_warehouse_id", referencedColumnName = "warehouse_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "warehouseId")
     private StockWarehouse lastWarehouseId;
 
@@ -84,7 +91,7 @@ public class StockPoDetail {
     private String stockPoItemUnit;
 
     @Column(name = "stock_po_tax")
-    private Boolean stockPoTax;
+    private Character stockPoTax;
 
     @Column(name = "stock_po_item_unitcost")
     private Double stockPoItemUnitcost;
@@ -93,7 +100,7 @@ public class StockPoDetail {
     private String stockPoItemOwner;
 
     @Column(name = "po_detail_cancel")
-    private Boolean poDetailCancel;
+    private Character poDetailCancel;
 
     @Column(name = "stock_po_before_discount_price")
     private Double stockPoBeforeDiscountPrice;
@@ -219,7 +226,7 @@ public class StockPoDetail {
     private Long stockVendorContractId;
 
     @Column(name = "is_transfer_unit")
-    private Boolean isTransferUnit;
+    private Character isTransferUnit;
 
     @Column(name = "back_order_qty")
     private Integer backOrderQty;
