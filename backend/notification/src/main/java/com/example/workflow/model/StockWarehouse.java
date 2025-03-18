@@ -69,7 +69,7 @@ public class StockWarehouse {
     private String warehouseLocation;
 
     @Column(name = "warehouse_active")
-    private Boolean warehouseActive;
+    private Character warehouseActive;
 
     @Column(name = "warehouse_code")
     private String warehouseCode;
@@ -90,7 +90,7 @@ public class StockWarehouse {
     private String warehousePrefact;
 
     @Column(name = "warehouse_default")
-    private Boolean warehouseDefault;
+    private Character warehouseDefault;
 
     @Column(name = "document_prefix")
     private String documentPrefix;

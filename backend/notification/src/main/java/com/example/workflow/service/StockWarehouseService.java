@@ -12,16 +12,18 @@ public class StockWarehouseService {
     @Autowired
     private StockWarehouseRepository stockWarehouseRepository;
 
-    public StockWarehouse createStockWarehouse(StockWarehouse stockWarehouse) {
-        return stockWarehouseRepository.save(stockWarehouse);
-    }
-
     public List<StockWarehouse> findAllStockWarehouses() {
         return stockWarehouseRepository.findAll();
     }
 
     public StockWarehouse findStockWarehouseById(Long id) {
         return stockWarehouseRepository.findById(id).orElse(null);
+    }
+
+    /* 
+
+    public StockWarehouse createStockWarehouse(StockWarehouse stockWarehouse) {
+        return stockWarehouseRepository.save(stockWarehouse);
     }
 
     public StockWarehouse updateStockWarehouse(StockWarehouse stockWarehouse) {
@@ -32,4 +34,6 @@ public class StockWarehouseService {
         stockWarehouseRepository.deleteById(id);
         return "StockWarehouse id : " + id + " deleted successfully";
     }
+
+    */
 }
