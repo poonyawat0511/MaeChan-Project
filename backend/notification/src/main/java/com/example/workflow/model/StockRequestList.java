@@ -19,6 +19,9 @@ import lombok.Setter;
 
 import java.util.Date;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -34,20 +37,22 @@ public class StockRequestList {
     // Add relation to StockRequest
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "request_id", referencedColumnName = "request_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "requestId")
     private StockRequest requestId;
 
     // Add relation to stock item
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id", referencedColumnName = "item_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "itemId")
     private StockItem itemId;
 
     @Column(name = "request_qty")
-    private int requestQty;
+    private Integer requestQty;
 
     @Column(name = "request_left_qty")
-    private int requestLeftQty;
+    private Integer requestLeftQty;
 
     @Column(name = "request_unit")
     private String requestUnit;
@@ -59,7 +64,7 @@ public class StockRequestList {
     private Double requestListTotalPrice;
 
     @Column(name = "request_complete")
-    private Boolean requestComplete;
+    private Character requestComplete;
 
     @Column(name = "department_id")
     private Long departmentId;
@@ -77,16 +82,16 @@ public class StockRequestList {
     private Long stockItemUnitId;
 
     @Column(name = "stock_package_qty")
-    private int stockPackageQty;
+    private Integer stockPackageQty;
 
     @Column(name = "hos_guid")
     private String hosGuid;
 
     @Column(name = "incoming_balance_qty")
-    private int incomingBalanceQty;
+    private Integer incomingBalanceQty;
 
     @Column(name = "rate_1_month")
-    private int rate1Month;
+    private Integer rate1Month;
 
     @Column(name = "stock_item_unit_standard_price")
     private Double stockItemUnitStandardPrice;
@@ -98,10 +103,10 @@ public class StockRequestList {
     private Double lastPrice;
 
     @Column(name = "approve")
-    private Boolean approve;
+    private Character approve;
 
     @Column(name = "use_stock_plan_bdg")
-    private Boolean useStockPlanBdg;
+    private Character useStockPlanBdg;
 
     @Column(name = "stock_plan_total_amount")
     private Double stockPlanTotalAmount;
@@ -119,7 +124,7 @@ public class StockRequestList {
     private String itemBarcode;
 
     @Column(name = "unit_qty")
-    private int unitQty;
+    private Integer unitQty;
 
     @Column(name = "stock_po_item_type_id")
     private Long stockPoItemTypeId;
@@ -131,19 +136,19 @@ public class StockRequestList {
     private Double stockRequestItemMoneyDiscount;
 
     @Column(name = "rate_3_month")
-    private int rate3Month;
+    private Integer rate3Month;
 
     @Column(name = "trade_name")
     private String tradeName;
 
     @Column(name = "total_plan_qty")
-    private int totalPlanQty;
+    private Integer totalPlanQty;
 
     @Column(name = "total_po_qty")
-    private int totalPoQty;
+    private Integer totalPoQty;
 
     @Column(name = "plan_remain_qty")
-    private int planRemainQty;
+    private Integer planRemainQty;
 
     @Column(name = "forcast_month")
     private Double forcastMonth;
@@ -161,22 +166,22 @@ public class StockRequestList {
     private Long stockPoPcTypeId;
 
     @Column(name = "trimester")
-    private int trimester;
+    private Integer trimester;
 
     @Column(name = "trimester_plan_qty")
-    private int trimesterPlanQty;
+    private Integer trimesterPlanQty;
 
     @Column(name = "trimester_plan_amount")
     private Double trimesterPlanAmount;
 
     @Column(name = "trimester_plan_use_qty")
-    private int trimesterPlanUseQty;
+    private Integer trimesterPlanUseQty;
 
     @Column(name = "trimester_plan_use_amount")
     private Double trimesterPlanUseAmount;
 
     @Column(name = "trimester_plan_remain_qty")
-    private int trimesterPlanRemainQty;
+    private Integer trimesterPlanRemainQty;
 
     @Column(name = "trimester_plan_remain_amount")
     private Double trimesterPlanRemainAmount;
@@ -194,16 +199,21 @@ public class StockRequestList {
     private Double totalPlanAmount;
 
     @Column(name = "item_flag")
-    private Boolean itemFlag;
+    private Character itemFlag;
 
     @Column(name = "stock_vendor_contract_id")
     private Long stockVendorContractId;
 
     @Column(name = "contract_remain_package_qty")
-    private int contractRemainPackageQty;
+    private Integer contractRemainPackageQty;
 
     // Add constructor to handle deserialization from number value
     public StockRequestList(long requestListId) {
         this.requestListId = requestListId;
+    }
+
+    //handel null value
+    public Double getForcastMonth() {
+        return forcastMonth != null ? forcastMonth : 0.0;
     }
 }
