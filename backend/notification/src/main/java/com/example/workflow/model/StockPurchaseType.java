@@ -34,8 +34,10 @@ public class StockPurchaseType {
     @Column(name = "max_total")
     private BigDecimal maxTotal;
 
+    public BigDecimal getMaxTotal() { return maxTotal != null ? maxTotal : BigDecimal.ZERO; }
+
     // Add constructor to handle deserialization from number value
-    public StockPurchaseType(long purchaseType) {
+    public StockPurchaseType(Long purchaseType) {
         this.purchaseType = purchaseType;
     }
 }

@@ -36,7 +36,7 @@ public class StockBudget {
     private String budgetName;
 
     @Column(name = "budget_status")
-    private boolean budgetStatus;
+    private Character budgetStatus;
 
     // Add relation
     @ManyToOne(fetch = FetchType.EAGER)

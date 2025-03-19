@@ -99,7 +99,7 @@ public class StockWarehouse {
     private String deliverDocumentPrefix;
 
     // Add constructor to handle deserialization from number value
-    public StockWarehouse(long warehouseId) {
+    public StockWarehouse(Long warehouseId) {
         this.warehouseId = warehouseId;
     }
 }

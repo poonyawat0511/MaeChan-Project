@@ -1,6 +1,7 @@
 package com.example.workflow.dto;
 
 import com.example.workflow.model.StockBudget;
+import com.example.workflow.model.StockPurchaseType;
 import com.example.workflow.model.StockRequest;
 import com.example.workflow.model.StockWarehouse;
 import lombok.AllArgsConstructor;
@@ -23,8 +24,8 @@ public class StockPoDto {
     private String stockPoNo;
     private LocalDate stockPoDate;
     private Long supplierId;
-    private String itemType;
-    private String purchaseType;
+    private Integer itemType;
+    private StockPurchaseType purchaseType;
     private Long paidStatusId;
     private Character stockPoConfirm;
     private Double poAmount;
@@ -36,7 +37,7 @@ public class StockPoDto {
     private Long poTypeId;
     private Character stockPoTax;
     private Double stockPoVat;
-    private Double stockPoDiscount;
+    private Integer stockPoDiscount;
     private Double stockPoDiscountTotal;
     private Character deliverCancel;
     private Character poCancel;
@@ -58,7 +59,6 @@ public class StockPoDto {
     private LocalDate chequeDate;
     private String paymentNo;
     private LocalDate endDate;
-    private String stockPoType;
     private Integer transportDay;
     private Long departmentId;
     private Long stockUserId;
@@ -69,9 +69,9 @@ public class StockPoDto {
     private String remark2;
     private String remark3;
     private Integer runnumber;
-    private Integer numberYear;
-    private Integer numberMonth;
-    private Long stockPoDocumentId;
+    private String numberYear;
+    private String numberMonth;
+    private String stockPoDocumentId;
     private Character statusAppoveData;
     private String significantNumber;
     private Character isTemp;
@@ -115,7 +115,7 @@ public class StockPoDto {
     private Character accPosted;
     private String accPostedDatetime;
     private String stockDeliverDocNoList;
-    private Double roundTotalPrice;
+    private Character roundTotalPrice;
     private Character useNoDiscount;
     private Double fineAmount;
     private Double stockPoAdjVat;

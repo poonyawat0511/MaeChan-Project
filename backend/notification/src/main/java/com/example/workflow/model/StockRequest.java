@@ -53,7 +53,7 @@ public class StockRequest {
     private StockWarehouse requestWarehouseId;
 
     @Column(name = "request_complete")
-    private Boolean requestComplete;
+    private Character requestComplete;
 
     @Column(name = "use_date")
     private LocalDate useDate;
@@ -103,13 +103,14 @@ public class StockRequest {
     private String numberMonth;
 
     @Column(name = "stock_request_doc_id")
-    private Long stockRequestDocId;
+    private String stockRequestDocId;
 
     @Column(name = "project_id")
     private Long projectId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_user_approve_id", referencedColumnName = "id")
+    @NotFound(action = NotFoundAction.IGNORE)
     private StockUser stockUserApprove;
 
     @Column(name = "stock_approve_date")
@@ -117,21 +118,22 @@ public class StockRequest {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_user_id", referencedColumnName = "id")
+    @NotFound(action = NotFoundAction.IGNORE)
     private StockUser stockUser;
 
     @Column(name = "stock_request_document_id")
-    private Long stockRequestDocumentId;
+    private String stockRequestDocumentId;
 
     @Column(name = "project_plan_id")
     private Long projectPlanId;
 
     @Column(name = "request_all_complete")
-    private Boolean requestAllComplete;
+    private Character requestAllComplete;
 
     @Column(name = "budget_runno")
     private Integer budgetRunNo;
 
-    private Boolean approve;
+    private Character approve;
 
     @Column(name = "request_tag_no")
     private String requestTagNo;
@@ -139,22 +141,41 @@ public class StockRequest {
     @Column(name = "request_time")
     private LocalTime requestTime;
 
-    @Column(name = "purchase_type")
-    private Long purchaseType;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "purchase_type", referencedColumnName = "purchase_type")
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "purchaseType")
+    private StockPurchaseType purchaseType;
 
     @Column(name = "stock_budget_total")
     private BigDecimal stockBudgetTotal;
 
+    public BigDecimal getStockBudgetTotal() {
+        return stockBudgetTotal != null ? stockBudgetTotal : BigDecimal.ZERO;
+    }
+    
     @Column(name = "stock_budget_use")
     private BigDecimal stockBudgetUse;
 
+    public BigDecimal getStockBudgetUse() {
+        return stockBudgetUse != null ? stockBudgetUse : BigDecimal.ZERO;
+    }
+
     @Column(name = "stock_budget_remain")
     private BigDecimal stockBudgetRemain;
+
+    public BigDecimal getStockBudgetRemain() {
+        return stockBudgetRemain != null ? stockBudgetRemain : BigDecimal.ZERO;
+    }
 
     private Integer trimester;
 
     @Column(name = "vat_percent")
     private BigDecimal vatPercent;
+
+    public BigDecimal getVatPercent() {
+        return vatPercent != null ? vatPercent : BigDecimal.ZERO;
+    }
 
     @Column(name = "request_reason")
     private String requestReason;
@@ -162,14 +183,26 @@ public class StockRequest {
     @Column(name = "request_total_price")
     private BigDecimal requestTotalPrice;
 
+    public BigDecimal getRequestTotalPrice() {
+        return requestTotalPrice != null ? requestTotalPrice : BigDecimal.ZERO;
+    }
+
     @Column(name = "request_item_count")
     private Integer requestItemCount;
 
     @Column(name = "stock_budget_pr_use")
     private BigDecimal stockBudgetPrUse;
 
+    public BigDecimal getStockBudgetPrUse() {
+        return stockBudgetPrUse != null ? stockBudgetPrUse : BigDecimal.ZERO;
+    }
+
     @Column(name = "stock_budget_pr_remain")
     private BigDecimal stockBudgetPrRemain;
+
+    public BigDecimal getStockBudgetPrRemain() {
+        return stockBudgetPrRemain != null ? stockBudgetPrRemain : BigDecimal.ZERO;
+    }
 
     @Column(name = "officer_list")
     private String officerList;

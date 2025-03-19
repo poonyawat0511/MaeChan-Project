@@ -11,7 +11,7 @@ public class StockBudgetMapper {
         StockBudgetDto dto = new StockBudgetDto();
         dto.setBudgetId(stockBudget.getBudgetId());
         dto.setBudgetName(stockBudget.getBudgetName());
-        dto.setBudgetStatus(stockBudget.isBudgetStatus());
+        dto.setBudgetStatus(stockBudget.getBudgetStatus());
         dto.setStockBudgetTypeId(stockBudget.getStockBudgetTypeId());
         dto.setAccPoBudgetSubTypeId(stockBudget.getAccPoBudgetSubTypeId());
         return dto;
@@ -21,7 +21,7 @@ public class StockBudgetMapper {
         StockBudget stockBudget = new StockBudget();
         stockBudget.setBudgetId(dto.getBudgetId());
         stockBudget.setBudgetName(dto.getBudgetName());
-        stockBudget.setBudgetStatus(dto.isBudgetStatus());
+        stockBudget.setBudgetStatus(dto.getBudgetStatus());
         stockBudget.setStockBudgetTypeId(dto.getStockBudgetTypeId());
         stockBudget.setAccPoBudgetSubTypeId(dto.getAccPoBudgetSubTypeId());
         return stockBudget;

@@ -33,25 +33,25 @@ public class StockItem {
     private String itemUnit;
 
     @Column(name = "item_type")
-    private String itemType;
+    private Integer itemType;
 
     @Column(name = "item_use_status")
-    private boolean itemUseStatus;
+    private Character itemUseStatus;
 
     @Column(name = "reorder_level")
-    private int reorderLevel;
+    private Integer reorderLevel;
 
     @Column(name = "reorder_qty")
-    private int reorderQty;
+    private Integer reorderQty;
 
     @Column(name = "unit_cost")
-    private double unitCost;
+    private Double unitCost;
 
     @Column(name = "oldcode")
     private String oldcode;
 
     @Column(name = "fix_department")
-    private String fixDepartment;
+    private Character fixDepartment;
 
     @Column(name = "stock_item_cost_type_id")
     private Long stockItemCostTypeId;
@@ -60,7 +60,7 @@ public class StockItem {
     private Long stockClassId;
 
     @Column(name = "unit_price")
-    private double unitPrice;
+    private Double unitPrice;
 
     @Column(name = "item_code")
     private String itemCode;
@@ -69,10 +69,10 @@ public class StockItem {
     private LocalDate stockItemRegdate;
 
     @Column(name = "safety_stock")
-    private int safetyStock;
+    private Integer safetyStock;
 
     @Column(name = "onhand_qty")
-    private int onhandQty;
+    private Integer onhandQty;
     
     @Column(name = "last_active_date")
     private LocalDate lastActiveDate;
@@ -84,13 +84,13 @@ public class StockItem {
     private String itemCommonName;
 
     @Column(name = "stock_item_mtr_id")
-    private Long stockItemMtrId;
+    private Integer stockItemMtrId;
 
     @Column(name = "stock_item_acct_id")
-    private Long stockItemAcctId;
+    private Integer stockItemAcctId;
 
     @Column(name = "stock_sub_class_id")
-    private Long stockSubClassId;
+    private Integer stockSubClassId;
 
     @Column(name = "item_trade_name")
     private String itemTradeName;
@@ -99,16 +99,16 @@ public class StockItem {
     private String stockItemNote;
 
     @Column(name = "last_po_price")
-    private double lastPoPrice;
+    private Double lastPoPrice;
 
     @Column(name = "stock_item_std_price")
-    private double stockItemStdPrice;
+    private Double stockItemStdPrice;
 
     @Column(name = "stock_item_ref_price")
-    private double stockItemRefPrice;
+    private Double stockItemRefPrice;
 
     @Column(name = "expire_qty")
-    private int expireQty;
+    private Integer expireQty;
 
     @Column(name = "supplier_list_text")
     private String supplierListText;
@@ -117,25 +117,25 @@ public class StockItem {
     private String vendorListText;
 
     @Column(name = "po_wait_qty")
-    private int poWaitQty;
+    private Integer poWaitQty;
 
     @Column(name = "last_deliver_date")
     private LocalDate lastDeliverDate;
 
     @Column(name = "item_min_qty")
-    private int itemMinQty;
+    private Integer itemMinQty;
 
     @Column(name = "item_max_qty")
-    private int itemMaxQty;
+    private Integer itemMaxQty;
 
     @Column(name = "last_po_price_1")
-    private double lastPoPrice1;
+    private Double lastPoPrice1;
 
     @Column(name = "last_stock_vendor_id")
-    private Long lastStockVendorId;
+    private Integer lastStockVendorId;
 
     @Column(name = "stock_item_ed_type_id")
-    private Long stockItemEdTypeId;
+    private Integer stockItemEdTypeId;
 
     @Column(name = "last_calc_si_map")
     private LocalDateTime lastCalcSiMap;
@@ -144,15 +144,15 @@ public class StockItem {
     private LocalDateTime updateDatetime;
 
     @Column(name = "drugitems_no_substock")
-    private boolean drugitemsNoSubstock;
+    private Character drugitemsNoSubstock;
 
     //blank column below
 
     @Column(name = "item_standard_price")
-    private double itemStandardPrice;
+    private Double itemStandardPrice;
 
     @Column(name = "item_unit_qty")
-    private int itemUnitQty;
+    private Integer itemUnitQty;
 
     @Column(name = "item_package_name")
     private String itemPackageName;
@@ -164,16 +164,16 @@ public class StockItem {
     private String standardCode;
 
     @Column(name = "dummy_left_qty")
-    private int dummyLeftQty;
+    private Integer dummyLeftQty;
 
     @Column(name = "dummy_left_price")
-    private double dummyLeftPrice;
+    private Double dummyLeftPrice;
 
     @Column(name = "item_sub_unit_qty")
-    private int itemSubUnitQty;
+    private Integer itemSubUnitQty;
 
     @Column(name = "old_unit_cost")
-    private double oldUnitCost;
+    private Double oldUnitCost;
 
     @Column(name = "newcode")
     private String newcode;
@@ -194,25 +194,25 @@ public class StockItem {
     private String didstdCode;
 
     @Column(name = "avg_month_use_qty")
-    private int avgMonthUseQty;
+    private Integer avgMonthUseQty;
 
     @Column(name = "item_regno")
     private String itemRegno;
 
     @Column(name = "bdg_nextyear_percent")
-    private double bdgNextyearPercent;
+    private Double bdgNextyearPercent;
 
     @Column(name = "item_note")
     private String itemNote;
 
     @Column(name = "avg_lead_day")
-    private int avgLeadDay;
+    private Double avgLeadDay;
 
     @Column(name = "gpo_vmi")
-    private boolean gpoVmi;
+    private Character gpoVmi;
 
     @Column(name = "balance_qty")
-    private int balanceQty;
+    private Double balanceQty;
 
     @Column(name = "item_eng")
     private String itemEng;
@@ -224,31 +224,31 @@ public class StockItem {
     private String itemTypeGroup;
 
     @Column(name = "item_status_control")
-    private String itemStatusControl;
+    private Character itemStatusControl;
 
     @Column(name = "item_van_type")
-    private String itemVanType;
+    private Character itemVanType;
 
     @Column(name = "search_keyword")
     private String searchKeyword;
 
     @Column(name = "abc")
-    private String abc;
+    private Character abc;
 
     @Column(name = "ved_code")
-    private String vedCode;
+    private Character vedCode;
 
     @Column(name = "pharmacology_group1")
-    private String pharmacologyGroup1;
+    private Integer pharmacologyGroup1;
 
     @Column(name = "pharmacology_group2")
-    private String pharmacologyGroup2;
+    private Integer pharmacologyGroup2;
 
     @Column(name = "pharmacology_group3")
-    private String pharmacologyGroup3;
+    private Integer pharmacologyGroup3;
 
     @Column(name = "vat_percent")
-    private double vatPercent;
+    private Double vatPercent;
 
     @Column(name = "sap_unit_name")
     private String sapUnitName;
@@ -257,34 +257,34 @@ public class StockItem {
     private String sapItemName;
 
     @Column(name = "sap_unit_cost")
-    private double sapUnitCost;
+    private Double sapUnitCost;
 
     @Column(name = "sap_active")
-    private boolean sapActive;
+    private String sapActive;
 
     @Column(name = "manufacturer_list_text")
     private String manufacturerListText;
 
     @Column(name = "use_fixed_avg_cost")
-    private boolean useFixedAvgCost;
+    private Character useFixedAvgCost;
 
     @Column(name = "fixed_avg_cost")
-    private double fixedAvgCost;
+    private Double fixedAvgCost;
 
     @Column(name = "stock_mrp_order_type_id")
-    private Long stockMrpOrderTypeId;
+    private Integer stockMrpOrderTypeId;
 
     @Column(name = "stock_mrp_lot_size")
-    private int stockMrpLotSize;
+    private Integer stockMrpLotSize;
 
     @Column(name = "apply_vat")
-    private boolean applyVat;
+    private Character applyVat;
 
     @Column(name = "gpsc_code")
     private String gpscCode;
 
     // Add constructor to accept integer argument
     public StockItem(Long itemId) {
-    this.itemId = itemId;
+        this.itemId = itemId;
     }
 }

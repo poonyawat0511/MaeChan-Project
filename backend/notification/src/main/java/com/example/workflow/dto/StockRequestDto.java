@@ -5,6 +5,7 @@ import java.time.LocalTime;
 
 import com.example.workflow.model.StockBudget;
 import com.example.workflow.model.StockPo;
+import com.example.workflow.model.StockPurchaseType;
 import com.example.workflow.model.StockUser;
 import com.example.workflow.model.StockWarehouse;
 
@@ -23,7 +24,7 @@ public class StockRequestDto {
     private String requestNo;
     private LocalDate requestReceiveDate;
     private StockWarehouse requestWarehouseId; //relation
-    private Boolean requestComplete;
+    private Character requestComplete;
     private LocalDate useDate;
     private StockPo stockPoId; //relation
     private String hosGuid;
@@ -38,19 +39,19 @@ public class StockRequestDto {
     private Integer runNumber;
     private String numberYear;
     private String numberMonth;
-    private Long stockRequestDocId;
+    private String stockRequestDocId;
     private Long projectId;
     private StockUser stockUserApprove; // relation
     private LocalDate stockApproveDate;
     private StockUser stockUser; // relation
-    private Long stockRequestDocumentId;
+    private String stockRequestDocumentId;
     private Long projectPlanId;
-    private Boolean requestAllComplete;
+    private Character requestAllComplete;
     private Integer budgetRunNo;
-    private Boolean approve;
+    private Character approve;
     private String requestTagNo;
     private LocalTime requestTime;
-    private Long purchaseType;
+    private StockPurchaseType purchaseType;
     private Double stockBudgetTotal;
     private Double stockBudgetUse;
     private Double stockBudgetRemain;

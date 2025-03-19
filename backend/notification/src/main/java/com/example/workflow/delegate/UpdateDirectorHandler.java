@@ -54,14 +54,19 @@ public class UpdateDirectorHandler implements JavaDelegate {
         springRequestService.updateSpringRequest(requestId, springRequest);
 
         // update stockRequest
-        stockRequest.setApprove(approve);
-        stockRequest.setRequestComplete(approve); // ใช้ approve กำหนดค่า requestComplete ด้วย
-        if (Boolean.TRUE.equals(approve)) {
+        //stockRequest.setApprove(approve);
+        //Approve (null, 'Y', 'N', 'W') ???????????
+        if(approve){
+            stockRequest.setApprove('Y');
             stockRequest.setStockApproveDate(date);
+        }else{
+            stockRequest.setApprove('W'); //เลือก "W" เพราะมีเยอะกว่า "N" (มี 5 จาก 1000 row)
         }
-        stockRequest.setRequestAllComplete(approve); // ตั้งค่า requestAllComplete ตาม approve
-        stockRequestService.updateStockRequest(stockRequest);
 
+        //ไม่ตั้งแล้วดูจากข้อมูลจริง 1000 row เป็น null หมด
+        //stockRequest.setRequestAllComplete(approve); // ตั้งค่า requestAllComplete ตาม approve
+        
+        stockRequestService.updateStockRequest(stockRequest);
     }
 
     private Long validateAndParseRequestId(String requestIdStr) {

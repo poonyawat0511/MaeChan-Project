@@ -27,7 +27,7 @@ public class StockUser {
     private String lastName;
 
     // Add constructor to handle deserialization from number value
-    public StockUser(long id) {
+    public StockUser(Long id) {
         this.id = id;
     }
 

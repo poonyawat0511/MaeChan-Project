@@ -49,7 +49,7 @@ public class UserHospital implements UserDetails {
 
     private String lineId;
 
-    //TODO: add boolean Active
+    private Boolean Active;
 
     @Column(name = "signature_path", nullable = true)
     private String signaturePath;
@@ -71,7 +71,7 @@ public class UserHospital implements UserDetails {
     }
 
     // Add constructor to handle deserialization from number value
-    public UserHospital(long id) {
+    public UserHospital(Long id) {
         this.id = id;
     }
 

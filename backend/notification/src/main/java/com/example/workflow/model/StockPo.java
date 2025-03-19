@@ -65,10 +65,13 @@ public class StockPo {
     private Long supplierId;
 
     @Column(name = "item_type")
-    private String itemType;
+    private Integer itemType;
 
-    @Column(name = "purchase_type")
-    private String purchaseType;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "purchase_type", referencedColumnName = "purchase_type")
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "purchaseType")
+    private StockPurchaseType purchaseType;
 
     @Column(name = "paid_status_id")
     private Long paidStatusId;
@@ -104,7 +107,7 @@ public class StockPo {
     private Double stockPoVat;
 
     @Column(name = "stock_po_discount")
-    private Double stockPoDiscount;
+    private Integer stockPoDiscount;
 
     @Column(name = "stock_po_discount_total")
     private Double stockPoDiscountTotal;
@@ -169,9 +172,6 @@ public class StockPo {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @Column(name = "stock_po_type")
-    private String stockPoType;
-
     @Column(name = "transport_day")
     private Integer transportDay;
 
@@ -203,13 +203,13 @@ public class StockPo {
     private Integer runnumber;
 
     @Column(name = "number_year")
-    private Integer numberYear;
+    private String numberYear;
 
     @Column(name = "number_month")
-    private Integer numberMonth;
+    private String numberMonth;
 
     @Column(name = "stock_po_document_id")
-    private Long stockPoDocumentId;
+    private String stockPoDocumentId;
 
     @Column(name = "status_appove_data")
     private Character statusAppoveData;
@@ -341,7 +341,7 @@ public class StockPo {
     private String stockDeliverDocNoList;
 
     @Column(name = "round_total_price")
-    private Double roundTotalPrice;
+    private Character roundTotalPrice;
 
     @Column(name = "use_no_discount")
     private Character useNoDiscount;

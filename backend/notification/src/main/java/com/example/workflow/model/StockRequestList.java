@@ -208,7 +208,7 @@ public class StockRequestList {
     private Integer contractRemainPackageQty;
 
     // Add constructor to handle deserialization from number value
-    public StockRequestList(long requestListId) {
+    public StockRequestList(Long requestListId) {
         this.requestListId = requestListId;
     }
 
