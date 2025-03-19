@@ -2,8 +2,9 @@ package com.example.workflow.model;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,6 +57,7 @@ public class UserHospital implements UserDetails {
     // Add relation to stock user
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_user_id", referencedColumnName = "id")
+    @NotFound(action = NotFoundAction.IGNORE)
     private StockUser stockUserId;
 
     private Role role;

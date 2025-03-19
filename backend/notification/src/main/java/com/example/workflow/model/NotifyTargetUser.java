@@ -1,10 +1,8 @@
 package com.example.workflow.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -31,5 +29,6 @@ public class NotifyTargetUser {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "target_user", referencedColumnName = "id")
+    @NotFound(action = NotFoundAction.IGNORE)
     private UserHospital targetUser;
 }

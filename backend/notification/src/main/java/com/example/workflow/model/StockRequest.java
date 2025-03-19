@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -45,6 +48,7 @@ public class StockRequest {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "request_warehouse_id", referencedColumnName = "warehouse_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "warehouseId")
     private StockWarehouse requestWarehouseId;
 
@@ -56,6 +60,7 @@ public class StockRequest {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_po_id", referencedColumnName = "stock_po_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "stockPoId")
     private StockPo stockPoId;
 
@@ -84,6 +89,7 @@ public class StockRequest {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "budget_id", referencedColumnName = "budget_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "budgetId")
     private StockBudget budgetId;
 

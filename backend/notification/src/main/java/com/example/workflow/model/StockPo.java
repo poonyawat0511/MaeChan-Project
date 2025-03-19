@@ -3,6 +3,9 @@ package com.example.workflow.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.Column;
@@ -34,18 +37,21 @@ public class StockPo {
     //Add relation
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "warehouse_id", referencedColumnName = "warehouse_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "warehouseId")
     private StockWarehouse warehouseId;
 
     //Add relation to StockRequest
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ref_request_id", referencedColumnName = "request_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "requestId")
     private StockRequest refRequestId;
 
     //Add relation to stock budget
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "budget_id", referencedColumnName = "budget_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "budgetId")
     private StockBudget budgetId;
 
@@ -68,13 +74,13 @@ public class StockPo {
     private Long paidStatusId;
 
     @Column(name = "stock_po_confirm")
-    private Boolean stockPoConfirm;
+    private Character stockPoConfirm;
 
     @Column(name = "po_amount")
     private Double poAmount;
 
     @Column(name = "po_item_amount")
-    private int poItemAmount;
+    private Integer poItemAmount;
 
     @Column(name = "bdg_year")
     private Integer bdgYear;
@@ -86,13 +92,13 @@ public class StockPo {
     private Integer deliverCount;
 
     @Column(name = "deliver_complete")
-    private Boolean deliverComplete;
+    private Character deliverComplete;
 
     @Column(name = "po_type_id")
     private Long poTypeId;
 
     @Column(name = "stock_po_tax")
-    private Boolean stockPoTax;
+    private Character stockPoTax;
 
     @Column(name = "stock_po_vat")
     private Double stockPoVat;
@@ -104,10 +110,10 @@ public class StockPo {
     private Double stockPoDiscountTotal;
 
     @Column(name = "deliver_cancel")
-    private Boolean deliverCancel;
+    private Character deliverCancel;
 
     @Column(name = "po_cancel")
-    private Boolean poCancel;
+    private Character poCancel;
 
     @Column(name = "cancel_reason")
     private String cancelReason;
@@ -125,7 +131,7 @@ public class StockPo {
     private String prRefNo;
 
     @Column(name = "receive_wo_po")
-    private Boolean receiveWoPo;
+    private Character receiveWoPo;
 
     @Column(name = "entry_staff")
     private String entryStaff;
@@ -206,13 +212,13 @@ public class StockPo {
     private Long stockPoDocumentId;
 
     @Column(name = "status_appove_data")
-    private Boolean statusAppoveData;
+    private Character statusAppoveData;
 
     @Column(name = "significant_number")
     private String significantNumber;
 
     @Column(name = "is_temp")
-    private Boolean isTemp;
+    private Character isTemp;
 
     @Column(name = "request_tag_no")
     private String requestTagNo;
@@ -290,7 +296,7 @@ public class StockPo {
     private Double poDeliverAmount;
 
     @Column(name = "deliver_stop")
-    private Boolean deliverStop;
+    private Character deliverStop;
 
     @Column(name = "stock_budget_transfer")
     private Double stockBudgetTransfer;
@@ -305,7 +311,7 @@ public class StockPo {
     private String poApprovalDate;
 
     @Column(name = "price_inc_vat")
-    private Boolean priceIncVat;
+    private Character priceIncVat;
 
     @Column(name = "deliver_no_list")
     private String deliverNoList;
@@ -326,7 +332,7 @@ public class StockPo {
     private Long stockBudgetTypeId;
 
     @Column(name = "acc_posted")
-    private Boolean accPosted;
+    private Character accPosted;
 
     @Column(name = "acc_posted_datetime")
     private String accPostedDatetime;
@@ -338,7 +344,7 @@ public class StockPo {
     private Double roundTotalPrice;
 
     @Column(name = "use_no_discount")
-    private Boolean useNoDiscount;
+    private Character useNoDiscount;
 
     @Column(name = "fine_amount")
     private Double fineAmount;

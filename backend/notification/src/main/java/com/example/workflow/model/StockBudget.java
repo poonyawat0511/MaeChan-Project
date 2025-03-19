@@ -13,6 +13,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -37,6 +41,7 @@ public class StockBudget {
     // Add relation
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_budget_type_id", referencedColumnName = "stock_budget_type_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "stockBudgetTypeId")
     private StockBudgetType stockBudgetTypeId;
 

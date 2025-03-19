@@ -2,11 +2,12 @@ package com.example.workflow.model;
 
 import java.time.LocalDate;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -28,6 +29,7 @@ public class SpringRequest {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_request_id", referencedColumnName = "request_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     private StockRequest stockRequest;
 
     @Column(name = "camunda_task_id")
@@ -35,6 +37,7 @@ public class SpringRequest {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_approve_id", referencedColumnName = "id")
+    @NotFound(action = NotFoundAction.IGNORE)
     private UserHospital userApprove;
 
     @Column(name = "approver_approve_status")
@@ -42,6 +45,7 @@ public class SpringRequest {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_director_id", referencedColumnName = "id")
+    @NotFound(action = NotFoundAction.IGNORE)
     private UserHospital userDirector;
 
     @Column(name = "director_approve_status")
