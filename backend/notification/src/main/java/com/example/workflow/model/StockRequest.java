@@ -33,7 +33,7 @@ import lombok.Setter;
 public class StockRequest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "request_id")
     private Long requestId;
 

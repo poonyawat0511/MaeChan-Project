@@ -241,11 +241,23 @@ public class StockItem {
     @Column(name = "pharmacology_group1")
     private Integer pharmacologyGroup1;
 
+    public Integer getPharmacologyGroup1() {
+        return pharmacologyGroup1 != null ? pharmacologyGroup1 : 0;
+    }
+
     @Column(name = "pharmacology_group2")
     private Integer pharmacologyGroup2;
 
+    public Integer getPharmacologyGroup2() {
+        return pharmacologyGroup2 != null ? pharmacologyGroup2 : 0;
+    }
+
     @Column(name = "pharmacology_group3")
     private Integer pharmacologyGroup3;
+
+    public Integer getPharmacologyGroup3() {
+        return pharmacologyGroup3 != null ? pharmacologyGroup3 : 0;
+    }
 
     @Column(name = "vat_percent")
     private Double vatPercent;
