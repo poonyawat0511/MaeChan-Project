@@ -19,7 +19,6 @@ import {
   ArrowRight,
   ArrowLeft,
   Calendar,
-  Building,
   Box,
   ShoppingCart,
   TrendingUp,
@@ -33,9 +32,17 @@ import StockPoTable from "@/app/(public)/dashboard/_components/StockPOTable";
 import LoadingScreen from "@/components/loading/loading";
 import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import CustomCard from "@/components/cards/CustomCard";
-import FilterButton from "@/components/buttons/FilterButton";
 import StatCard from "@/components/cards/StatCard";
-import { Pagination } from "@heroui/react";
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Pagination,
+  Select,
+  SelectItem,
+} from "@heroui/react";
 
 interface PRPOData {
   month: string;
@@ -100,7 +107,7 @@ const months = [
 
 export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [filterWarehouse] = useState<string>("ทั้งหมด");
+  const [selectedDepartments, setSelectedDepartments] = useState(mockDepartmentData.map((dept) => dept.department));
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [StockRequest, setRequests] = useState<StockRequest[]>([]);
@@ -135,7 +142,7 @@ export default function Dashboard() {
 
   const availableYears = Array.from(
     new Set(po.map((po) => new Date(po.stockPoDate).getFullYear()))
-  ).sort();
+  ).sort((a, b) => b - a);
 
   useEffect(() => {
     if (!availableYears.includes(filterYear) && availableYears.length > 0) {
@@ -189,7 +196,7 @@ export default function Dashboard() {
       return acc;
     }, [] as { name: string; value: number }[]);
 
-  const totalInventoryValue = po.reduce(
+  const totalBudgetListValue = po.reduce(
     (sum, po) => sum + po.stockBudgetUse,
     0
   );
@@ -245,7 +252,7 @@ export default function Dashboard() {
   );
 
   const poPrRatio =
-    totalStockRequests > 0 ? (totalStockPo / totalStockRequests) * 100 : 0;
+    totalStockRequests > 0 ? (totalStockRequests / totalStockPo) * 100 : 0;
 
   const totalPrValue = StockRequest.reduce(
     (sum, req) => sum + (req.requestTotalPrice || 0),
@@ -304,32 +311,47 @@ export default function Dashboard() {
     <div className="space-y-6">
       {/* Filter Section */}
       <div className="flex flex-wrap gap-3">
-        <FilterButton
-          icon={Calendar}
-          label={`ปี: ${filterYear}`}
-          onClick={() => setFilterYear(filterYear === 2025 ? 2024 : 2025)}
-          isActive={true}
-        />
-        <div className="relative">
-          <select
-            value={filterMonth}
-            onChange={(e) => setFilterMonth(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-          >
-            {months.map((month) => (
-              <option key={month.value} value={month.value}>
-                {month.label}
-              </option>
+        {/* Year Filter Dropdown */}
+        <Dropdown backdrop="blur">
+          <DropdownTrigger>
+            <Button variant="bordered" startContent={<Calendar size={16} />}>
+              ปี: {filterYear}
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu aria-label="เลือกปี" variant="faded">
+            {availableYears.map((year) => (
+              <DropdownItem key={year} onClick={() => setFilterYear(year)}>
+                {year}
+              </DropdownItem>
             ))}
-          </select>
-        </div>
+          </DropdownMenu>
+        </Dropdown>
+
+        {/* Month Filter Dropdown */}
+        <Dropdown backdrop="blur">
+          <DropdownTrigger>
+            <Button variant="bordered" startContent={<Calendar size={16} />}>
+              เดือน: {filterMonth}
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu aria-label="เลือกเดือน" variant="faded">
+            {months.map((month) => (
+              <DropdownItem
+                key={month.value}
+                onClick={() => setFilterMonth(month.value)}
+              >
+                {month.label}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </Dropdown>
       </div>
 
       {/* Stats row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="มูลค่าคงคลังรวม"
-          value={`฿ ${totalInventoryValue.toLocaleString()}`}
+          value={`฿ ${totalBudgetListValue.toLocaleString()}`}
           icon={Box}
           trend={5.2} // You can calculate trend based on historical data
           color="bg-blue-500"
@@ -420,16 +442,16 @@ export default function Dashboard() {
 
       {/* Recent POs section */}
       <CustomCard title="ใบสั่งซื้อล่าสุด">
-      <StockPoTable stockPo={paginatedStockPo} />
+        <StockPoTable stockPo={paginatedStockPo} />
 
         <div className="flex justify-center mt-4">
-      <Pagination
-        total={Math.ceil(po.length / itemsPerPage)}
-        page={stockPoPage}
-        onChange={setStockPoPage}
-        showControls
-      />
-    </div>
+          <Pagination
+            total={Math.ceil(po.length / itemsPerPage)}
+            page={stockPoPage}
+            onChange={setStockPoPage}
+            showControls
+          />
+        </div>
       </CustomCard>
     </div>
   );
@@ -438,18 +460,34 @@ export default function Dashboard() {
     <div className="space-y-6">
       {/* Filter Section */}
       <div className="flex flex-wrap gap-3">
-        <FilterButton
-          icon={Calendar}
-          label={`ปี: ${filterYear}`}
-          onClick={() => setFilterYear(filterYear === 2025 ? 2024 : 2025)}
-          isActive={true}
-        />
-        <FilterButton
-          icon={Building}
-          label={`หน่วยงาน: ${filterWarehouse}`}
-          onClick={() => {}}
-          isActive={false}
-        />
+        <Dropdown backdrop="blur">
+          <DropdownTrigger>
+            <Button variant="bordered" startContent={<Calendar size={16} />}>
+              ปี: {filterYear}
+            </Button>
+          </DropdownTrigger>
+          <DropdownMenu aria-label="เลือกปี" variant="faded">
+            {availableYears.map((year) => (
+              <DropdownItem key={year} onClick={() => setFilterYear(year)}>
+                {year}
+              </DropdownItem>
+            ))}
+          </DropdownMenu>
+        </Dropdown>
+        <Select
+        className="max-w-xs"
+        label="เลือกหน่วยงาน"
+        placeholder="เลือกหน่วยงาน"
+        selectionMode="multiple"
+        selectedKeys={selectedDepartments}
+        onSelectionChange={(keys) => setSelectedDepartments(Array.from(keys) as string[])}
+      >
+        {mockDepartmentData.map((dept) => (
+          <SelectItem key={dept.department}>{dept.department}</SelectItem>
+        ))}
+      </Select>
+
+
         <div className="ml-auto">
           <div className="relative">
             <input
@@ -467,12 +505,14 @@ export default function Dashboard() {
 
       {/* PR vs PO Comparison chart */}
       <CustomCard title="เปรียบเทียบมูลค่า PR และ PO รายเดือน">
-        <div className="h-80">
+        <div className="h-[500px]">
+          {" "}
+          {/* Increased height */}
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={prPoData}>
+            <BarChart data={prPoData} layout="vertical" barSize={40}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="month" stroke="#64748b" />
-              <YAxis stroke="#64748b" />
+              <XAxis type="number" stroke="#64748b" />
+              <YAxis dataKey="month" type="category" stroke="#64748b" />
               <Tooltip
                 contentStyle={{
                   borderRadius: "8px",
@@ -481,8 +521,18 @@ export default function Dashboard() {
                 }}
               />
               <Legend />
-              <Bar dataKey="pr" name="ใบขอซื้อ (PR)" fill={colors.chart[0]} />
-              <Bar dataKey="po" name="ใบสั่งซื้อ (PO)" fill={colors.chart[1]} />
+              <Bar
+                dataKey="pr"
+                name="ใบขอซื้อ (PR)"
+                fill={colors.chart[0]}
+                barSize={40}
+              />
+              <Bar
+                dataKey="po"
+                name="ใบสั่งซื้อ (PO)"
+                fill={colors.chart[1]}
+                barSize={40}
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>
