@@ -95,7 +95,7 @@ public class StockItem {
     @Column(name = "item_trade_name")
     private String itemTradeName;
 
-    @Column(name = "stock_item_note")
+    @Column(name = "stock_item_note",columnDefinition = "TEXT")
     private String stockItemNote;
 
     @Column(name = "last_po_price")
