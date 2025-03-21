@@ -79,8 +79,11 @@ public class StockRequest {
     @Column(name = "supplier_id")
     private Long supplierId;
 
-    @Column(name = "department_id")
-    private Long departmentId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "department_id", referencedColumnName = "department_id")
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "departmentId")
+    private StockDepartment departmentId;
 
     private String note;
 

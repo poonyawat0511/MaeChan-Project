@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.example.workflow.model.StockBudget;
+import com.example.workflow.model.StockDepartment;
 import com.example.workflow.model.StockPo;
 import com.example.workflow.model.StockPurchaseType;
 import com.example.workflow.model.Officer;
@@ -32,7 +33,7 @@ public class StockRequestDto {
     private String stockSubject;
     private String stockSubjectPerson;
     private Long supplierId;
-    private Long departmentId;
+    private StockDepartment departmentId; //relation
     private String note;
     private Integer transportDay;
     private StockBudget budgetId; //relation
@@ -51,7 +52,7 @@ public class StockRequestDto {
     private Character approve;
     private String requestTagNo;
     private LocalTime requestTime;
-    private StockPurchaseType purchaseType;
+    private StockPurchaseType purchaseType; //relation
     private Double stockBudgetTotal;
     private Double stockBudgetUse;
     private Double stockBudgetRemain;
