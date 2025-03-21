@@ -2,7 +2,7 @@ import { StockItem } from "./stock-item";
 import { StockRequest } from "./stock-request";
 
 export interface StockRequestList {
-  requestListId: string;
+  requestListId: number;
   requestId: StockRequest;
   itemId: StockItem;
   requestQty: number;
@@ -10,9 +10,9 @@ export interface StockRequestList {
   requestUnit: string;
   requestListUnitPrice: number;
   requestListTotalPrice: number;
-  requestComplete: boolean;
+  requestComplete: 'Y' | 'N' | null; // หรือ boolean ถ้า backend แปลงแล้ว
   departmentId: number;
-  requestDate: string;
+  requestDate: string; // ISO date string
   supplierId: number;
   remark: string;
   stockItemUnitId: number;
@@ -23,8 +23,8 @@ export interface StockRequestList {
   stockItemUnitStandardPrice: number;
   packagePrice: number;
   lastPrice: number;
-  approve: boolean;
-  useStockPlanBdg: boolean;
+  approve: 'Y' | 'N' | null;
+  useStockPlanBdg: 'Y' | 'N' | null;
   stockPlanTotalAmount: number;
   stockPlanRemainAmount: number;
   stockPlanOutgoingAmount: number;
@@ -55,7 +55,7 @@ export interface StockRequestList {
   totalPriceBeforeVat: number;
   lastWarehouseId: number;
   totalPlanAmount: number;
-  itemFlag: boolean;
+  itemFlag: 'Y' | 'N' | null;
   stockVendorContractId: number;
   contractRemainPackageQty: number;
 }

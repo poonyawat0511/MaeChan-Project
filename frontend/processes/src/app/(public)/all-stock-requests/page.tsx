@@ -72,8 +72,8 @@ export default function AllStockRequest() {
     try {
       // Fetch stock request list related to this request
       const stockRequestList = requestList.filter(
-        (item) => item.requestId.requestId === request.requestId
-      );
+        (item) => item.requestId?.requestId === request.requestId
+      );      
   
       if (!stockRequestList || stockRequestList.length === 0) {
         console.warn("No stock request list found for this request.");

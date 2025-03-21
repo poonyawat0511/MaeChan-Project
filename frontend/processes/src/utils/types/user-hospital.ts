@@ -1,5 +1,5 @@
+import { Officer } from "../types/Officer";
 import { Role } from "./role";
-import { StockUser } from "./stock-user";
 
 export interface UserHospital {
   id: string;
@@ -8,8 +8,8 @@ export interface UserHospital {
   email: string;
   password: string;
   signaturePath: string;
-  stockUserId: StockUser;
+  stockUserId: Officer;
   lineId: string;
+  Active: boolean;
   role: Role;
 }
-

@@ -1,5 +1,5 @@
-export interface stockBudgetType {
-  stockBudgetTypeId: string;
+export interface StockBudgetType {
+  stockBudgetTypeId: number;
   stockBudgetTypeName: string;
-  accPoBudgetTypeId: null;
+  accPoBudgetTypeId: number | null;
 }
