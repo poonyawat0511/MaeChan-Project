@@ -107,7 +107,9 @@ const months = [
 
 export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [selectedDepartments, setSelectedDepartments] = useState(mockDepartmentData.map((dept) => dept.department));
+  const [selectedDepartments, setSelectedDepartments] = useState(
+    mockDepartmentData.map((dept) => dept.department)
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [StockRequest, setRequests] = useState<StockRequest[]>([]);
@@ -140,15 +142,18 @@ export default function Dashboard() {
     fetchRequests();
   }, []);
 
-  const availableYears = Array.from(
-    new Set(po.map((po) => new Date(po.stockPoDate).getFullYear()))
+  const allYears = Array.from(
+    new Set([
+      ...po.map((poItem) => new Date(poItem.stockPoDate).getFullYear()),
+      ...StockRequest.map((req) => new Date(req.requestDate).getFullYear()),
+    ])
   ).sort((a, b) => b - a);
 
   useEffect(() => {
-    if (!availableYears.includes(filterYear) && availableYears.length > 0) {
-      setFilterYear(availableYears[availableYears.length - 1]);
+    if (!allYears.includes(filterYear) && allYears.length > 0) {
+      setFilterYear(allYears[allYears.length - 1]);
     }
-  }, [availableYears, filterYear]);
+  }, [allYears, filterYear]);
   const monthlyPurchases = po
     .filter(
       (po) =>
@@ -209,11 +214,17 @@ export default function Dashboard() {
     const month = new Date(2025, i).toLocaleString("th-TH", { month: "short" });
 
     const prTotal = StockRequest.filter(
-      (req) => new Date(req.requestDate).getMonth() === i
+      (req) =>
+        new Date(req.requestDate).getMonth() === i &&
+        new Date(req.requestDate).getFullYear() === filterYear
     ).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
 
     const poTotal = po
-      .filter((po) => new Date(po.stockPoDate).getMonth() === i)
+      .filter(
+        (po) =>
+          new Date(po.stockPoDate).getMonth() === i &&
+          new Date(po.stockPoDate).getFullYear() === filterYear
+      )
       .reduce((sum, po) => sum + (po.poDeliverAmount || 0), 0);
 
     return { month, pr: prTotal, po: poTotal };
@@ -267,7 +278,7 @@ export default function Dashboard() {
   const totalProcessingTime = po.reduce((sum, poItem) => {
     const request = StockRequest.find(
       (req) => req.requestId === poItem.refRequestId?.requestId
-    );    
+    );
     if (!request) return sum;
     const prDate = new Date(request.requestDate);
     const poDate = new Date(poItem.stockPoDate);
@@ -319,8 +330,8 @@ export default function Dashboard() {
             </Button>
           </DropdownTrigger>
           <DropdownMenu aria-label="เลือกปี" variant="faded">
-            {availableYears.map((year) => (
-              <DropdownItem key={year} onClick={() => setFilterYear(year)}>
+            {allYears.map((year) => (
+              <DropdownItem key={year} onPress={() => setFilterYear(year)}>
                 {year}
               </DropdownItem>
             ))}
@@ -335,10 +346,10 @@ export default function Dashboard() {
             </Button>
           </DropdownTrigger>
           <DropdownMenu aria-label="เลือกเดือน" variant="faded">
-            {months.map((month) => (
+            {months.map((month) => (  
               <DropdownItem
                 key={month.value}
-                onClick={() => setFilterMonth(month.value)}
+                onPress={() => setFilterMonth(month.value)}
               >
                 {month.label}
               </DropdownItem>
@@ -467,26 +478,27 @@ export default function Dashboard() {
             </Button>
           </DropdownTrigger>
           <DropdownMenu aria-label="เลือกปี" variant="faded">
-            {availableYears.map((year) => (
-              <DropdownItem key={year} onClick={() => setFilterYear(year)}>
+            {allYears.map((year) => (
+              <DropdownItem key={year} onPress={() => setFilterYear(year)}>
                 {year}
               </DropdownItem>
             ))}
           </DropdownMenu>
         </Dropdown>
         <Select
-        className="max-w-xs"
-        label="เลือกหน่วยงาน"
-        placeholder="เลือกหน่วยงาน"
-        selectionMode="multiple"
-        selectedKeys={selectedDepartments}
-        onSelectionChange={(keys) => setSelectedDepartments(Array.from(keys) as string[])}
-      >
-        {mockDepartmentData.map((dept) => (
-          <SelectItem key={dept.department}>{dept.department}</SelectItem>
-        ))}
-      </Select>
-
+          className="max-w-xs"
+          label="เลือกหน่วยงาน"
+          placeholder="เลือกหน่วยงาน"
+          selectionMode="multiple"
+          selectedKeys={selectedDepartments}
+          onSelectionChange={(keys) =>
+            setSelectedDepartments(Array.from(keys) as string[])
+          }
+        >
+          {mockDepartmentData.map((dept) => (
+            <SelectItem key={dept.department}>{dept.department}</SelectItem>
+          ))}
+        </Select>
 
         <div className="ml-auto">
           <div className="relative">
