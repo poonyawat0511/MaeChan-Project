@@ -9,12 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StockUserDto {
+public class OfficerDto {
 
-    private Long id;
-
-    private String firstName;
-
-    private String lastName;
+    private Long officerId;
+    private String officerName;
 
 }

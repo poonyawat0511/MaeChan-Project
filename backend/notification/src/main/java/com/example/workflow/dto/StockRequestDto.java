@@ -1,10 +1,13 @@
 package com.example.workflow.dto;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import com.example.workflow.model.StockBudget;
+import com.example.workflow.model.StockDepartment;
 import com.example.workflow.model.StockPo;
-import com.example.workflow.model.StockUser;
+import com.example.workflow.model.StockPurchaseType;
+import com.example.workflow.model.Officer;
 import com.example.workflow.model.StockWarehouse;
 
 import lombok.AllArgsConstructor;
@@ -22,34 +25,34 @@ public class StockRequestDto {
     private String requestNo;
     private LocalDate requestReceiveDate;
     private StockWarehouse requestWarehouseId; //relation
-    private Boolean requestComplete;
+    private Character requestComplete;
     private LocalDate useDate;
     private StockPo stockPoId; //relation
     private String hosGuid;
     private Integer budgetYear;
     private String stockSubject;
     private String stockSubjectPerson;
-    private String supplierId;
-    private String departmentId;
+    private Long supplierId;
+    private StockDepartment departmentId; //relation
     private String note;
     private Integer transportDay;
     private StockBudget budgetId; //relation
     private Integer runNumber;
-    private Integer numberYear;
-    private Integer numberMonth;
+    private String numberYear;
+    private String numberMonth;
     private String stockRequestDocId;
-    private String projectId;
-    private StockUser stockUserApprove; // relation
+    private Long projectId;
+    private Officer stockUserApprove; // relation
     private LocalDate stockApproveDate;
-    private StockUser stockUser; // relation
+    private Officer stockUser; // relation
     private String stockRequestDocumentId;
-    private String projectPlanId;
-    private Boolean requestAllComplete;
-    private String budgetRunNo;
-    private Boolean approve;
+    private Long projectPlanId;
+    private Character requestAllComplete;
+    private Integer budgetRunNo;
+    private Character approve;
     private String requestTagNo;
-    private String requestTime;
-    private String purchaseType;
+    private LocalTime requestTime;
+    private StockPurchaseType purchaseType; //relation
     private Double stockBudgetTotal;
     private Double stockBudgetUse;
     private Double stockBudgetRemain;

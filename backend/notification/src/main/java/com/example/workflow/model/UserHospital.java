@@ -2,8 +2,9 @@ package com.example.workflow.model;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,15 +49,16 @@ public class UserHospital implements UserDetails {
 
     private String lineId;
 
-    //TODO: add boolean Active
+    private Boolean Active;
 
     @Column(name = "signature_path", nullable = true)
     private String signaturePath;
 
     // Add relation to stock user
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "stock_user_id", referencedColumnName = "id")
-    private StockUser stockUserId;
+    @JoinColumn(name = "stock_user_id", referencedColumnName = "officer_id")
+    @NotFound(action = NotFoundAction.IGNORE)
+    private Officer officerId;
 
     private Role role;
 
@@ -69,7 +71,7 @@ public class UserHospital implements UserDetails {
     }
 
     // Add constructor to handle deserialization from number value
-    public UserHospital(long id) {
+    public UserHospital(Long id) {
         this.id = id;
     }
 

@@ -1,5 +1,6 @@
 package com.example.workflow.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,20 +16,20 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "stock_user") 
-public class StockUser {
+@Table(name = "officer") 
+public class Officer {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; //TODO: refactor later (dont forget to update UserHospital/SpringRequest)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "officer_id")
+    private Long officerId; 
 
-    private String firstName; 
-
-    private String lastName;
+    @Column(name = "officer_name")
+    private String officerName; 
 
     // Add constructor to handle deserialization from number value
-    public StockUser(long id) {
-        this.id = id;
+    public Officer(Long id) {
+        this.officerId = id;
     }
 
 }

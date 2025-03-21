@@ -51,7 +51,6 @@ public class StockPoMapper {
         dto.setChequeDate(stockPo.getChequeDate());
         dto.setPaymentNo(stockPo.getPaymentNo());
         dto.setEndDate(stockPo.getEndDate());
-        dto.setStockPoType(stockPo.getStockPoType());
         dto.setTransportDay(stockPo.getTransportDay());
         dto.setDepartmentId(stockPo.getDepartmentId());
         dto.setStockUserId(stockPo.getStockUserId());
@@ -159,7 +158,6 @@ public class StockPoMapper {
         stockPo.setChequeDate(dto.getChequeDate());
         stockPo.setPaymentNo(dto.getPaymentNo());
         stockPo.setEndDate(dto.getEndDate());
-        stockPo.setStockPoType(dto.getStockPoType());
         stockPo.setTransportDay(dto.getTransportDay());
         stockPo.setDepartmentId(dto.getDepartmentId());
         stockPo.setStockUserId(dto.getStockUserId());

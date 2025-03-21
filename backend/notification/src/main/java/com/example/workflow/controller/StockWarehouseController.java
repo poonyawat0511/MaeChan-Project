@@ -16,12 +16,6 @@ public class StockWarehouseController {
     @Autowired
     private StockWarehouseService stockWarehouseService;
 
-    @PostMapping
-    public ResponseEntity<StockWarehouse> createStockWarehouse(@RequestBody StockWarehouse stockWarehouse) {
-        StockWarehouse createdStockWarehouse = stockWarehouseService.createStockWarehouse(stockWarehouse);
-        return new ResponseEntity<>(createdStockWarehouse, HttpStatus.CREATED);
-    }
-
     @GetMapping
     public ResponseEntity<List<StockWarehouse>> getStockWarehouseList() {
         List<StockWarehouse> stockWarehouses = stockWarehouseService.findAllStockWarehouses();
@@ -36,6 +30,14 @@ public class StockWarehouseController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    /* 
+
+    @PostMapping
+    public ResponseEntity<StockWarehouse> createStockWarehouse(@RequestBody StockWarehouse stockWarehouse) {
+        StockWarehouse createdStockWarehouse = stockWarehouseService.createStockWarehouse(stockWarehouse);
+        return new ResponseEntity<>(createdStockWarehouse, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
@@ -58,4 +60,6 @@ public class StockWarehouseController {
         String result = stockWarehouseService.deleteStockWarehouseById(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    */
 }

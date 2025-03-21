@@ -14,7 +14,7 @@ import lombok.Setter;
 public class StockBudgetDto {
     private Long budgetId;
     private String budgetName;
-    private boolean budgetStatus;
+    private Character budgetStatus;
     private StockBudgetType stockBudgetTypeId;
     private Long accPoBudgetSubTypeId;
 }

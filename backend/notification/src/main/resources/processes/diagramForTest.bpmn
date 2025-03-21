@@ -45,7 +45,9 @@
       <bpmn:outgoing>Flow_0a8t67i</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_02q5q1m" sourceRef="ST_createMessage" targetRef="Event_1ti5u9n" />
-    <bpmn:sequenceFlow id="Flow_13qr12e" sourceRef="Gateway_0ubvjz0" targetRef="DR_Getinput" />
+    <bpmn:sequenceFlow id="Flow_13qr12e" sourceRef="Gateway_0ubvjz0" targetRef="DR_Getinput">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${requestComplete == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_17i64pf" sourceRef="serviceTaskUpdateApprover" targetRef="Gateway_0ubvjz0" />
     <bpmn:serviceTask id="serviceTaskUpdateApprover" name="Update Approver" camunda:class="com.example.workflow.delegate.UpdateApprovalHandler">
       <bpmn:incoming>Flow_1qkvb8y</bpmn:incoming>

@@ -26,10 +26,10 @@ public class StockPoDetailDto {
     private Double stockPoItemDiscount;
     private Double stockPoItemMoneyDiscount;
     private String stockPoItemUnit;
-    private Boolean stockPoTax;
+    private Character stockPoTax;
     private Double stockPoItemUnitcost;
     private String stockPoItemOwner;
-    private Boolean poDetailCancel;
+    private Character poDetailCancel;
     private Double stockPoBeforeDiscountPrice;
     private String cancelReason;
     private Integer stockDeliverQty;
@@ -71,7 +71,7 @@ public class StockPoDetailDto {
     private Double stockPoPriceBeforeVat;
     private Long stockPoPcTypeId;
     private Long stockVendorContractId;
-    private Boolean isTransferUnit;
+    private Character isTransferUnit;
     private Integer backOrderQty;
     private Long stockVendorContractItemId;
 }
