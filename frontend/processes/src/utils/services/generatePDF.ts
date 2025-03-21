@@ -100,7 +100,7 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
   ];
 
   // Filter stockRequestList to only include items that match the stockRequest
-  const filteredStockRequestList = stockRequestList.filter(item => item.requestId.requestId  === stockRequest.requestId);
+  const filteredStockRequestList = stockRequestList.filter(item => item?.requestId?.requestId  === stockRequest?.requestId);
 
   // Table Rows (Stock Request List Data)
   const itemRows = filteredStockRequestList.map((item, index) => [

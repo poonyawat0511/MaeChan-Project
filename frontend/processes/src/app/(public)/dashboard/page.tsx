@@ -266,8 +266,8 @@ export default function Dashboard() {
 
   const totalProcessingTime = po.reduce((sum, poItem) => {
     const request = StockRequest.find(
-      (req) => req.requestId === poItem.refRequestId.requestId
-    );
+      (req) => req.requestId === poItem.refRequestId?.requestId
+    );    
     if (!request) return sum;
     const prDate = new Date(request.requestDate);
     const poDate = new Date(poItem.stockPoDate);
@@ -279,7 +279,7 @@ export default function Dashboard() {
 
   const pendingPr = StockRequest.filter(
     (req) =>
-      !po.some((poItem) => poItem.refRequestId.requestId === req.requestId)
+      !po.some((poItem) => poItem.refRequestId?.requestId === req?.requestId)
   ).length;
 
   const handleSignIn = () => {
