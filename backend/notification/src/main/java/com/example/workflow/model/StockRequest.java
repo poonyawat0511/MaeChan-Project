@@ -109,17 +109,17 @@ public class StockRequest {
     private Long projectId;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "stock_user_approve_id", referencedColumnName = "id")
+    @JoinColumn(name = "stock_user_approve_id", referencedColumnName = "officer_id")
     @NotFound(action = NotFoundAction.IGNORE)
-    private StockUser stockUserApprove;
+    private Officer stockUserApprove;
 
     @Column(name = "stock_approve_date")
     private LocalDate stockApproveDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "stock_user_id", referencedColumnName = "id")
+    @JoinColumn(name = "stock_user_id", referencedColumnName = "officer_id")
     @NotFound(action = NotFoundAction.IGNORE)
-    private StockUser stockUser;
+    private Officer stockUser;
 
     @Column(name = "stock_request_document_id")
     private String stockRequestDocumentId;

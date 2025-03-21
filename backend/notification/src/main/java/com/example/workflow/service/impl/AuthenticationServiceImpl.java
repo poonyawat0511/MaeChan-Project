@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,9 +19,9 @@ import com.example.workflow.dto.RefreshTokenRequest;
 import com.example.workflow.dto.SignUpRequest;
 import com.example.workflow.dto.SigninRequest;
 import com.example.workflow.model.Role;
-import com.example.workflow.model.StockUser;
+import com.example.workflow.model.Officer;
 import com.example.workflow.model.UserHospital;
-import com.example.workflow.repository.StockUserRepository;
+import com.example.workflow.repository.OfficerRepository;
 import com.example.workflow.repository.UserHospitalRepository;
 import com.example.workflow.service.AuthenticationService;
 import com.example.workflow.service.JWTService;
@@ -35,7 +36,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
-    private final StockUserRepository stockUserRepository;
+    private final OfficerRepository officerRepository;
 
     private static final String UPLOAD_DIR = "uploads/signatures/";
 
@@ -58,14 +59,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         //get StockUser from firstName and lastName
         //and update to UserHospital
-        StockUser user = stockUserRepository.findByFirstNameAndLastName(signUpRequest.getFirstName(), signUpRequest.getLastName());
-                
-        if(user == null){
-            System.out.println("Can't find stockUser ID from firstName and lastName");
+        String fullname = signUpRequest.getFirstName() + " " + signUpRequest.getLastName();
+        List<Officer> officerList = officerRepository.findByOfficerName(fullname);       
+        if(officerList.isEmpty()){
+            System.out.println("Can't find officer ID from firstName and lastName");
             return null;
         }else{
-            userHospital.setStockUserId(user);
-            System.out.println("match " + userHospital.getFirstName() + " "+ userHospital.getLastName() + "with StockUser ID : " + userHospital.getStockUserId());
+            //pick first from list
+            Officer user = officerList.get(0);
+            userHospital.setOfficerId(user);
+            userHospital.setActive(true);
+            System.out.println("match " + userHospital.getFirstName() + " "+ userHospital.getLastName() + " with officer ID : " + userHospital.getOfficerId().getOfficerId());
             return userHospitalRepository.save(userHospital);
         }
     }

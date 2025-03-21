@@ -56,9 +56,9 @@ public class UserHospital implements UserDetails {
 
     // Add relation to stock user
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "stock_user_id", referencedColumnName = "id")
+    @JoinColumn(name = "stock_user_id", referencedColumnName = "officer_id")
     @NotFound(action = NotFoundAction.IGNORE)
-    private StockUser stockUserId;
+    private Officer officerId;
 
     private Role role;
 

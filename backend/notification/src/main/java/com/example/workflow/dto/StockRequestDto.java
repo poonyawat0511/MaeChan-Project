@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import com.example.workflow.model.StockBudget;
 import com.example.workflow.model.StockPo;
 import com.example.workflow.model.StockPurchaseType;
-import com.example.workflow.model.StockUser;
+import com.example.workflow.model.Officer;
 import com.example.workflow.model.StockWarehouse;
 
 import lombok.AllArgsConstructor;
@@ -41,9 +41,9 @@ public class StockRequestDto {
     private String numberMonth;
     private String stockRequestDocId;
     private Long projectId;
-    private StockUser stockUserApprove; // relation
+    private Officer stockUserApprove; // relation
     private LocalDate stockApproveDate;
-    private StockUser stockUser; // relation
+    private Officer stockUser; // relation
     private String stockRequestDocumentId;
     private Long projectPlanId;
     private Character requestAllComplete;

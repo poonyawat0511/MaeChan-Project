@@ -14,7 +14,7 @@ public class UserHospitalMapper {
         UserHospitalDto dto = new UserHospitalDto();
         dto.setId(userHospital.getId());
         dto.setSignature(userHospital.getSignaturePath());
-        dto.setStockUserId(userHospital.getStockUserId());
+        dto.setOfficerId(userHospital.getOfficerId());
         dto.setLineId(userHospital.getLineId());
         dto.setFirstName(userHospital.getFirstName());
         dto.setLastName(userHospital.getLastName());
@@ -33,7 +33,7 @@ public class UserHospitalMapper {
         userHospital.setId(userHospitalDto.getId());
         userHospital.setLineId(userHospitalDto.getLineId());
         userHospital.setSignaturePath(userHospitalDto.getSignature());
-        userHospital.setStockUserId(userHospitalDto.getStockUserId());
+        userHospital.setOfficerId(userHospitalDto.getOfficerId());
         userHospital.setFirstName(userHospitalDto.getFirstName());
         userHospital.setLastName(userHospitalDto.getLastName());
         userHospital.setEmail(userHospitalDto.getEmail());

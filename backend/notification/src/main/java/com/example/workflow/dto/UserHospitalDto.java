@@ -1,6 +1,6 @@
 package com.example.workflow.dto;
 
-import com.example.workflow.model.StockUser;
+import com.example.workflow.model.Officer;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +20,6 @@ public class UserHospitalDto {
     private String password;
     private String lineId;
     private String signature;
-    private StockUser stockUserId;
+    private Officer officerId;
     private String role;
 }
