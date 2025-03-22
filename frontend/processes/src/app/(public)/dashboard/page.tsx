@@ -1,23 +1,28 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { LineChart, Line, PieChart, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, } from "recharts";
-import { ArrowRight, ArrowLeft, Calendar, Box, ShoppingCart, TrendingUp, Layers, } from "lucide-react";
+import { ArrowRight, ArrowLeft, Box, ShoppingCart, TrendingUp, Layers, } from "lucide-react";
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockPo } from "@/utils/types/stock-po";
-import { getStockDepartments, getStockPo, getStockRequests, } from "@/utils/services/getApi";
+import { getStockBugetList, getStockDepartments, getStockPo, getStockRequests, } from "@/utils/services/getApi";
 import StockPoTable from "@/app/(public)/dashboard/_components/StockPOTable";
 import LoadingScreen from "@/components/loading/loading";
 import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import CustomCard from "@/components/cards/CustomCard";
 import StatCard from "@/components/cards/StatCard";
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination } from "@heroui/react";
+import { Button, Pagination } from "@heroui/react";
 import { StockDepartment } from "@/utils/types/stock-department";
 import PrVsPoComparisonChart from "./_components/cards/PrVsPoComparisonChart";
 import PrVsPoByDepartmentChart from "./_components/cards/PrVsPoByDepartmentChart";
-import SummaryStats from "./_components/cards/SummaryStats";
 import YearFilter from "./_components/buttons/YearFilter";
 import DepartmentFilter from "./_components/buttons/DepartmentFilter";
 import ClearFilterButton from "./_components/buttons/ClearFilterButton";
+import MonthFilter from "./_components/buttons/MonthFilter";
+import { StockBudgetList } from "@/utils/types/stock-buget-list";
+import PRSummaryCard from "./_components/cards/PrSummaryCard";
+import POSummaryCard from "./_components/cards/PoSummaryCard";
+import EfficiencySummaryCard from "./_components/cards/EfficiencySummaryCard";
+
 interface PRPOData {
   month: string;
   pr: number;
@@ -77,15 +82,18 @@ export default function Dashboard() {
   const itemsPerPage = 5;
   const [filterYear, setFilterYear] = useState<number>(new Date().getFullYear());
   const [filterMonth, setFilterMonth] = useState<string>(new Date().toLocaleString("th-TH", { month: "short" }));
+  const [stockBudgetList, setStockBudgetList] = useState<StockBudgetList[]>([])
 
   const fetchData = async () => {
     try {
       const data = await getStockRequests();
       const stockPo = await getStockPo();
       const stockDepartments = await getStockDepartments();
+      const stockBudgetLists = await getStockBugetList();
       setRequests(data);
       setPo(stockPo);
       setStockDepartments(stockDepartments);
+      setStockBudgetList(stockBudgetLists);
       setError(null);
     } catch {
       console.log("Session expired. Redirecting to sign-in...");
@@ -176,14 +184,19 @@ export default function Dashboard() {
       return acc;
     }, [] as { name: string; value: number }[]);
 
-  const totalBudgetListValue = po.reduce(
-    (sum, po) => sum + po.stockBudgetUse,
-    0
-  );
+  const budgetYearThai = (filterYear + 543).toString();
 
-  const totalPurchaseOrders = po.length;
+  const totalBudgetListValue = stockBudgetList
+    .filter((b) => b.stockBudgetYear === budgetYearThai)
+    .reduce((sum, b) => sum + (b.stockBudgetPrice || 0), 0);
 
-  const pendingPurchaseOrders = po.filter((po) => !po.deliverComplete).length;
+  const totalBudgetUsed = stockBudgetList
+    .filter((b) => b.stockBudgetYear === budgetYearThai)
+    .reduce((sum, b) => sum + (b.stockBudgetUse || 0), 0);
+
+  const totalBudgetRemain = stockBudgetList
+    .filter((b) => b.stockBudgetYear === budgetYearThai)
+    .reduce((sum, b) => sum + (b.stockBudgetRemain || 0), 0);
 
   const prPoData: PRPOData[] = Array.from({ length: 12 }, (_, i) => {
     const month = new Date(2025, i).toLocaleString("th-TH", { month: "short" });
@@ -298,60 +311,38 @@ export default function Dashboard() {
       {/* Filter Section */}
       <div className="flex flex-wrap gap-3">
         {/* Year Filter Dropdown */}
-        <Dropdown backdrop="blur">
-          <DropdownTrigger>
-            <Button variant="bordered" startContent={<Calendar size={16} />}>
-              ปี: {filterYear}
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu aria-label="เลือกปี" variant="faded">
-            {allYears.map((year) => (
-              <DropdownItem key={year} onPress={() => setFilterYear(year)}>
-                {year}
-              </DropdownItem>
-            ))}
-          </DropdownMenu>
-        </Dropdown>
-
+        <YearFilter
+          filterYear={filterYear}
+          allYears={allYears}
+          setFilterYear={setFilterYear}
+        />
         {/* Month Filter Dropdown */}
-        <Dropdown backdrop="blur">
-          <DropdownTrigger>
-            <Button variant="bordered" startContent={<Calendar size={16} />}>
-              เดือน: {filterMonth}
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu aria-label="เลือกเดือน" variant="faded">
-            {months.map((month) => (
-              <DropdownItem
-                key={month.value}
-                onPress={() => setFilterMonth(month.value)}
-              >
-                {month.label}
-              </DropdownItem>
-            ))}
-          </DropdownMenu>
-        </Dropdown>
+        <MonthFilter
+          filterMonth={filterMonth}
+          setFilterMonth={setFilterMonth}
+          months={months}
+        />
       </div>
 
       {/* Stats row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          title="มูลค่าคงคลังรวม"
+          title="งบประมาณรวมของปี"
           value={`฿ ${totalBudgetListValue.toLocaleString()}`}
           icon={Box}
-          trend={5.2} // You can calculate trend based on historical data
+          trend={5.2}
           color="bg-blue-500"
         />
         <StatCard
-          title="รายการสินค้าทั้งหมด"
-          value={`${totalPurchaseOrders.toLocaleString()} รายการ`}
+          title="งบที่ใช้"
+          value={`฿ ${totalBudgetUsed.toLocaleString()}`}
           icon={Layers}
           trend={2.1}
           color="bg-green-500"
         />
         <StatCard
-          title="ใบสั่งซื้อรอดำเนินการ"
-          value={`${pendingPurchaseOrders.toLocaleString()} รายการ`}
+          title="งบที่คงเหลือ"
+          value={`฿ ${totalBudgetRemain.toLocaleString()}`}
           icon={ShoppingCart}
           trend={-3.4}
           color="bg-orange-500"
@@ -360,7 +351,7 @@ export default function Dashboard() {
           title="มูลค่าการซื้อเดือนนี้"
           value={`฿ ${monthlyPurchases.toLocaleString()}`}
           icon={TrendingUp}
-          trend={8.7} // You can calculate trend dynamically
+          trend={8.7}
           color="bg-purple-500"
         />
       </div>
@@ -467,22 +458,27 @@ export default function Dashboard() {
         data={filteredDepartmentData}
         colors={colors.chart}
       />
-
-      <SummaryStats
-        totalStockRequests={totalStockRequests}
-        totalStockRequestValue={totalStockRequestValue}
-        avgStockRequestValue={avgStockRequestValue}
-        highestStockRequest={highestStockRequest}
-        totalStockPo={totalStockPo}
-        totalStockPoValue={totalStockPoValue}
-        avgStockPoValue={avgStockPoValue}
-        highestStockPo={highestStockPo}
-        poPrRatio={poPrRatio}
-        budgetSaved={budgetSaved}
-        avgProcessingTime={avgProcessingTime}
-        pendingPr={pendingPr}
-      />
-    </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <PRSummaryCard
+          total={totalStockRequests}
+          totalValue={totalStockRequestValue}
+          avgValue={avgStockRequestValue}
+          highestValue={highestStockRequest}
+        />
+        <POSummaryCard
+          total={totalStockPo}
+          totalValue={totalStockPoValue}
+          avgValue={avgStockPoValue}
+          highestValue={highestStockPo}
+        />
+        <EfficiencySummaryCard
+          poPrRatio={poPrRatio}
+          budgetSaved={budgetSaved}
+          avgProcessingTime={avgProcessingTime}
+          pendingPr={pendingPr}
+        />
+      </div>
+    </div >
   );
 
   return (
