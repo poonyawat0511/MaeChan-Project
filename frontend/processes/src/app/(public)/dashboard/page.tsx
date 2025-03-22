@@ -115,18 +115,41 @@ export default function Dashboard() {
   };
 
   // Step 1: เตรียมข้อมูลใหม่ (filtered + รวม PR/PO ตาม department)
-  const filteredDepartmentData = (selectedDepartments.length > 0 ? selectedDepartments : stockDepartments.map((dept) => dept.departmentName)).map((deptName) => {
-    const prTotal = StockRequest.filter((req) => req.departmentId?.departmentName === deptName && new Date(req.requestDate).getFullYear() === filterYear).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
-    const poTotal = po.filter(
-      (poItem) => poItem.refRequestId?.departmentId?.departmentName === deptName && new Date(poItem.stockPoDate).getFullYear() === filterYear).reduce((sum, poItem) => sum + (poItem.poDeliverAmount || 0), 0);
-    return {
-      department: deptName,
-      pr: prTotal,
-      po: poTotal,
-    };
-  })
+  const limitTop = selectedDepartments.length === 0;
+  const allDepartmentNames = stockDepartments.map((dept) => dept.departmentName);
+
+  const filteredDepartmentData = (selectedDepartments.length > 0
+    ? selectedDepartments
+    : allDepartmentNames
+  )
+    .map((deptName) => {
+      const prTotal = StockRequest.filter(
+        (req) =>
+          req.departmentId?.departmentName === deptName &&
+          new Date(req.requestDate).getFullYear() === filterYear
+      ).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
+  
+      const poTotal = po
+        .filter((poItem) => {
+          const relatedRequest = StockRequest.find(
+            (req) => req.requestId === poItem.refRequestId?.requestId
+          );
+          return (
+            relatedRequest?.departmentId?.departmentName === deptName &&
+            new Date(poItem.stockPoDate).getFullYear() === filterYear
+          );
+        })
+        .reduce((sum, poItem) => sum + (poItem.poDeliverAmount || 0), 0);
+  
+      return {
+        department: deptName,
+        pr: prTotal,
+        po: poTotal,
+      };
+    })
+    .filter((entry) => entry.pr > 0 || entry.po > 0)
     .sort((a, b) => b.pr + b.po - (a.pr + a.po))
-    .slice(0, 8);
+    .slice(0, limitTop ? 8 : undefined);
 
   const allYears = Array.from(
     new Set([
