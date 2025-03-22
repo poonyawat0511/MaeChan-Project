@@ -139,25 +139,29 @@ export default function Dashboard() {
   // Step 1: เตรียมข้อมูลใหม่ (filtered + รวม PR/PO ตาม department)
   const filteredDepartmentData = (selectedDepartments.length > 0
     ? selectedDepartments
-    : stockDepartments.map((dept) => dept.departmentName) // ถ้าไม่ได้เลือกอะไรเลย → แสดงทั้งหมด
-  ).map((deptName) => {
-    const prTotal = StockRequest.filter(
-      (req) => req.departmentId?.departmentName === deptName
-    ).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
+    : stockDepartments.map((dept) => dept.departmentName)
+  )
+    .map((deptName) => {
+      const prTotal = StockRequest.filter(
+        (req) =>
+          req.departmentId?.departmentName === deptName &&
+          new Date(req.requestDate).getFullYear() === filterYear
+      ).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
   
-    const poTotal = po.filter(
-      (poItem) => poItem.refRequestId?.departmentId?.departmentName === deptName
-    ).reduce((sum, poItem) => sum + (poItem.poDeliverAmount || 0), 0);
+      const poTotal = po.filter(
+        (poItem) =>
+          poItem.refRequestId?.departmentId?.departmentName === deptName &&
+          new Date(poItem.stockPoDate).getFullYear() === filterYear
+      ).reduce((sum, poItem) => sum + (poItem.poDeliverAmount || 0), 0);
   
-    return {
-      department: deptName,
-      pr: prTotal,
-      po: poTotal,
-    };
-  })
-  .sort((a, b) => b.pr + b.po - (a.pr + a.po)) // เรียงตามมูลค่ารวม
-  .slice(0, 8); // จำกัด top 8
-  
+      return {
+        department: deptName,
+        pr: prTotal,
+        po: poTotal,
+      };
+    })
+    .sort((a, b) => b.pr + b.po - (a.pr + a.po))
+    .slice(0, 8);  
 
   const allYears = Array.from(
     new Set([
