@@ -1,54 +1,23 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
-import {
-  ArrowRight,
-  ArrowLeft,
-  Calendar,
-  Box,
-  ShoppingCart,
-  TrendingUp,
-  Layers,
-  Search,
-} from "lucide-react";
+import { LineChart, Line, PieChart, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, } from "recharts";
+import { ArrowRight, ArrowLeft, Calendar, Box, ShoppingCart, TrendingUp, Layers, } from "lucide-react";
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockPo } from "@/utils/types/stock-po";
-import {
-  getStockDepartments,
-  getStockPo,
-  getStockRequests,
-} from "@/utils/services/getApi";
+import { getStockDepartments, getStockPo, getStockRequests, } from "@/utils/services/getApi";
 import StockPoTable from "@/app/(public)/dashboard/_components/StockPOTable";
 import LoadingScreen from "@/components/loading/loading";
 import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import CustomCard from "@/components/cards/CustomCard";
 import StatCard from "@/components/cards/StatCard";
-import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-  Pagination,
-  Select,
-  SelectItem,
-} from "@heroui/react";
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination } from "@heroui/react";
 import { StockDepartment } from "@/utils/types/stock-department";
-
+import PrVsPoComparisonChart from "./_components/cards/PrVsPoComparisonChart";
+import PrVsPoByDepartmentChart from "./_components/cards/PrVsPoByDepartmentChart";
+import SummaryStats from "./_components/cards/SummaryStats";
+import YearFilter from "./_components/buttons/YearFilter";
+import DepartmentFilter from "./_components/buttons/DepartmentFilter";
+import ClearFilterButton from "./_components/buttons/ClearFilterButton";
 interface PRPOData {
   month: string;
   pr: number;
@@ -102,18 +71,12 @@ export default function Dashboard() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [StockRequest, setRequests] = useState<StockRequest[]>([]);
-  const [stockDepartments, setStockDepartments] = useState<StockDepartment[]>(
-    []
-  );
+  const [stockDepartments, setStockDepartments] = useState<StockDepartment[]>([]);
   const [po, setPo] = useState<StockPo[]>([]);
   const [stockPoPage, setStockPoPage] = useState(1);
   const itemsPerPage = 5;
-  const [filterYear, setFilterYear] = useState<number>(
-    new Date().getFullYear()
-  );
-  const [filterMonth, setFilterMonth] = useState<string>(
-    new Date().toLocaleString("th-TH", { month: "short" })
-  );
+  const [filterYear, setFilterYear] = useState<number>(new Date().getFullYear());
+  const [filterMonth, setFilterMonth] = useState<string>(new Date().toLocaleString("th-TH", { month: "short" }));
 
   const fetchData = async () => {
     try {
@@ -136,32 +99,23 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
+  const clearDepartmentFilter = () => {
+    setSelectedDepartments([]);
+  };
+
   // Step 1: เตรียมข้อมูลใหม่ (filtered + รวม PR/PO ตาม department)
-  const filteredDepartmentData = (selectedDepartments.length > 0
-    ? selectedDepartments
-    : stockDepartments.map((dept) => dept.departmentName)
-  )
-    .map((deptName) => {
-      const prTotal = StockRequest.filter(
-        (req) =>
-          req.departmentId?.departmentName === deptName &&
-          new Date(req.requestDate).getFullYear() === filterYear
-      ).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
-  
-      const poTotal = po.filter(
-        (poItem) =>
-          poItem.refRequestId?.departmentId?.departmentName === deptName &&
-          new Date(poItem.stockPoDate).getFullYear() === filterYear
-      ).reduce((sum, poItem) => sum + (poItem.poDeliverAmount || 0), 0);
-  
-      return {
-        department: deptName,
-        pr: prTotal,
-        po: poTotal,
-      };
-    })
+  const filteredDepartmentData = (selectedDepartments.length > 0 ? selectedDepartments : stockDepartments.map((dept) => dept.departmentName)).map((deptName) => {
+    const prTotal = StockRequest.filter((req) => req.departmentId?.departmentName === deptName && new Date(req.requestDate).getFullYear() === filterYear).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
+    const poTotal = po.filter(
+      (poItem) => poItem.refRequestId?.departmentId?.departmentName === deptName && new Date(poItem.stockPoDate).getFullYear() === filterYear).reduce((sum, poItem) => sum + (poItem.poDeliverAmount || 0), 0);
+    return {
+      department: deptName,
+      pr: prTotal,
+      po: poTotal,
+    };
+  })
     .sort((a, b) => b.pr + b.po - (a.pr + a.po))
-    .slice(0, 8);  
+    .slice(0, 8);
 
   const allYears = Array.from(
     new Set([
@@ -180,7 +134,7 @@ export default function Dashboard() {
       (po) =>
         new Date(po.stockPoDate).getFullYear() === filterYear &&
         new Date(po.stockPoDate).toLocaleString("th-TH", { month: "short" }) ===
-          filterMonth
+        filterMonth
     )
     .reduce((sum, po) => sum + (po.stockBudgetUse || 0), 0);
 
@@ -492,198 +446,42 @@ export default function Dashboard() {
     <div className="space-y-6">
       {/* Filter Section */}
       <div className="flex flex-wrap gap-3">
-        <Dropdown backdrop="blur">
-          <DropdownTrigger>
-            <Button variant="bordered" startContent={<Calendar size={16} />}>
-              ปี: {filterYear}
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu aria-label="เลือกปี" variant="faded">
-            {allYears.map((year) => (
-              <DropdownItem key={year} onPress={() => setFilterYear(year)}>
-                {year}
-              </DropdownItem>
-            ))}
-          </DropdownMenu>
-        </Dropdown>
-        <Select
-          className="max-w-xs"
-          label="เลือกหน่วยงาน"
-          placeholder="ทั้งหมด"
-          selectionMode="multiple"
-          selectedKeys={selectedDepartments}
-          onSelectionChange={(keys) =>
-            setSelectedDepartments(Array.from(keys) as string[])
-          }
-        >
-          {stockDepartments.map((dept) => (
-            <SelectItem key={dept.departmentName}>
-              {dept.departmentName}
-            </SelectItem>
-          ))}
-        </Select>
-
-        <div className="ml-auto">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="ค้นหา..."
-              className="pl-9 pr-4 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
-            <Search
-              size={16}
-              className="absolute left-3 top-2.5 text-gray-400"
-            />
-          </div>
-        </div>
+        <YearFilter
+          filterYear={filterYear}
+          allYears={allYears}
+          setFilterYear={setFilterYear}
+        />
+        <DepartmentFilter
+          selectedDepartments={selectedDepartments}
+          setSelectedDepartments={setSelectedDepartments}
+          stockDepartments={stockDepartments}
+        />
+        <ClearFilterButton onClear={clearDepartmentFilter} />
       </div>
 
       {/* PR vs PO Comparison chart */}
-      <CustomCard title="เปรียบเทียบมูลค่า PR และ PO รายเดือน">
-        <div className="h-[550px]">
-          {" "}
-          {/* Increased height */}
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={prPoData} layout="vertical" barSize={40}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis type="number" stroke="#64748b" />
-              <YAxis dataKey="month" type="category" stroke="#64748b" />
-              <Tooltip
-                contentStyle={{
-                  borderRadius: "8px",
-                  border: "1px solid #e2e8f0",
-                  boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-                }}
-              />
-              <Legend />
-              <Bar
-                dataKey="pr"
-                name="ใบขอซื้อ (PR)"
-                fill={colors.chart[0]}
-                barSize={40}
-              />
-              <Bar
-                dataKey="po"
-                name="ใบสั่งซื้อ (PO)"
-                fill={colors.chart[1]}
-                barSize={40}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </CustomCard>
+      <PrVsPoComparisonChart prPoData={prPoData} colors={colors.chart} />
 
       {/* PR vs PO by Department chart */}
-      <CustomCard title="เปรียบเทียบมูลค่า PR และ PO ตามหน่วยงาน">
-        <div className="h-[500px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={filteredDepartmentData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis type="number" stroke="#64748b" />
-              <YAxis
-                dataKey="department"
-                type="category"
-                stroke="#64748b"
-                width={120}
-              />
-              <Tooltip
-                contentStyle={{
-                  borderRadius: "8px",
-                  border: "1px solid #e2e8f0",
-                  boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-                }}
-              />
-              <Legend />
-              <Bar dataKey="pr" name="ใบขอซื้อ (PR)" fill={colors.chart[0]} />
-              <Bar dataKey="po" name="ใบสั่งซื้อ (PO)" fill={colors.chart[1]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </CustomCard>
+      <PrVsPoByDepartmentChart
+        data={filteredDepartmentData}
+        colors={colors.chart}
+      />
 
-      {/* Summary stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <CustomCard title="สรุปข้อมูล PR ประจำปี">
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-gray-600">จำนวน PR ทั้งหมด:</span>
-              <span className="font-medium">{totalStockRequests} รายการ</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">มูลค่า PR รวม:</span>
-              <span className="font-medium">
-                ฿ {totalStockRequestValue.toLocaleString()}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">มูลค่า PR เฉลี่ยต่อเดือน:</span>
-              <span className="font-medium">
-                ฿ {avgStockRequestValue.toLocaleString()}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">มูลค่า PR สูงสุด:</span>
-              <span className="font-medium">
-                ฿ {highestStockRequest.toLocaleString()}
-              </span>
-            </div>
-          </div>
-        </CustomCard>
-
-        <CustomCard title="สรุปข้อมูล PO ประจำปี">
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-gray-600">จำนวน PO ทั้งหมด:</span>
-              <span className="font-medium">{totalStockPo} รายการ</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">มูลค่า PO รวม:</span>
-              <span className="font-medium">
-                ฿ {totalStockPoValue.toLocaleString()}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">มูลค่า PO เฉลี่ยต่อเดือน:</span>
-              <span className="font-medium">
-                ฿ {avgStockPoValue.toLocaleString()}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">มูลค่า PO สูงสุด:</span>
-              <span className="font-medium">
-                ฿ {highestStockPo.toLocaleString()}
-              </span>
-            </div>
-          </div>
-        </CustomCard>
-
-        <CustomCard title="ประสิทธิภาพการจัดซื้อ">
-          <div className="space-y-3">
-            <div className="flex justify-between">
-              <span className="text-gray-600">อัตราเฉลี่ย PO/PR:</span>
-              <span className="font-medium">{poPrRatio.toFixed(1)}%</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">ประหยัดงบประมาณ:</span>
-              <span className="font-medium text-green-600">
-                ฿ {budgetSaved.toLocaleString()}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">เวลาดำเนินการเฉลี่ย:</span>
-              <span className="font-medium">{avgProcessingTime} วัน</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">
-                จำนวน PR ที่ไม่ได้ดำเนินการ:
-              </span>
-              <span className="font-medium text-orange-600">
-                {pendingPr} รายการ
-              </span>
-            </div>
-          </div>
-        </CustomCard>
-      </div>
+      <SummaryStats
+        totalStockRequests={totalStockRequests}
+        totalStockRequestValue={totalStockRequestValue}
+        avgStockRequestValue={avgStockRequestValue}
+        highestStockRequest={highestStockRequest}
+        totalStockPo={totalStockPo}
+        totalStockPoValue={totalStockPoValue}
+        avgStockPoValue={avgStockPoValue}
+        highestStockPo={highestStockPo}
+        poPrRatio={poPrRatio}
+        budgetSaved={budgetSaved}
+        avgProcessingTime={avgProcessingTime}
+        pendingPr={pendingPr}
+      />
     </div>
   );
 
@@ -697,26 +495,24 @@ export default function Dashboard() {
             แดชบอร์ดสินค้าคงคลัง
           </h1>
           <div className="flex space-x-2">
-            <button
-              onClick={() => setCurrentPage(0)}
-              className={`px-4 py-2 rounded-md text-sm flex items-center gap-2 transition-colors ${
-                currentPage === 0
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-600 border border-gray-200"
-              }`}
+            <Button
+              onPress={() => setCurrentPage(0)}
+              className={`px-4 py-2 rounded-md text-sm flex items-center gap-2 transition-colors ${currentPage === 0
+                ? "bg-blue-500 text-white"
+                : "bg-white text-gray-600 border border-gray-200"
+                }`}
             >
               ภาพรวม
-            </button>
-            <button
-              onClick={() => setCurrentPage(1)}
-              className={`px-4 py-2 rounded-md text-sm flex items-center gap-2 transition-colors ${
-                currentPage === 1
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-600 border border-gray-200"
-              }`}
+            </Button>
+            <Button
+              onPress={() => setCurrentPage(1)}
+              className={`px-4 py-2 rounded-md text-sm flex items-center gap-2 transition-colors ${currentPage === 1
+                ? "bg-blue-500 text-white"
+                : "bg-white text-gray-600 border border-gray-200"
+                }`}
             >
               เปรียบเทียบ PR/PO
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -739,22 +535,20 @@ export default function Dashboard() {
         <div className="flex justify-center mt-6 space-x-2">
           <button
             onClick={() => currentPage > 0 && setCurrentPage(currentPage - 1)}
-            className={`p-2 rounded-full ${
-              currentPage > 0
-                ? "text-blue-600 hover:bg-blue-50"
-                : "text-gray-300"
-            }`}
+            className={`p-2 rounded-full ${currentPage > 0
+              ? "text-blue-600 hover:bg-blue-50"
+              : "text-gray-300"
+              }`}
             disabled={currentPage === 0}
           >
             <ArrowLeft size={20} />
           </button>
           <button
             onClick={() => currentPage < 1 && setCurrentPage(currentPage + 1)}
-            className={`p-2 rounded-full ${
-              currentPage < 1
-                ? "text-blue-600 hover:bg-blue-50"
-                : "text-gray-300"
-            }`}
+            className={`p-2 rounded-full ${currentPage < 1
+              ? "text-blue-600 hover:bg-blue-50"
+              : "text-gray-300"
+              }`}
             disabled={currentPage === 1}
           >
             <ArrowRight size={20} />
