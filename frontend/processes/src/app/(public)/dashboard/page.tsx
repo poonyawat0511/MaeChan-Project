@@ -27,7 +27,11 @@ import {
 } from "lucide-react";
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockPo } from "@/utils/types/stock-po";
-import { getStockPo, getStockRequests } from "@/utils/services/getApi";
+import {
+  getStockDepartments,
+  getStockPo,
+  getStockRequests,
+} from "@/utils/services/getApi";
 import StockPoTable from "@/app/(public)/dashboard/_components/StockPOTable";
 import LoadingScreen from "@/components/loading/loading";
 import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
@@ -43,15 +47,10 @@ import {
   Select,
   SelectItem,
 } from "@heroui/react";
+import { StockDepartment } from "@/utils/types/stock-department";
 
 interface PRPOData {
   month: string;
-  pr: number;
-  po: number;
-}
-
-interface DepartmentData {
-  department: string;
   pr: number;
   po: number;
 }
@@ -82,14 +81,6 @@ const colors = {
   ],
 };
 
-const mockDepartmentData: DepartmentData[] = [
-  { department: "แผนกยา", pr: 420000, po: 380000 },
-  { department: "แผนกเวชภัณฑ์", pr: 380000, po: 350000 },
-  { department: "แผนกเครื่องมือแพทย์", pr: 550000, po: 520000 },
-  { department: "แผนกสำนักงาน", pr: 180000, po: 170000 },
-  { department: "แผนกอื่นๆ", pr: 150000, po: 130000 },
-];
-
 const months = [
   { label: "มกราคม", value: "ม.ค." },
   { label: "กุมภาพันธ์", value: "ก.พ." },
@@ -107,12 +98,13 @@ const months = [
 
 export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [selectedDepartments, setSelectedDepartments] = useState(
-    mockDepartmentData.map((dept) => dept.department)
-  );
+  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [StockRequest, setRequests] = useState<StockRequest[]>([]);
+  const [stockDepartments, setStockDepartments] = useState<StockDepartment[]>(
+    []
+  );
   const [po, setPo] = useState<StockPo[]>([]);
   const [stockPoPage, setStockPoPage] = useState(1);
   const itemsPerPage = 5;
@@ -123,12 +115,14 @@ export default function Dashboard() {
     new Date().toLocaleString("th-TH", { month: "short" })
   );
 
-  const fetchRequests = async () => {
+  const fetchData = async () => {
     try {
       const data = await getStockRequests();
       const stockPo = await getStockPo();
+      const stockDepartments = await getStockDepartments();
       setRequests(data);
       setPo(stockPo);
+      setStockDepartments(stockDepartments);
       setError(null);
     } catch {
       console.log("Session expired. Redirecting to sign-in...");
@@ -139,8 +133,31 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    fetchRequests();
+    fetchData();
   }, []);
+
+  // Step 1: เตรียมข้อมูลใหม่ (filtered + รวม PR/PO ตาม department)
+  const filteredDepartmentData = (selectedDepartments.length > 0
+    ? selectedDepartments
+    : stockDepartments.map((dept) => dept.departmentName) // ถ้าไม่ได้เลือกอะไรเลย → แสดงทั้งหมด
+  ).map((deptName) => {
+    const prTotal = StockRequest.filter(
+      (req) => req.departmentId?.departmentName === deptName
+    ).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
+  
+    const poTotal = po.filter(
+      (poItem) => poItem.refRequestId?.departmentId?.departmentName === deptName
+    ).reduce((sum, poItem) => sum + (poItem.poDeliverAmount || 0), 0);
+  
+    return {
+      department: deptName,
+      pr: prTotal,
+      po: poTotal,
+    };
+  })
+  .sort((a, b) => b.pr + b.po - (a.pr + a.po)) // เรียงตามมูลค่ารวม
+  .slice(0, 8); // จำกัด top 8
+  
 
   const allYears = Array.from(
     new Set([
@@ -346,7 +363,7 @@ export default function Dashboard() {
             </Button>
           </DropdownTrigger>
           <DropdownMenu aria-label="เลือกเดือน" variant="faded">
-            {months.map((month) => (  
+            {months.map((month) => (
               <DropdownItem
                 key={month.value}
                 onPress={() => setFilterMonth(month.value)}
@@ -488,15 +505,17 @@ export default function Dashboard() {
         <Select
           className="max-w-xs"
           label="เลือกหน่วยงาน"
-          placeholder="เลือกหน่วยงาน"
+          placeholder="ทั้งหมด"
           selectionMode="multiple"
           selectedKeys={selectedDepartments}
           onSelectionChange={(keys) =>
             setSelectedDepartments(Array.from(keys) as string[])
           }
         >
-          {mockDepartmentData.map((dept) => (
-            <SelectItem key={dept.department}>{dept.department}</SelectItem>
+          {stockDepartments.map((dept) => (
+            <SelectItem key={dept.departmentName}>
+              {dept.departmentName}
+            </SelectItem>
           ))}
         </Select>
 
@@ -517,7 +536,7 @@ export default function Dashboard() {
 
       {/* PR vs PO Comparison chart */}
       <CustomCard title="เปรียบเทียบมูลค่า PR และ PO รายเดือน">
-        <div className="h-[500px]">
+        <div className="h-[550px]">
           {" "}
           {/* Increased height */}
           <ResponsiveContainer width="100%" height="100%">
@@ -552,9 +571,9 @@ export default function Dashboard() {
 
       {/* PR vs PO by Department chart */}
       <CustomCard title="เปรียบเทียบมูลค่า PR และ PO ตามหน่วยงาน">
-        <div className="h-80">
+        <div className="h-[500px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={mockDepartmentData} layout="vertical">
+            <BarChart data={filteredDepartmentData} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
               <XAxis type="number" stroke="#64748b" />
               <YAxis

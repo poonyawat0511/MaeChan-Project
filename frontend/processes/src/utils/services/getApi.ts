@@ -1,6 +1,7 @@
 import {
   axiosInstance,
   dayApi,
+  departmentApi,
   stockPoApi,
   stockRequestListApi,
   targetApi,
@@ -24,6 +25,7 @@ import { StockRequestList } from "../types/stock-request-list";
 import { StockPo } from "../types/stock-po";
 import { StockWarehouse } from "../types/stock-warehouse";
 import { getAuthenticatedUser } from "../auth/auth";
+import { StockDepartment } from "../types/stock-department";
 
 // Function to get stock requests
 export const getStockRequests = async (): Promise<StockRequest[]> => {
@@ -148,3 +150,13 @@ export const getStockWarehouse = async (): Promise<StockWarehouse[]> => {
     throw error;
   }
 };
+
+export const getStockDepartments = async (): Promise<StockDepartment[]> => {
+  try {
+    const response = await axiosInstance.get<StockDepartment[]>(departmentApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Stock Departments :", error);
+    throw error;
+  }
+}
