@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { LineChart, Line, PieChart, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, } from "recharts";
-import { ArrowRight, ArrowLeft, Box, ShoppingCart, TrendingUp, Layers, } from "lucide-react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockPo } from "@/utils/types/stock-po";
 import { getStockBugetList, getStockDepartments, getStockPo, getStockRequests, } from "@/utils/services/getApi";
@@ -9,7 +9,6 @@ import StockPoTable from "@/app/(public)/dashboard/_components/StockPOTable";
 import LoadingScreen from "@/components/loading/loading";
 import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import CustomCard from "@/components/cards/CustomCard";
-import StatCard from "@/components/cards/StatCard";
 import { Button, Pagination } from "@heroui/react";
 import { StockDepartment } from "@/utils/types/stock-department";
 import PrVsPoComparisonChart from "./_components/cards/PrVsPoComparisonChart";
@@ -22,6 +21,10 @@ import { StockBudgetList } from "@/utils/types/stock-buget-list";
 import PRSummaryCard from "./_components/cards/PrSummaryCard";
 import POSummaryCard from "./_components/cards/PoSummaryCard";
 import EfficiencySummaryCard from "./_components/cards/EfficiencySummaryCard";
+import TotalBudgetCard from "./_components/cards/TotalBudgetCard";
+import UsedBudgetCard from "./_components/cards/UsedBudgetCard";
+import RemainBudgetCard from "./_components/cards/RemainBudgetCard";
+import MonthlyPurchaseCard from "./_components/cards/MonthlyPurchaseCard";
 
 interface PRPOData {
   month: string;
@@ -79,7 +82,7 @@ export default function Dashboard() {
   const [stockDepartments, setStockDepartments] = useState<StockDepartment[]>([]);
   const [po, setPo] = useState<StockPo[]>([]);
   const [stockPoPage, setStockPoPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 15;
   const [filterYear, setFilterYear] = useState<number>(new Date().getFullYear());
   const [filterMonth, setFilterMonth] = useState<string>(new Date().toLocaleString("th-TH", { month: "short" }));
   const [stockBudgetList, setStockBudgetList] = useState<StockBudgetList[]>([])
@@ -326,34 +329,10 @@ export default function Dashboard() {
 
       {/* Stats row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="งบประมาณรวมของปี"
-          value={`฿ ${totalBudgetListValue.toLocaleString()}`}
-          icon={Box}
-          trend={5.2}
-          color="bg-blue-500"
-        />
-        <StatCard
-          title="งบที่ใช้"
-          value={`฿ ${totalBudgetUsed.toLocaleString()}`}
-          icon={Layers}
-          trend={2.1}
-          color="bg-green-500"
-        />
-        <StatCard
-          title="งบที่คงเหลือ"
-          value={`฿ ${totalBudgetRemain.toLocaleString()}`}
-          icon={ShoppingCart}
-          trend={-3.4}
-          color="bg-orange-500"
-        />
-        <StatCard
-          title="มูลค่าการซื้อเดือนนี้"
-          value={`฿ ${monthlyPurchases.toLocaleString()}`}
-          icon={TrendingUp}
-          trend={8.7}
-          color="bg-purple-500"
-        />
+        <TotalBudgetCard value={totalBudgetListValue} />
+        <UsedBudgetCard value={totalBudgetUsed} />
+        <RemainBudgetCard value={totalBudgetRemain} />
+        <MonthlyPurchaseCard value={monthlyPurchases} />
       </div>
 
       {/* Charts row */}
