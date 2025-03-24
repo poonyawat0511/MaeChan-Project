@@ -30,7 +30,7 @@ import org.hibernate.annotations.NotFoundAction;
 @Table(name = "stock_request_list")
 public class StockRequestList {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "request_list_id")
     private Long requestListId;
 
