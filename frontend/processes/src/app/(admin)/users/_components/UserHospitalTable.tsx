@@ -124,7 +124,7 @@ export default function UserHospitalTable({
                     }
                     if (columnKey === "stockUserId") {
                       return user.stockUserId
-                        ? `${user.stockUserId.id}`
+                        ? `${user.stockUserId.officerId}`
                         : "-";
                     }
                     if (columnKey === "actions") {

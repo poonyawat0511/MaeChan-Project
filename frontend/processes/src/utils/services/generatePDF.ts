@@ -79,7 +79,7 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
   //line 6
   thaitext(doc, "ด้วย ", margin, margin + 70);
   
-  thaitext(doc, stockRequest.requestWarehouseId.warehouseName, margin + 11, margin + 70);
+  thaitext(doc, stockRequest.requestWarehouseId?.warehouseName || "-", margin + 11, margin + 70);
   doc.line(margin + 10, margin + 71, margin + 80, margin + 71); // Add bottom line
   
   thaitext(doc, "โรงพยาบาลแม่จันมีความประสงค์ ขออนุมัติสั่งซื้อวัสดุ ", margin + 82, margin + 70);
@@ -100,7 +100,7 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
   ];
 
   // Filter stockRequestList to only include items that match the stockRequest
-  const filteredStockRequestList = stockRequestList.filter(item => item.requestId.requestId  === stockRequest.requestId);
+  const filteredStockRequestList = stockRequestList.filter(item => item?.requestId?.requestId  === stockRequest?.requestId);
 
   // Table Rows (Stock Request List Data)
   const itemRows = filteredStockRequestList.map((item, index) => [
@@ -143,19 +143,18 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
   const finalY2 = doc.lastAutoTable?.finalY ?? finalY + 30;
 
   //line 8 //stockRequest.purchaseType relation needed
-  thaitext(doc, `ด้วยวิธี ${stockRequest.purchaseType} และขอแต่งตั้งคณะกรรมการตรวจรับพัสดุ ตามารายนามดังนี้`, margin, finalY2 + 10);
+  thaitext(doc, `ด้วยวิธี ${stockRequest?.purchaseType?.purchaseTypeName || "-"} และขอแต่งตั้งคณะกรรมการตรวจรับพัสดุ ตามารายนามดังนี้`, margin, finalY2 + 10);
 
 
   //line 9
   doc.text('สถานะ __________________________________', margin +100, finalY2 + 30);
-  if(stockRequest.requestComplete == true){
-    thaitext(doc, `ผ่านการตรวจสอบ true`, margin +115, finalY2 + 30);
-  }else if(stockRequest.requestComplete == null){
-    thaitext(doc, `รอตรวจสอบ null`, margin +115, finalY2 + 30);
-  }else{
-    thaitext(doc, `ไม่ผ่านการตรวจสอบ false`, margin +115, finalY2 + 30);
-  }
-      
+  if (stockRequest.requestComplete === "Y") {
+    thaitext(doc, `ผ่านการตรวจสอบ`, margin + 115, finalY2 + 30);
+  } else if (stockRequest.requestComplete === null) {
+    thaitext(doc, `รอตรวจสอบ`, margin + 115, finalY2 + 30);
+  } else {
+    thaitext(doc, `ไม่ผ่านการตรวจสอบ`, margin + 115, finalY2 + 30);
+  }    
 
   /*
 
@@ -185,7 +184,7 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
 
   thaitext(doc, "ลงชื่อ ___________________________________ ผู้ตรวจสอบ", margin +100, finalY2 + 40);
   if(stockRequest.stockUserApprove){
-    thaitext(doc, `${stockRequest.stockUserApprove.firstName} ${stockRequest.stockUserApprove.lastName}`, margin +100, finalY2 + 50);
+    thaitext(doc, `${stockRequest.stockUserApprove.officerName}`, margin +100, finalY2 + 50);
   }else{
     thaitext(doc, `-`, margin +100, finalY2 + 50);
   }
@@ -193,7 +192,7 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
 
   thaitext(doc, "ลงชื่อ ___________________________________ ผู้ขออนุมัติ", margin, finalY2 + 40);
   if (stockRequest.stockUser) {
-    thaitext(doc, `${stockRequest.stockUser.firstName} ${stockRequest.stockUser.lastName}`, margin, finalY2 + 50);
+    thaitext(doc, `${stockRequest.stockUser.officerName}`, margin, finalY2 + 50);
   }else{
     thaitext(doc, `-`, margin, finalY2 + 50);
   }
@@ -201,13 +200,14 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
 
   //line 11
   doc.text('สถานะ __________________________________', pageWidth / 2 - 30, finalY2 + 80);
-  if(stockRequest.approve == true){
-    thaitext(doc, `อนุมัติ true`, pageWidth / 2 -15, finalY2 + 80);
-  }else if(stockRequest.approve == null){
-    thaitext(doc, `รออนุมัติ null`, pageWidth / 2 -15, finalY2 + 80);
-  }else{
-    thaitext(doc, `ไม่อนุมัติ false`, pageWidth / 2 -15, finalY2 + 80);
+  if (stockRequest.approve === "Y") {
+    thaitext(doc, `อนุมัติ`, pageWidth / 2 - 15, finalY2 + 80);
+  } else if (stockRequest.approve === null) {
+    thaitext(doc, `รออนุมัติ`, pageWidth / 2 - 15, finalY2 + 80);
+  } else {
+    thaitext(doc, `ไม่อนุมัติ`, pageWidth / 2 - 15, finalY2 + 80);
   }
+  
 
   //line 12
   thaitext(doc, "ลงชื่อ ___________________________________", pageWidth / 2 - 30, finalY2 + 90);

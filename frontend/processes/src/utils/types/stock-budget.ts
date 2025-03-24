@@ -1,9 +1,8 @@
-import { stockBudgetType } from "./stock-budget-type";
-
-export interface StokcBudget {
-  budgetId: string;
+import { StockBudgetType } from "./stock-budget-type";
+export interface StockBudget {
+  budgetId: number;
   budgetName: string;
-  budgetStatus: true;
-  stockBudgetTypeId: stockBudgetType;
-  accPoBudgetSubTypeId: null;
+  budgetStatus: 'Y' | 'N' | null;
+  stockBudgetTypeId: StockBudgetType | null;
+  accPoBudgetSubTypeId: number;
 }

@@ -1,6 +1,11 @@
 import {
   axiosInstance,
+  budgetApi,
+  budgetTypeApi,
+  bugetListApi,
+  bugetListTrApi,
   dayApi,
+  departmentApi,
   stockPoApi,
   stockRequestListApi,
   targetApi,
@@ -24,6 +29,11 @@ import { StockRequestList } from "../types/stock-request-list";
 import { StockPo } from "../types/stock-po";
 import { StockWarehouse } from "../types/stock-warehouse";
 import { getAuthenticatedUser } from "../auth/auth";
+import { StockDepartment } from "../types/stock-department";
+import { StockBudget } from "../types/stock-budget";
+import { StockBudgetList } from "../types/stock-buget-list";
+import { StockBudgetType } from "../types/stock-budget-type";
+import { StockBudgetListTr } from "../types/stock-budget-list-tr";
 
 // Function to get stock requests
 export const getStockRequests = async (): Promise<StockRequest[]> => {
@@ -148,3 +158,53 @@ export const getStockWarehouse = async (): Promise<StockWarehouse[]> => {
     throw error;
   }
 };
+
+export const getStockDepartments = async (): Promise<StockDepartment[]> => {
+  try {
+    const response = await axiosInstance.get<StockDepartment[]>(departmentApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Stock Departments :", error);
+    throw error;
+  }
+}
+
+export const getStockBugets = async (): Promise<StockBudget[]> => {
+  try {
+    const response = await axiosInstance.get<StockBudget[]>(budgetApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Stock Budgets :", error);
+    throw error;
+  }
+}
+
+export const getStockBugetType = async (): Promise<StockBudgetType[]> => {
+  try {
+    const response = await axiosInstance.get<StockBudgetType[]>(budgetTypeApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Stock Budget Type :", error);
+    throw error;
+  }
+}
+
+export const getStockBugetList = async (): Promise<StockBudgetList[]> => {
+  try {
+    const response = await axiosInstance.get<StockBudgetList[]>(bugetListApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Stock Budget List :", error);
+    throw error;
+  }
+}
+
+export const getStockBugetListTr = async (): Promise<StockBudgetListTr[]> => {
+  try {
+    const response = await axiosInstance.get<StockBudgetListTr[]>(bugetListTrApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Stock Budget List Tr :", error);
+    throw error;
+  }
+}

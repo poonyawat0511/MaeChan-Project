@@ -1,5 +1,6 @@
+import { Officer } from "../types/Officer";
 import { StockRequest } from "../types/stock-request";
-import { StockUser } from "../types/stock-user";
+
 
 export const downloadCSV = (requests: StockRequest[]) => {
   if (!requests || requests.length === 0) {
@@ -22,12 +23,12 @@ export const downloadCSV = (requests: StockRequest[]) => {
     "Stock Budget Type ID", "Dep Request No List"
   ];
 
-  const getStockUserId = (user: StockUser | undefined | null): string => {
+  const getStockUserId = (user: Officer | undefined | null): string => {
     if (!user) {
       console.warn("⚠️ Missing StockUser Data!");
       return "N/A"; // กำหนดค่า default
     }
-    return user.firstName ? user.firstName.toString() : "N/A";
+    return user.officerName ?.toString() ?? "N/A";
   };
   
 

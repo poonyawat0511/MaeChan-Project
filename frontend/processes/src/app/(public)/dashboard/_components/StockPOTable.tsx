@@ -25,11 +25,25 @@ export default function StockPoTable({ stockPo }: StockPoTableProps) {
     { key: "deliverComplete", label: "สถานะ" },
   ];
 
-  const getStatus = (deliverComplete: boolean) => {
-    return deliverComplete
-      ? { label: "Completed", style: { backgroundColor: "#A9DFE2", color: "#000" } }
-      : { label: "Pending", style: { backgroundColor: "#FEF2E5", color: "#000" } };
+  const getStatus = (deliverComplete: 'Y' | 'N' | null) => {
+    if (deliverComplete === 'Y') {
+      return {
+        label: "ออกแล้ว",
+        style: { backgroundColor: "#A9DFE2", color: "#000" },
+      };
+    } else if (deliverComplete === 'N') {
+      return {
+        label: "รอดำเนินการ",
+        style: { backgroundColor: "#FEF2E5", color: "#000" },
+      };
+    } else {
+      return {
+        label: "-",
+        style: { backgroundColor: "#F8D7DA", color: "#000" },
+      };
+    }
   };
+  
 
   return (
     <div className="bg-white p-4 w-full h-full flex flex-col">

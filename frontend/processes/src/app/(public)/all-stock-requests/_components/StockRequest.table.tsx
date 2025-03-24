@@ -41,36 +41,40 @@ export default function StockRequestTable({
     { key: "actions", label: "รายละเอียด" },
   ];
 
-  const getStatus = (requestComplete: boolean, approve: boolean) => {
-    if (requestComplete == null && approve == null)
+  const getStatus = (
+    requestComplete: "Y" | "N" | null,
+    approve: "Y" | "N" | null
+  ) => {
+    if (requestComplete === null && approve === null)
       return {
         label: "รอดำเนินการ",
         style: { backgroundColor: "#D1D5FA", color: "#000" },
       };
-
-    if (requestComplete && approve == null)
+  
+    if (requestComplete === "Y" && approve === null)
       return {
         label: "ผ่านการตรวจสอบ",
         style: { backgroundColor: "#FEF2E5", color: "#000" },
       };
-
-    if (!requestComplete && !approve)
+  
+    if (requestComplete === "N" && approve === "N")
       return {
         label: "ไม่ผ่านการตรวจสอบ",
-        style: { backgroundColor: " #FDB3CA", color: "#000" },
+        style: { backgroundColor: "#FDB3CA", color: "#000" },
       };
-
-    if (requestComplete && approve)
+  
+    if (requestComplete === "Y" && approve === "Y")
       return {
         label: "อนุมัติ",
         style: { backgroundColor: "#A9DFE2", color: "#000" },
       };
-
+  
     return {
       label: "ไม่อนุมัติ",
       style: { backgroundColor: "#FBE7E8", color: "#000" },
     };
   };
+  
 
   return (
     <div className="bg-white p-4 w-full h-full flex flex-col">
@@ -115,7 +119,7 @@ export default function StockRequestTable({
                     </Chip>
                   ) : columnKey === "stockUserApprove" ? (
                     item.stockUserApprove ? (
-                      `${item.stockUserApprove.firstName}`
+                      `${item.stockUserApprove.officerName}`
                     ) : (
                       "-"
                     )
@@ -144,7 +148,7 @@ export default function StockRequestTable({
                       "N/A"
                     )
                   ) : (
-                    getKeyValue(item, columnKey)
+                    getKeyValue(item, columnKey) ?? "-"
                   )}
                 </TableCell>
               )}
