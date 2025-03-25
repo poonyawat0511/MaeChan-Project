@@ -4,8 +4,7 @@ import { LineChart, Line, PieChart, Pie, XAxis, YAxis, CartesianGrid, Tooltip, L
 import { ArrowRight, ArrowLeft } from "lucide-react";
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockPo } from "@/utils/types/stock-po";
-import { getStockBugetList, getStockDepartments, getStockPo, getStockRequests, } from "@/utils/services/getApi";
-import StockPoTable from "@/app/(public)/dashboard/_components/StockPOTable";
+import { getStockBugetList, getStockBugets, getStockDepartments, getStockPo, getStockRequests, } from "@/utils/services/getApi";
 import LoadingScreen from "@/components/loading/loading";
 import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import CustomCard from "@/components/cards/CustomCard";
@@ -25,6 +24,8 @@ import TotalBudgetCard from "./_components/cards/TotalBudgetCard";
 import UsedBudgetCard from "./_components/cards/UsedBudgetCard";
 import RemainBudgetCard from "./_components/cards/RemainBudgetCard";
 import MonthlyPurchaseCard from "./_components/cards/MonthlyPurchaseCard";
+import { StockBudget } from "@/utils/types/stock-budget";
+import StockBudgetTable from "@/app/(public)/dashboard/_components/tables/StockBudgetTable";
 
 interface PRPOData {
   month: string;
@@ -81,11 +82,12 @@ export default function Dashboard() {
   const [StockRequest, setRequests] = useState<StockRequest[]>([]);
   const [stockDepartments, setStockDepartments] = useState<StockDepartment[]>([]);
   const [po, setPo] = useState<StockPo[]>([]);
-  const [stockPoPage, setStockPoPage] = useState(1);
+  const [stockBudgetPage, setStockBudgetPage] = useState(1);
   const itemsPerPage = 15;
   const [filterYear, setFilterYear] = useState<number>(new Date().getFullYear());
   const [filterMonth, setFilterMonth] = useState<string>(new Date().toLocaleString("th-TH", { month: "short" }));
-  const [stockBudgetList, setStockBudgetList] = useState<StockBudgetList[]>([])
+  const [stockBudgetList, setStockBudgetList] = useState<StockBudgetList[]>([]);
+  const [stockBudget , setStockBudget ] = useState <StockBudget[]>([]);
 
   const fetchData = async () => {
     try {
@@ -93,10 +95,12 @@ export default function Dashboard() {
       const stockPo = await getStockPo();
       const stockDepartments = await getStockDepartments();
       const stockBudgetLists = await getStockBugetList();
+      const stockBudget  = await getStockBugets();
       setRequests(data);
       setPo(stockPo);
       setStockDepartments(stockDepartments);
       setStockBudgetList(stockBudgetLists);
+      setStockBudget(stockBudget);
       setError(null);
     } catch {
       console.log("Session expired. Redirecting to sign-in...");
@@ -114,7 +118,6 @@ export default function Dashboard() {
     setSelectedDepartments([]);
   };
 
-  // Step 1: เตรียมข้อมูลใหม่ (filtered + รวม PR/PO ตาม department)
   const limitTop = selectedDepartments.length === 0;
   const allDepartmentNames = stockDepartments.map((dept) => dept.departmentName);
 
@@ -261,7 +264,7 @@ export default function Dashboard() {
     0
   );
 
-  const totalStockRequests = StockRequest.length;
+  const   totalStockRequests = StockRequest.length;
   const totalStockRequestValue = StockRequest.reduce(
     (sum, req) => sum + (req.requestTotalPrice || 0),
     0
@@ -326,9 +329,9 @@ export default function Dashboard() {
     );
   }
 
-  const paginatedStockPo = po.slice(
-    (stockPoPage - 1) * itemsPerPage,
-    stockPoPage * itemsPerPage
+  const paginatedStockBudget = stockBudget.slice(
+    (stockBudgetPage - 1) * itemsPerPage,
+    stockBudgetPage * itemsPerPage
   );
 
   // Pages
@@ -420,14 +423,14 @@ export default function Dashboard() {
       </div>
 
       {/* Recent POs section */}
-      <CustomCard title="ใบสั่งซื้อล่าสุด">
-        <StockPoTable stockPo={paginatedStockPo} />
+      <CustomCard title="รายชื่องบประมาณ">
+        <StockBudgetTable stockBudget={paginatedStockBudget} />
 
         <div className="flex justify-center mt-4">
           <Pagination
-            total={Math.ceil(po.length / itemsPerPage)}
-            page={stockPoPage}
-            onChange={setStockPoPage}
+            total={Math.ceil(stockBudget.length / itemsPerPage)}
+            page={stockBudgetPage}
+            onChange={setStockBudgetPage}
             showControls
           />
         </div>
@@ -490,7 +493,7 @@ export default function Dashboard() {
         {/* Page navigation */}
         <div className="flex justify-between mb-6">
           <h1 className="text-2xl font-semibold text-gray-800">
-            แดชบอร์ดสินค้าคงคลัง
+            ภาพรวมข้อมูล
           </h1>
           <div className="flex space-x-2">
             <Button
