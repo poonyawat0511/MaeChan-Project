@@ -32,6 +32,11 @@ function thaitext(doc: jsPDF, str: string, x: number, y: number) {
   doc.text(base, x, y);
 }
 
+function formatNumber(num: number | null | undefined) {
+  if (num === null || num === undefined) return "-"; // Handle null or undefined
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 export default function generatePDF(stockRequest: StockRequest, stockRequestList: StockRequestList[]): string {
   const doc = new jsPDF("p", "mm", "a4");
 
@@ -106,11 +111,11 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
   const itemRows = filteredStockRequestList.map((item, index) => [
     index + 1,
     item.tradeName || "-",
-    item.requestQty,
-    item.stockItemUnitStandardPrice || "-",
-    item.totalPrice,
+    formatNumber(item.requestQty),
+    formatNumber(item.stockItemUnitStandardPrice) || "-",
+    formatNumber(item.totalPrice),
     "-",
-    item.lastPrice || "-",
+    formatNumber(item.lastPrice) || "-",
     stockRequest.transportDay,
   ]);
 
@@ -118,33 +123,69 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
     startY: margin + 100,
     head: [itemColumn],
     body: itemRows,
-    styles: { font: "Sarabun-Thin", fontSize: 10 },
-    columnStyles: { 0: { cellWidth: 12 }, 1: { cellWidth: 50 } },
-  });
+    styles: { 
+        font: "Sarabun-Thin", 
+        fontSize: 10, 
+        fillColor: [255, 255, 255], // White background for body rows
+        textColor: [0, 0, 0], // Black text for body
+        lineColor: [0, 0, 0], // Black outline for border
+        lineWidth: 0.2 // Set thickness of the border
+    },
+    headStyles: {
+        fillColor: [200, 200, 200], // Gray background for header
+        textColor: [0, 0, 0], // Black text for header
+        lineColor: [0, 0, 0], // Black outline for header border
+        lineWidth: 0.2 // Set thickness of the header border
+    },
+    columnStyles: { 
+        0: { cellWidth: 12, halign: "center" }, 
+        1: { cellWidth: 50 } 
+    },
+});
 
   const finalY = doc.lastAutoTable?.finalY ?? margin + 120;
 
   //table summary
   const summaryColumns = ["รายการ", "จำนวนเงิน (บาท)"];
   const summaryRows = [
-    ["ยอดเงินที่ได้รับจัดสรร", stockRequest.stockBudgetTotal, "บาท"],
-    ["ยอดเงินที่ซื้อแล้ว", stockRequest.stockBudgetUse, "บาท"],
-    ["ยอดเงินที่เหลือ", stockRequest.stockBudgetRemain, "บาท"],
+    ["ยอดเงินที่ได้รับจัดสรร", formatNumber(stockRequest.stockBudgetTotal), "บาท"],
+    ["ยอดเงินที่ซื้อแล้ว", formatNumber(stockRequest.stockBudgetUse), "บาท"],
+    ["ยอดเงินที่เหลือ", formatNumber(stockRequest.stockBudgetRemain), "บาท"],
   ];
 
   doc.autoTable({
     startY: finalY + 10,
     head: [summaryColumns],
     body: summaryRows,
-    styles: { font: "Sarabun-Thin", fontSize: 10, halign: "center" },
-    columnStyles: { 0: { cellWidth: 80, halign: "left" }, 1: { halign: "right" } },
-  });
+    styles: { 
+        font: "Sarabun-Thin", 
+        fontSize: 10, 
+        fillColor: [255, 255, 255], // White background for body rows
+        textColor: [0, 0, 0], // Black text for body
+        lineColor: [0, 0, 0], // Black outline for border
+        lineWidth: 0.2 // Set thickness of the border
+    },
+    headStyles: {
+        fillColor: [200, 200, 200], // Gray background for header
+        textColor: [0, 0, 0], // Black text for header
+        lineColor: [0, 0, 0], // Black outline for header border
+        lineWidth: 0.2 // Set thickness of the header border
+    },
+    columnStyles: { 
+        0: { cellWidth: 80, halign: "left" }, 
+        1: { halign: "left" } 
+    },
+});
 
   const finalY2 = doc.lastAutoTable?.finalY ?? finalY + 30;
 
   //line 8 //stockRequest.purchaseType relation needed
-  thaitext(doc, `ด้วยวิธี ${stockRequest?.purchaseType?.purchaseTypeName || "-"} และขอแต่งตั้งคณะกรรมการตรวจรับพัสดุ ตามารายนามดังนี้`, margin, finalY2 + 10);
+  thaitext(doc, `ด้วยวิธี `, margin, finalY2 + 10);
 
+  thaitext(doc, `${stockRequest?.purchaseType?.purchaseTypeName || "-"} `, margin + 14, finalY2 + 10);
+  doc.line(margin + 12, finalY2 + 11, margin + 80, finalY2 + 11);
+
+  thaitext(doc, ` และขอแต่งตั้งคณะกรรมการตรวจรับพัสดุ ตามารายนามดังนี้`, margin + 81, finalY2 + 10);
 
   //line 9
   doc.text('สถานะ __________________________________', margin +100, finalY2 + 30);
@@ -155,30 +196,6 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
   } else {
     thaitext(doc, `ไม่ผ่านการตรวจสอบ`, margin + 115, finalY2 + 30);
   }    
-
-  /*
-
-  var {
-    ComboBox,
-    ListBox,
-    CheckBox,
-    PushButton,
-    TextField,
-    PasswordField,
-    RadioButton,
-    Appearance
-  } = jsPDF.AcroForm;
-
-  doc.text("CheckBox:", margin + 60, finalY2 + 30);
-  const checkBox = new CheckBox();
-  checkBox.fieldName = "CheckBox1";
-  checkBox.Rect = [margin + 80, finalY2 + 25, 10, 10];
-  checkBox.noToggleToOff = true;
-  checkBox.value = true;
-  checkBox.color = "red";
-  doc.addField(checkBox);
-  */
-
 
   //line 10
 

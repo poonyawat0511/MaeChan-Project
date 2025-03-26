@@ -5,6 +5,9 @@ services:
       - "8081:8081"
     environment:
       IPADDRESS: ${IPADDRESS}
+      DB_URL: jdbc:postgresql://host.docker.internal:${POSTGRES_PORT}/${POSTGRES_DB_NAME}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
 
   frontend:
     image: osathi/mfu-tidloop-frontend:latest
@@ -43,9 +46,9 @@ services:
       STATUS_STORAGE_TOPIC: "my_connect_statuses"
       KAFKA_BOOTSTRAP_SERVERS: host.docker.internal:9092
       POSTGRES_HOST: ${IPADDRESS}
-      POSTGRES_PORT: 5432
-      POSTGRES_USER: Postgres
-      POSTGRES_PASSWORD: user1234
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   register-connector:
     image: curlimages/curl:latest
@@ -61,14 +64,14 @@ services:
           \"connector.class\": \"io.debezium.connector.postgresql.PostgresConnector\",
           \"tasks.max\": \"1\",
           \"database.hostname\": \"host.docker.internal\",
-          \"database.port\": \"5432\",
-          \"database.user\": \"postgres\",
-          \"database.password\": \"user1234\",
-          \"database.dbname\": \"InventoryManagement\",
-          \"database.server.name\": \"dbserver1\",
+          \"database.port\": \"${POSTGRES_PORT}\",
+          \"database.user\": \"${POSTGRES_USER}\",
+          \"database.password\": \"${POSTGRES_PASSWORD}\",
+          \"database.dbname\": \"${POSTGRES_DB_NAME}\",
+          \"database.server.name\": \"${POSTGRES_DB_SEVER_NAME}\",
           \"plugin.name\": \"pgoutput\",
           \"slot.name\": \"inventory_slot\",
-          \"topic.prefix\": \"dbserver1\",
+          \"topic.prefix\": \"${POSTGRES_DB_TOPIC_PREFIX}\",
           \"schema.include.list\": \"public\",
           \"schema.history.internal.kafka.bootstrap.servers\": \"kafka:9092\",
           \"schema.history.internal.kafka.topic\": \"schemahistory.inventory\"
