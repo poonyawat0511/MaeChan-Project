@@ -8,7 +8,7 @@ export interface UserHospital {
   email: string;
   password: string;
   signaturePath: string;
-  stockUserId: Officer;
+  officerId: Officer;
   lineId: string;
   Active: boolean;
   role: Role;

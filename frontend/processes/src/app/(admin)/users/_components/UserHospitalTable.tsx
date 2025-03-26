@@ -123,8 +123,8 @@ export default function UserHospitalTable({
                       );
                     }
                     if (columnKey === "stockUserId") {
-                      return user.stockUserId
-                        ? `${user.stockUserId.officerId}`
+                      return user.officerId
+                        ? `${user.officerId.officerId}`
                         : "-";
                     }
                     if (columnKey === "actions") {

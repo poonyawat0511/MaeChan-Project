@@ -40,7 +40,7 @@ export default function UserPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const itemsPerPage = 10;
   const { showAlert } = useAlert();
 
@@ -62,7 +62,7 @@ export default function UserPage() {
     }
   };
 
-  const handleConfirmDelete = (stockUserId: string) => {
+  const handleConfirmDelete = (stockUserId: number) => {
     setSelectedUserId(stockUserId);
     setIsModalOpen(true);
   };
