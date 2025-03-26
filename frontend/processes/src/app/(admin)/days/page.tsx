@@ -71,8 +71,8 @@ export default function DayPage() {
         const response = await axiosInstance.get<Target[]>(targetApi);
 
         // Extract the actual user data from the targetUser field
-        const users = response.data.map((record) => record.targetUser);
-
+        const users = response.data.map((record) => record.targetUser)
+          .filter((user): user is UserHospital => user !== null);
         setSelectedUsers(users);
       } catch (error) {
         console.error("Error fetching selected users:", error);
@@ -401,18 +401,20 @@ export default function DayPage() {
               <div className="overflow-auto mb-3" style={{ maxHeight: "25%" }}>
                 {paginatedSelectedUsers.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {paginatedSelectedUsers.map((user) => (
-                      <Chip
-                        key={user.id}
-                        onClose={() => handleRemoveUser(user.id)}
-                        avatar={<Avatar name={user.firstName} size="sm" />}
-                        variant="flat"
-                        color="primary"
-                        size="sm"
-                      >
-                        {user.firstName}
-                      </Chip>
-                    ))}
+                    {paginatedSelectedUsers
+                      .filter((user) => user != null)
+                      .map((user) => (
+                        <Chip
+                          key={user.id}
+                          onClose={() => handleRemoveUser(user.id)}
+                          avatar={<Avatar name={user.firstName} size="sm" />}
+                          variant="flat"
+                          color="primary"
+                          size="sm"
+                        >
+                          {user.firstName}
+                        </Chip>
+                      ))}
                   </div>
                 ) : (
                   <p className="text-gray-500 text-xs">ไม่มีผู้ใช้ที่เลือก</p>
