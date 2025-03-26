@@ -58,6 +58,12 @@ export default function DayPage() {
   const [selectedUsers, setSelectedUsers] = useState<UserHospital[]>([]);
   const [userSearchQuery, setUserSearchQuery] = useState("");
   const { showAlert } = useAlert();
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 5;
+  const [selectedCurrentPage, setSelectedCurrentPage] = useState(1);
+  const selectedUsersPerPage = 5;
+
+
 
   useEffect(() => {
     const fetchSelectedUsers = async () => {
@@ -98,6 +104,15 @@ export default function DayPage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Reset pagination เมื่อมีการค้นหาใหม่
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [userSearchQuery]);
+
+  useEffect(() => {
+    setSelectedCurrentPage(1);
+  }, [selectedUsers]);
 
   const handleCreateTime = () => {
     setEditDataTime(null);
@@ -220,6 +235,18 @@ export default function DayPage() {
       user.lastName.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(userSearchQuery.toLowerCase())
   );
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * usersPerPage,
+    currentPage * usersPerPage
+  );
+
+  const totalSelectedPages = Math.ceil(selectedUsers.length / selectedUsersPerPage);
+  const paginatedSelectedUsers = selectedUsers.slice(
+    (selectedCurrentPage - 1) * selectedUsersPerPage,
+    selectedCurrentPage * selectedUsersPerPage
+  );
+
 
   if (loading) {
     return <LoadingScreen message="Loading users..." />;
@@ -372,9 +399,9 @@ export default function DayPage() {
                 เลือกผู้ใช้
               </h5>
               <div className="overflow-auto mb-3" style={{ maxHeight: "25%" }}>
-                {selectedUsers.length > 0 ? (
+                {paginatedSelectedUsers.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {selectedUsers.map((user) => (
+                    {paginatedSelectedUsers.map((user) => (
                       <Chip
                         key={user.id}
                         onClose={() => handleRemoveUser(user.id)}
@@ -391,6 +418,46 @@ export default function DayPage() {
                   <p className="text-gray-500 text-xs">ไม่มีผู้ใช้ที่เลือก</p>
                 )}
               </div>
+
+              {totalSelectedPages > 1 && (
+                <div className="flex justify-center mt-2 gap-2">
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    onPress={() =>
+                      setSelectedCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    isDisabled={selectedCurrentPage === 1}
+                  >
+                    ก่อนหน้า
+                  </Button>
+                  {[...Array(totalSelectedPages)].map((_, index) => (
+                    <Button
+                      key={index}
+                      size="sm"
+                      variant={
+                        selectedCurrentPage === index + 1 ? "solid" : "flat"
+                      }
+                      onPress={() => setSelectedCurrentPage(index + 1)}
+                    >
+                      {index + 1}
+                    </Button>
+                  ))}
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    onPress={() =>
+                      setSelectedCurrentPage((prev) =>
+                        Math.min(prev + 1, totalSelectedPages)
+                      )
+                    }
+                    isDisabled={selectedCurrentPage === totalSelectedPages}
+                  >
+                    ถัดไป
+                  </Button>
+                </div>
+              )}
+
 
               <Divider className="my-2" />
 
@@ -411,8 +478,8 @@ export default function DayPage() {
 
               {/* User List */}
               <div className="overflow-auto flex-1">
-                {filteredUsers.length > 0 ? (
-                  filteredUsers.map((user) => (
+                {paginatedUsers.length > 0 ? (
+                  paginatedUsers.map((user) => (
                     <div
                       key={user.id}
                       className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-md"
@@ -420,7 +487,7 @@ export default function DayPage() {
                       <div className="flex items-center gap-2">
                         <Avatar name={user.firstName} size="sm" />
                         <div>
-                          <p className="text-xs font-medium">{user.lastName}</p>
+                          <p className="text-xs font-medium">{user.firstName}</p>
                           <p className="text-xs text-gray-500">{user.email}</p>
                         </div>
                       </div>
@@ -450,6 +517,37 @@ export default function DayPage() {
                   </p>
                 )}
               </div>
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-3 gap-2">
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    isDisabled={currentPage === 1}
+                  >
+                    ก่อนหน้า
+                  </Button>
+                  {[...Array(totalPages)].map((_, index) => (
+                    <Button
+                      key={index}
+                      size="sm"
+                      variant={currentPage === index + 1 ? "solid" : "flat"}
+                      onPress={() => setCurrentPage(index + 1)}
+                    >
+                      {index + 1}
+                    </Button>
+                  ))}
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    onPress={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    isDisabled={currentPage === totalPages}
+                  >
+                    ถัดไป
+                  </Button>
+                </div>
+              )}
+
             </CardBody>
           </Card>
         </div>
