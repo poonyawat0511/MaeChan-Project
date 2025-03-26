@@ -1,12 +1,14 @@
 package com.example.workflow.repository;
 
-import com.example.workflow.model.NotifyTime;
+import java.time.LocalTime;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalTime;
+import com.example.workflow.model.NotifyTime;
 
 @Repository
 public interface NotifyTimeRepository extends JpaRepository<NotifyTime, Long> {
-    NotifyTime findByTime(LocalTime time);
+    Optional<NotifyTime> findByTime(LocalTime time);
 }

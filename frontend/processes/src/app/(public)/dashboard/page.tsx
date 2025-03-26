@@ -26,6 +26,9 @@ import RemainBudgetCard from "./_components/cards/RemainBudgetCard";
 import MonthlyPurchaseCard from "./_components/cards/MonthlyPurchaseCard";
 import { StockBudget } from "@/utils/types/stock-budget";
 import StockBudgetTable from "@/app/(public)/dashboard/_components/tables/StockBudgetTable";
+import StockBudgetListTable from "./_components/tables/StockBudgetListTable";
+import { motion, AnimatePresence } from "framer-motion";
+import { RotateCcw } from "lucide-react";
 
 interface PRPOData {
   month: string;
@@ -83,11 +86,14 @@ export default function Dashboard() {
   const [stockDepartments, setStockDepartments] = useState<StockDepartment[]>([]);
   const [po, setPo] = useState<StockPo[]>([]);
   const [stockBudgetPage, setStockBudgetPage] = useState(1);
+  const [stockBudgetListPage, setStockBudgetListPage] = useState(1);
   const itemsPerPage = 15;
   const [filterYear, setFilterYear] = useState<number>(new Date().getFullYear());
   const [filterMonth, setFilterMonth] = useState<string>(new Date().toLocaleString("th-TH", { month: "short" }));
   const [stockBudgetList, setStockBudgetList] = useState<StockBudgetList[]>([]);
-  const [stockBudget , setStockBudget ] = useState <StockBudget[]>([]);
+  const [stockBudget, setStockBudget] = useState<StockBudget[]>([]);
+  const [showBudgetList, setShowBudgetList] = useState(false);
+
 
   const fetchData = async () => {
     try {
@@ -95,7 +101,7 @@ export default function Dashboard() {
       const stockPo = await getStockPo();
       const stockDepartments = await getStockDepartments();
       const stockBudgetLists = await getStockBugetList();
-      const stockBudget  = await getStockBugets();
+      const stockBudget = await getStockBugets();
       setRequests(data);
       setPo(stockPo);
       setStockDepartments(stockDepartments);
@@ -131,7 +137,7 @@ export default function Dashboard() {
           req.departmentId?.departmentName === deptName &&
           new Date(req.requestDate).getFullYear() === filterYear
       ).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
-  
+
       const poTotal = po
         .filter((poItem) => {
           const relatedRequest = StockRequest.find(
@@ -143,7 +149,7 @@ export default function Dashboard() {
           );
         })
         .reduce((sum, poItem) => sum + (poItem.poDeliverAmount || 0), 0);
-  
+
       return {
         department: deptName,
         pr: prTotal,
@@ -264,7 +270,7 @@ export default function Dashboard() {
     0
   );
 
-  const   totalStockRequests = StockRequest.length;
+  const totalStockRequests = StockRequest.length;
   const totalStockRequestValue = StockRequest.reduce(
     (sum, req) => sum + (req.requestTotalPrice || 0),
     0
@@ -332,6 +338,11 @@ export default function Dashboard() {
   const paginatedStockBudget = stockBudget.slice(
     (stockBudgetPage - 1) * itemsPerPage,
     stockBudgetPage * itemsPerPage
+  );
+
+  const paginatedStockBudgetList = stockBudgetList.slice(
+    (stockBudgetListPage - 1) * itemsPerPage,
+    stockBudgetListPage * itemsPerPage
   );
 
   // Pages
@@ -422,19 +433,80 @@ export default function Dashboard() {
         </CustomCard>
       </div>
 
-      {/* Recent POs section */}
-      <CustomCard title="รายชื่องบประมาณ">
-        <StockBudgetTable stockBudget={paginatedStockBudget} />
 
-        <div className="flex justify-center mt-4">
-          <Pagination
-            total={Math.ceil(stockBudget.length / itemsPerPage)}
-            page={stockBudgetPage}
-            onChange={setStockBudgetPage}
-            showControls
-          />
-        </div>
-      </CustomCard>
+      {/* Recent Budgets section */}
+      {/* Recent Budgets section */}
+<div className="w-full">
+  <CustomCard
+  className="min-h-[600px]"
+    title={
+      <div className="flex justify-between items-center w-full gap-5">
+        <span className="font-semibold text-gray-800">
+          {showBudgetList ? "รายการงบประมาณ" : "รายชื่องบประมาณ"}
+        </span>
+        <Button
+          onPress={() => setShowBudgetList((prev) => !prev)}
+          className="flex items-center gap-2 text-sm px-3 py-1 border border-gray-300 rounded-md bg-white hover:bg-gray-100"
+        >
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 0.6 }}
+            key={showBudgetList ? "table" : "list"} // ให้หมุนใหม่ทุกครั้งที่เปลี่ยน
+          >
+            <RotateCcw size={16} />
+          </motion.div>
+          {showBudgetList ? "แสดงตารางรวม" : "แสดงรายการย่อย"}
+        </Button>
+      </div>
+    }
+  >
+    {/* 🔄 Flip effect using framer-motion */}
+    <div className="relative min-h-[50rem]">
+      <AnimatePresence mode="wait">
+        {showBudgetList ? (
+          <motion.div
+            key="list"
+            initial={{ rotateY: 180, opacity: 0 }}
+            animate={{ rotateY: 0, opacity: 1 }}
+            exit={{ rotateY: -180, opacity: 0 }}
+            transition={{ duration: 0.6 }}
+            className="absolute inset-0 w-full"
+          >
+            <StockBudgetListTable stockBudgetList={paginatedStockBudgetList} />
+            <div className="flex justify-center mt-4">
+              <Pagination
+                total={Math.ceil(stockBudgetList.length / itemsPerPage)}
+                page={stockBudgetListPage}
+                onChange={setStockBudgetListPage}
+                showControls
+              />
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="table"
+            initial={{ rotateY: 180, opacity: 0 }}
+            animate={{ rotateY: 0, opacity: 1 }}
+            exit={{ rotateY: -180, opacity: 0 }}
+            transition={{ duration: 0.6 }}
+            className="w-full"
+          >
+            <StockBudgetTable stockBudget={paginatedStockBudget} />
+            <div className="flex justify-center mt-4">
+              <Pagination
+                total={Math.ceil(stockBudget.length / itemsPerPage)}
+                page={stockBudgetPage}
+                onChange={setStockBudgetPage}
+                showControls
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  </CustomCard>
+</div>
+
     </div>
   );
 
