@@ -73,11 +73,9 @@ export default function UserHospitalTable({
                     const value = user[columnKey as keyof UserHospital];
 
                     if (columnKey === "officerId") {
-                      return (
-                        <span className="font-mono text-xs text-gray-500">
-                          {user.id}
-                        </span>
-                      );
+                      return user.officerId
+                        ? `${user.officerId.officerId}`
+                        : "-";
                     }
                     if (columnKey === "email") {
                       return (
@@ -121,11 +119,6 @@ export default function UserHospitalTable({
                           ไม่มีลายเซ็น
                         </span>
                       );
-                    }
-                    if (columnKey === "stockUserId") {
-                      return user.officerId
-                        ? `${user.officerId.officerId}`
-                        : "-";
                     }
                     if (columnKey === "actions") {
                       return (
