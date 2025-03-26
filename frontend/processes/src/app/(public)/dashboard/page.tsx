@@ -124,41 +124,52 @@ export default function Dashboard() {
     setSelectedDepartments([]);
   };
 
-  const limitTop = selectedDepartments.length === 0;
+  // const limitTop = selectedDepartments.length === 0;
   const allDepartmentNames = stockDepartments.map((dept) => dept.departmentName);
+  const budgetYearThai = (filterYear + 543).toString();
+  const totalBudgetAllDepts = stockBudgetList
+  .filter((b) => b.stockBudgetYear === budgetYearThai)
+  .reduce((sum, b) => sum + (b.stockBudgetPrice || 0), 0);
 
-  const filteredDepartmentData = (selectedDepartments.length > 0
-    ? selectedDepartments
-    : allDepartmentNames
-  )
-    .map((deptName) => {
-      const prTotal = StockRequest.filter(
+const filteredDepartmentData = (selectedDepartments.length > 0
+  ? selectedDepartments
+  : allDepartmentNames
+).map((deptName) => {
+  const prTotal = StockRequest.filter(
+    (req) =>
+      req.departmentId?.departmentName === deptName &&
+      new Date(req.requestDate).getFullYear() === filterYear
+  ).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
+
+  const poTotal = po
+    .filter((poItem) => {
+      const relatedRequest = StockRequest.find(
         (req) =>
-          req.departmentId?.departmentName === deptName &&
-          new Date(req.requestDate).getFullYear() === filterYear
-      ).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
-
-      const poTotal = po
-        .filter((poItem) => {
-          const relatedRequest = StockRequest.find(
-            (req) => req.requestId === poItem.refRequestId?.requestId
-          );
-          return (
-            relatedRequest?.departmentId?.departmentName === deptName &&
-            new Date(poItem.stockPoDate).getFullYear() === filterYear
-          );
-        })
-        .reduce((sum, poItem) => sum + (poItem.poDeliverAmount || 0), 0);
-
-      return {
-        department: deptName,
-        pr: prTotal,
-        po: poTotal,
-      };
+          req.requestId === poItem.refRequestId?.requestId &&
+          req.departmentId?.departmentName === deptName
+      );
+      return (
+        relatedRequest &&
+        new Date(poItem.stockPoDate).getFullYear() === filterYear
+      );
     })
-    .filter((entry) => entry.pr > 0 || entry.po > 0)
-    .sort((a, b) => b.pr + b.po - (a.pr + a.po))
-    .slice(0, limitTop ? 8 : undefined);
+    .reduce((sum, poItem) => sum + (poItem.poDeliverAmount || 0), 0);
+
+  const poPercent = totalBudgetAllDepts > 0
+    ? (poTotal / totalBudgetAllDepts) * 100
+    : 0;
+
+  return {
+    department: deptName,
+    pr: prTotal,
+    po: poTotal,
+    poPercent: +poPercent.toFixed(1),
+  };
+})
+.filter((entry) => entry.pr > 0 || entry.po > 0)
+.sort((a, b) => b.po - a.po)
+.slice(0, selectedDepartments.length === 0 ? 8 : undefined);
+
 
   const allYears = Array.from(
     new Set([
@@ -179,7 +190,7 @@ export default function Dashboard() {
         new Date(po.stockPoDate).toLocaleString("th-TH", { month: "short" }) ===
         filterMonth
     )
-    .reduce((sum, po) => sum + (po.stockBudgetUse || 0), 0);
+    .reduce((sum, po) => sum + (po.poAmount || 0), 0);
 
   const formattedInventoryData = po
     .filter((po) => new Date(po.stockPoDate).getFullYear() === filterYear)
@@ -218,8 +229,6 @@ export default function Dashboard() {
 
       return acc;
     }, [] as { name: string; value: number }[]);
-
-  const budgetYearThai = (filterYear + 543).toString();
 
   const totalBudgetListValue = stockBudgetList
     .filter((b) => b.stockBudgetYear === budgetYearThai)
