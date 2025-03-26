@@ -1,4 +1,4 @@
-import { Officer } from "./Officer";
+import { Officer } from "../types/officer";
 import { StockBudget } from "./stock-budget";
 import { StockDepartment } from "./stock-department";
 import { StockPo } from "./stock-po";

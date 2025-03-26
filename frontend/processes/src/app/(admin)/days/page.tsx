@@ -199,7 +199,7 @@ export default function DayPage() {
     }
   };
 
-  const handleRemoveUser = async (id: string) => {
+  const handleRemoveUser = async (id: number) => {
     try {
       const response = await axiosInstance.get<Target[]>(targetApi);
       const targetUsers = response.data;

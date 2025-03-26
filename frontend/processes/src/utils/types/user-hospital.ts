@@ -1,8 +1,8 @@
-import { Officer } from "../types/Officer";
+import { Officer } from "../types/officer";
 import { Role } from "./role";
 
 export interface UserHospital {
-  id: string;
+  id: number;
   firstName: string;
   lastName: string;
   email: string;

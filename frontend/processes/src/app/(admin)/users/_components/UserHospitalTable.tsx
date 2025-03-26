@@ -18,7 +18,7 @@ import { UserHospital } from "@/utils/types/user-hospital";
 interface UserHospitalTableProps {
   UserHospitals: UserHospital[];
   currentPage: number;
-  onDelete: (userId: string) => void;
+  onDelete: (userId: number) => void;
 }
 
 export default function UserHospitalTable({
@@ -31,7 +31,7 @@ export default function UserHospitalTable({
     { key: "lastName", label: "นามสกุล" },
     { key: "email", label: "อีเมล" },
     { key: "role", label: "ตำแหน่ง" },
-    { key: "stockUserId", label: "รหัสประจำตัวโรงพยาบาล" },
+    { key: "officerId", label: "รหัสประจำตัวโรงพยาบาล" },
     { key: "lineId", label: "Line UID" },
     { key: "signaturePath", label: "ลายเซ็น" },
     { key: "actions", label: "ลบ" },
@@ -72,7 +72,7 @@ export default function UserHospitalTable({
                   {(() => {
                     const value = user[columnKey as keyof UserHospital];
 
-                    if (columnKey === "UserHospitalId") {
+                    if (columnKey === "officerId") {
                       return (
                         <span className="font-mono text-xs text-gray-500">
                           {user.id}

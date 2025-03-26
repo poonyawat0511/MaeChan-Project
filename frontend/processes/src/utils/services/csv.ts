@@ -1,4 +1,4 @@
-import { Officer } from "../types/Officer";
+import { Officer } from "../types/officer";
 import { StockRequest } from "../types/stock-request";
 
 
