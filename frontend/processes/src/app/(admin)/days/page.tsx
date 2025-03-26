@@ -34,7 +34,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { Times } from "@/utils/types/time";
 import LoadingScreen from "@/components/loading/loading";
-import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import { axiosInstance, dayApi, targetApi, timeApi } from "@/utils/api/api";
 import TimeFormModal from "@/app/(admin)/days/_components/TimeModalForm";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
@@ -75,7 +74,7 @@ export default function DayPage() {
           .filter((user): user is UserHospital => user !== null);
         setSelectedUsers(users);
       } catch (error) {
-        console.error("Error fetching selected users:", error);
+        console.error("Error fetching selected users:", error,isAuthorized);
       }
     };
 
@@ -173,10 +172,6 @@ export default function DayPage() {
     }
   };
 
-  const handleSignIn = () => {
-    window.location.href = "/signin";
-  };
-
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
     console.log("Selected time:", time);
@@ -250,12 +245,6 @@ export default function DayPage() {
 
   if (loading) {
     return <LoadingScreen message="Loading users..." />;
-  }
-
-  if (!isAuthorized) {
-    return (
-      <UnauthorizedCard message="No users available" onSignin={handleSignIn} />
-    );
   }
 
   return (

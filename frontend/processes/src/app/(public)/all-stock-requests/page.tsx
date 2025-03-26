@@ -17,7 +17,6 @@ import { getStockRequestList, getStockRequests } from "@/utils/services/getApi";
 import StockRequestTable from "@/app/(public)/all-stock-requests/_components/StockRequest.table";
 import PdfPreview from "@/components/pdf/PdfPreview";
 import LoadingScreen from "@/components/loading/loading";
-import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import {
   MagnifyingGlassIcon,
   DocumentTextIcon,
@@ -55,7 +54,7 @@ export default function AllStockRequest() {
       setRequestList(stockRequestList);
       setError(null);
     } catch {
-      console.log("Session expired. Redirecting to sign-in...");
+      console.log("Session expired. Redirecting to sign-in...",error);
       setError("Failed to load requests");
     } finally {
       setRefreshing(false);
@@ -108,27 +107,12 @@ export default function AllStockRequest() {
     currentPage * itemsPerPage
   );
 
-  const handleSignIn = () => {
-    window.location.href = "/signin";
-  };
-
   const handleRefresh = () => {
     fetchRequests();
   };
 
   if (loading) {
     return <LoadingScreen message="Loading requests..." />;
-  }
-
-  if (error) {
-    return (
-      <UnauthorizedCard
-        message="No users available"
-        onSignin={() => {
-          handleSignIn();
-        }}
-      />
-    );
   }
 
   return (

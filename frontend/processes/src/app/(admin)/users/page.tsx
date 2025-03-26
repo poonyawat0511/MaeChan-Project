@@ -26,7 +26,6 @@ import {
 import { axiosInstance, userHospitalApi } from "@/utils/api/api";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
 import LoadingScreen from "@/components/loading/loading";
-import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import EmptyState from "@/components/emptys/EmptyState";
 import BlurModal from "@/components/modals/BlurModal";
 import { getUserHospital } from "@/utils/services/getApi";
@@ -55,7 +54,7 @@ export default function UserPage() {
       setUsers(userData);
       setError(null);
     } catch {
-      console.log("Session expired. Redirecting to sign-in...");
+      console.log("Session expired. Redirecting to sign-in...", error);
       setError("Failed to load users");
     } finally {
       setLoading(false);
@@ -97,18 +96,8 @@ export default function UserPage() {
     currentPage * itemsPerPage
   );
 
-  const handleSignIn = () => {
-    window.location.href = "/signin";
-  };
-
   if (loading) {
     return <LoadingScreen message="Loading users..." />;
-  }
-
-  if (error) {
-    return (
-      <UnauthorizedCard message="No users available" onSignin={handleSignIn} />
-    );
   }
 
   return (

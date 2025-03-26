@@ -6,7 +6,6 @@ import { StockRequest } from "@/utils/types/stock-request";
 import { StockPo } from "@/utils/types/stock-po";
 import { getStockBugetList, getStockBugets, getStockDepartments, getStockPo, getStockRequests, } from "@/utils/services/getApi";
 import LoadingScreen from "@/components/loading/loading";
-import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import CustomCard from "@/components/cards/CustomCard";
 import { Button, Pagination } from "@heroui/react";
 import { StockDepartment } from "@/utils/types/stock-department";
@@ -109,7 +108,7 @@ export default function Dashboard() {
       setStockBudget(stockBudget);
       setError(null);
     } catch {
-      console.log("Session expired. Redirecting to sign-in...");
+      console.log("Session expired. Redirecting to sign-in..." , error);
       setError("Failed to load requests");
     } finally {
       setLoading(false);
@@ -325,23 +324,9 @@ const filteredDepartmentData = (selectedDepartments.length > 0
       !po.some((poItem) => poItem.refRequestId?.requestId === req?.requestId)
   ).length;
 
-  const handleSignIn = () => {
-    window.location.href = "/signin";
-  };
 
   if (loading) {
     return <LoadingScreen message="Loading requests..." />;
-  }
-
-  if (error) {
-    return (
-      <UnauthorizedCard
-        message="No users available"
-        onSignin={() => {
-          handleSignIn();
-        }}
-      />
-    );
   }
 
   const paginatedStockBudget = stockBudget.slice(
