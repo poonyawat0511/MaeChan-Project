@@ -4,7 +4,7 @@ import { Chip } from "@heroui/react";
 import { DocumentIcon } from "@heroicons/react/24/solid";
 import CustomCard from "@/components/cards/CustomCard";
 import { Task } from "@/utils/types/task";
-import TaskCard from "../Task.Card";
+import TaskCard from "./Task.Card";
 
 interface TaskPanelCardProps {
   tasks: Task[];
