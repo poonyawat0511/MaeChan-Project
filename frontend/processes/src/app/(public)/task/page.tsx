@@ -5,7 +5,6 @@ import { StockRequest } from "@/utils/types/stock-request";
 import generatePDF from "@/utils/services/generatePDF";
 import { Chip, Avatar, Tooltip } from "@heroui/react";
 import {
-  DocumentIcon,
   UserIcon,
   XCircleIcon,
 } from "@heroicons/react/24/solid";
@@ -16,17 +15,14 @@ import {
   springRequestByTaskApi,
 } from "@/utils/api/api";
 import { getCamundaTasks, getStockRequestList } from "@/utils/services/getApi";
-import PdfPreview from "@/components/pdf/PdfPreview";
 import LoadingScreen from "@/components/loading/loading";
 import { StockRequestList } from "@/utils/types/stock-request-list";
-import TaskCard from "./_components/Task.Card";
 import { getAuthenticatedUser } from "@/utils/auth/auth";
 import SortButton from "./_components/buttons/SortButton";
 import HistoryButton from "./_components/buttons/HistoryButton";
-import ClosePreviewButton from "./_components/buttons/ClosePreviewButton";
-import RejectButton from "./_components/buttons/RejectButton";
-import ApproveButton from "./_components/buttons/ApproveButton";
 import ConfirmationModal from "./_components/modals/ConfirmationModal";
+import TaskPanelCard from "./_components/cards/TaskPanelCard";
+import PdfPreviewPanelCard from "./_components/cards/PdfPreviewPanelCard";
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -298,77 +294,19 @@ export default function TaskPage() {
 
         <div className="flex justify-between gap-6 flex-grow h-full">
           {/* Task List Panel */}
-          <div className="p-5 bg-white rounded-xl border border-gray-100 shadow-sm flex-1 max-w-[30%] h-[calc(100vh-220px)] overflow-auto scrollbar-hidden">
-            <div className="mb-4">
-              <h2 className="text-lg font-semibold text-gray-700">
-                <div className="flex items-center gap-x-2">
-                  <Chip
-                    color="secondary"
-                    variant="dot"
-                    className="border-none"
-                  />
-                  <p>ภาระงานที่รอดำเนินการ</p>
-                  <Chip
-                    radius="full"
-                    color="default"
-                    size="sm"
-                    className="ml-2"
-                  >
-                    {tasks.length}
-                  </Chip>
-                </div>
-              </h2>
-            </div>
-            {tasks.length > 0 ? (
-              <TaskCard
-                tasks={tasks}
-                onTaskClick={(task) => handleTaskClick(task)}
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-                <DocumentIcon className="h-12 w-12 mb-2 opacity-30" />
-                <p className="text-center">No pending tasks</p>
-              </div>
-            )}
-          </div>
+          <TaskPanelCard tasks={tasks}
+            onTaskClick={handleTaskClick}
+          />
 
           {/* PDF Preview Panel */}
-          <div className="p-5 bg-white rounded-xl border border-gray-100 shadow-sm flex-1 overflow-hidden ml-5 flex flex-col h-[calc(100vh-220px)] justify-center items-center">
-            {selectedPdfUrl ? (
-              <div className="w-full h-full flex flex-col flex-grow min-h-0">
-                <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
-                  <h3 className="font-medium text-gray-700">
-                    {selectedTask?.name || "Document Preview"}
-                  </h3>
-                  <Chip color="warning" size="sm" variant="flat">
-                    จำเป็นต้องตรวจสอบ
-                  </Chip>
-                </div>
+          <PdfPreviewPanelCard
+            selectedTask={selectedTask}
+            pdfUrl={selectedPdfUrl}
+            onClose={handleClosePreview}
+            onApprove={() => selectedTask && handleApprove(selectedTask)}
+            onReject={() => selectedTask && handleRejecte(selectedTask)}
+          />
 
-                <div className="flex-grow overflow-hidden rounded-md border border-gray-200">
-                  <PdfPreview pdfUrl={selectedPdfUrl} />
-                </div>
-
-                <div className="flex justify-between items-center mt-4 pt-2 border-t border-gray-100">
-                  <ClosePreviewButton onClick={handleClosePreview} />
-                  <div className="flex gap-3">
-                    <RejectButton onClick={() => selectedTask && handleRejecte(selectedTask)} />
-                    <ApproveButton onClick={() => selectedTask && handleApprove(selectedTask)} />
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center text-gray-400">
-                <DocumentIcon className="h-16 w-16 mb-3 opacity-20" />
-                <p className="text-lg font-medium text-gray-500 mb-1">
-                  ไม่มีเอกสารที่เลือก
-                </p>
-                <p className="text-sm text-gray-400">
-                  เลือกงานจากรายการเพื่อดูรายละเอียด
-                </p>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
