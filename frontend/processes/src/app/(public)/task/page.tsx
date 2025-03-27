@@ -3,16 +3,11 @@ import { useEffect, useState } from "react";
 import { Task } from "@/utils/types/task";
 import { StockRequest } from "@/utils/types/stock-request";
 import generatePDF from "@/utils/services/generatePDF";
-import { Button, Chip, Avatar, Tooltip } from "@heroui/react";
+import { Chip, Avatar, Tooltip } from "@heroui/react";
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
   DocumentIcon,
   UserIcon,
-  CheckCircleIcon,
   XCircleIcon,
-  ClockIcon,
-  XMarkIcon,
 } from "@heroicons/react/24/solid";
 import BlurModal from "@/components/modals/BlurModal";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
@@ -27,6 +22,11 @@ import LoadingScreen from "@/components/loading/loading";
 import { StockRequestList } from "@/utils/types/stock-request-list";
 import TaskCard from "./_components/Task.Card";
 import { getAuthenticatedUser } from "@/utils/auth/auth";
+import SortButton from "./_components/buttons/SortButton";
+import HistoryButton from "./_components/buttons/HistoryButton";
+import ClosePreviewButton from "./_components/buttons/ClosePreviewButton";
+import RejectButton from "./_components/buttons/RejectButton";
+import ApproveButton from "./_components/buttons/ApproveButton";
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -58,7 +58,6 @@ export default function TaskPage() {
         const tasksData = await getCamundaTasks();
         const stockRequestList = await getStockRequestList();
 
-        // Sort tasks by 'created' date in descending order (newest first)
         const sortedTasks = tasksData.sort(
           (a: Task, b: Task) =>
             new Date(b.created).getTime() - new Date(a.created).getTime()
@@ -85,7 +84,6 @@ export default function TaskPage() {
         `Fetching stock request for processInstanceId: ${processInstanceId}`
       );
 
-      // Ensure we fetch the correct structure
       const response = await axiosInstance.get<{ stockRequest: StockRequest }>(
         springRequestByTaskApi(processInstanceId)
       );
@@ -120,7 +118,7 @@ export default function TaskPage() {
   const executeTaskAction = async (task: Task, approve: boolean) => {
     try {
       const user = await getAuthenticatedUser();
-      if (!user || !user.id) {  // ✅ Ensure user ID is not null
+      if (!user || !user.id) {
         showAlert("User ID not found. Please log in again.", "warning");
         return;
       }
@@ -135,7 +133,7 @@ export default function TaskPage() {
 
       console.log("Executing task with stockRequest:", stockRequest);
 
-      const userHospitalId = user.id.toString();  // ✅ Correct field
+      const userHospitalId = user.id.toString();
       const userRole = user.role || "USER";
 
       let requestBody = {};
@@ -147,7 +145,7 @@ export default function TaskPage() {
               value: stockRequest.requestId.toString(),
               type: "String",
             },
-            stockSubjectPerson: {  // ✅ Correct field
+            stockSubjectPerson: {
               value: userHospitalId,
               type: "String",
             },
@@ -161,7 +159,7 @@ export default function TaskPage() {
               value: stockRequest.requestId.toString(),
               type: "String",
             },
-            stockUserApprove: {  // ✅ Correct field
+            stockUserApprove: {
               value: userHospitalId,
               type: "String",
             },
@@ -287,34 +285,14 @@ export default function TaskPage() {
 
         <div className="flex items-center justify-between gap-4 mb-6 pb-3 border-b border-gray-200">
           <div className="flex items-center">
-            <Button
-              onPress={handleSort}
-              className="rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 flex items-center space-x-2 transition-all"
-              variant="flat"
-              size="sm"
-            >
-              {sortOrder === "asc" ? (
-                <ArrowUpIcon className="h-4 w-4" />
-              ) : (
-                <ArrowDownIcon className="h-4 w-4" />
-              )}
-              <span>เรียงตามวันที่</span>
-            </Button>
-
+          <SortButton sortOrder={sortOrder} onClick={handleSort} />
             <Chip className="ml-4" variant="flat" color="primary">
               {tasks.length} งานที่รอดำเนินการ
             </Chip>
           </div>
 
           <Tooltip content="ดูประวัติงานที่เสร็จสิ้น">
-            <Button
-              variant="light"
-              size="sm"
-              className="text-gray-600"
-              startContent={<ClockIcon className="h-4 w-4" />}
-            >
-              ประวัติงานที่เสร็จสิ้น
-            </Button>
+          <HistoryButton />
           </Tooltip>
         </div>
 
@@ -372,37 +350,10 @@ export default function TaskPage() {
                 </div>
 
                 <div className="flex justify-between items-center mt-4 pt-2 border-t border-gray-100">
-                  <Button
-                    className="rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700"
-                    onPress={handleClosePreview}
-                    size="sm"
-                    startContent={<XMarkIcon className="h-4 w-4" />}
-                  >
-                    ปิด
-                  </Button>
-
+                <ClosePreviewButton onClick={handleClosePreview} />
                   <div className="flex gap-3">
-                    <Button
-                      className="rounded-md bg-red-50 hover:bg-red-100 text-red-600 transition-all"
-                      startContent={<XCircleIcon className="h-4 w-4" />}
-                      size="sm"
-                      onPress={() =>
-                        selectedTask && handleRejecte(selectedTask)
-                      }
-                    >
-                      ไม่อนุมัติ
-                    </Button>
-
-                    <Button
-                      className="rounded-md bg-green-50 hover:bg-green-100 text-green-600 transition-all"
-                      endContent={<CheckCircleIcon className="h-4 w-4" />}
-                      size="sm"
-                      onPress={() =>
-                        selectedTask && handleApprove(selectedTask)
-                      }
-                    >
-                      อนุมัติ
-                    </Button>
+                  <RejectButton onClick={() => selectedTask && handleRejecte(selectedTask)} />
+                  <ApproveButton onClick={() => selectedTask && handleApprove(selectedTask)} />
                   </div>
                 </div>
               </div>
