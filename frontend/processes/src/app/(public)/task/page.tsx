@@ -9,7 +9,6 @@ import {
   UserIcon,
   XCircleIcon,
 } from "@heroicons/react/24/solid";
-import BlurModal from "@/components/modals/BlurModal";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
 import {
   axiosInstance,
@@ -27,6 +26,7 @@ import HistoryButton from "./_components/buttons/HistoryButton";
 import ClosePreviewButton from "./_components/buttons/ClosePreviewButton";
 import RejectButton from "./_components/buttons/RejectButton";
 import ApproveButton from "./_components/buttons/ApproveButton";
+import ConfirmationModal from "./_components/modals/ConfirmationModal";
 
 export default function TaskPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -35,7 +35,7 @@ export default function TaskPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<() => void>(() => () => {});
+  const [modalAction, setModalAction] = useState<() => void>(() => () => { });
   const { showAlert } = useAlert();
   const [userRole, setUserRole] = useState<string>("USER");
   const [requestList, setRequestList] = useState<StockRequestList[]>([]);
@@ -285,14 +285,14 @@ export default function TaskPage() {
 
         <div className="flex items-center justify-between gap-4 mb-6 pb-3 border-b border-gray-200">
           <div className="flex items-center">
-          <SortButton sortOrder={sortOrder} onClick={handleSort} />
+            <SortButton sortOrder={sortOrder} onClick={handleSort} />
             <Chip className="ml-4" variant="flat" color="primary">
               {tasks.length} งานที่รอดำเนินการ
             </Chip>
           </div>
 
           <Tooltip content="ดูประวัติงานที่เสร็จสิ้น">
-          <HistoryButton />
+            <HistoryButton />
           </Tooltip>
         </div>
 
@@ -350,10 +350,10 @@ export default function TaskPage() {
                 </div>
 
                 <div className="flex justify-between items-center mt-4 pt-2 border-t border-gray-100">
-                <ClosePreviewButton onClick={handleClosePreview} />
+                  <ClosePreviewButton onClick={handleClosePreview} />
                   <div className="flex gap-3">
-                  <RejectButton onClick={() => selectedTask && handleRejecte(selectedTask)} />
-                  <ApproveButton onClick={() => selectedTask && handleApprove(selectedTask)} />
+                    <RejectButton onClick={() => selectedTask && handleRejecte(selectedTask)} />
+                    <ApproveButton onClick={() => selectedTask && handleApprove(selectedTask)} />
                   </div>
                 </div>
               </div>
@@ -373,15 +373,12 @@ export default function TaskPage() {
       </div>
 
       {/* Confirmation Modal */}
-      <BlurModal
+      <ConfirmationModal
         isOpen={isConfirmModalOpen}
         onClose={() => setConfirmModalOpen(false)}
-        onAction={modalAction}
-        title="Decision Confirm"
-        actionLabel="ยืนยัน"
-      >
-        <p>คุณแน่ใจว่าต้องการดำเนินการนี้หรือไม่?</p>
-      </BlurModal>
+        onConfirm={modalAction}
+      />
+
     </div>
   );
 }
