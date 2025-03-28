@@ -1,235 +1,35 @@
 "use client";
-import { useEffect, useState } from "react";
-import { Task } from "@/utils/types/task";
-import { StockRequest } from "@/utils/types/stock-request";
-import generatePDF from "@/utils/services/generatePDF";
 import { Chip, Avatar, Tooltip } from "@heroui/react";
 import {
   UserIcon,
   XCircleIcon,
 } from "@heroicons/react/24/solid";
-import { useAlert } from "@/components/alerts/GlobalAlertProvider";
-import {
-  axiosInstance,
-  camundaTaskSubmit,
-  springRequestByTaskApi,
-} from "@/utils/api/api";
-import { getCamundaTasks, getStockRequestList } from "@/utils/services/getApi";
 import LoadingScreen from "@/components/loading/loading";
-import { StockRequestList } from "@/utils/types/stock-request-list";
-import { getAuthenticatedUser } from "@/utils/auth/auth";
 import SortButton from "./_components/buttons/SortButton";
 import HistoryButton from "./_components/buttons/HistoryButton";
 import ConfirmationModal from "./_components/modals/ConfirmationModal";
 import TaskPanelCard from "./_components/cards/TaskPanelCard";
 import PdfPreviewPanelCard from "./_components/cards/PdfPreviewPanelCard";
+import { useTaskPage } from "./hooks/useTaskPage";
 
 export default function TaskPage() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<() => void>(() => () => { });
-  const { showAlert } = useAlert();
-  const [userRole, setUserRole] = useState<string>("USER");
-  const [requestList, setRequestList] = useState<StockRequestList[]>([]);
-
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      try {
-        const user = await getAuthenticatedUser();
-        if (user) {
-          setUserRole(user.role || "USER");
-        }
-      } catch (error) {
-        console.error("Error fetching user role:", error);
-        setUserRole("USER");
-      }
-    };
-
-    const fetchTasks = async () => {
-      try {
-        const tasksData = await getCamundaTasks();
-        const stockRequestList = await getStockRequestList();
-
-        const sortedTasks = tasksData.sort(
-          (a: Task, b: Task) =>
-            new Date(b.created).getTime() - new Date(a.created).getTime()
-        );
-
-        setTasks(sortedTasks);
-        setRequestList(stockRequestList);
-      } catch {
-        setError("Error fetching tasks. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserRole();
-    fetchTasks();
-  }, []);
-
-  const fetchStockRequestByTaskId = async (
-    processInstanceId: string
-  ): Promise<StockRequest | null> => {
-    try {
-      console.log(
-        `Fetching stock request for processInstanceId: ${processInstanceId}`
-      );
-
-      const response = await axiosInstance.get<{ stockRequest: StockRequest }>(
-        springRequestByTaskApi(processInstanceId)
-      );
-
-      console.log("Full API Response:", response.data);
-
-      if (!response.data || !response.data.stockRequest) {
-        console.warn("Stock request is missing or invalid:", response.data);
-        return null;
-      }
-
-      return response.data.stockRequest;
-    } catch (error) {
-      console.error("Error fetching stock request:", error);
-      return null;
-    }
-  };
-
-  const handleRejecte = (task: Task) => {
-    confirmAction(() => executeTaskAction(task, false));
-  };
-
-  const confirmAction = (action: () => void) => {
-    setModalAction(() => action);
-    setConfirmModalOpen(true);
-  };
-
-  const handleApprove = (task: Task) => {
-    confirmAction(() => executeTaskAction(task, true));
-  };
-
-  const executeTaskAction = async (task: Task, approve: boolean) => {
-    try {
-      const user = await getAuthenticatedUser();
-      if (!user || !user.id) {
-        showAlert("User ID not found. Please log in again.", "warning");
-        return;
-      }
-
-      const stockRequest = await fetchStockRequestByTaskId(task.processInstanceId);
-
-      if (!stockRequest || !stockRequest.requestId) {
-        showAlert("Stock request not found or missing requestId.", "danger");
-        console.warn("Stock request is invalid:", stockRequest);
-        return;
-      }
-
-      console.log("Executing task with stockRequest:", stockRequest);
-
-      const userHospitalId = user.id.toString();
-      const userRole = user.role || "USER";
-
-      let requestBody = {};
-
-      if (userRole === "DIRECTOR") {
-        requestBody = {
-          variables: {
-            requestId: {
-              value: stockRequest.requestId.toString(),
-              type: "String",
-            },
-            stockSubjectPerson: {
-              value: userHospitalId,
-              type: "String",
-            },
-            approve: { value: approve, type: "Boolean" },
-          },
-        };
-      } else {
-        requestBody = {
-          variables: {
-            requestId: {
-              value: stockRequest.requestId.toString(),
-              type: "String",
-            },
-            stockUserApprove: {
-              value: userHospitalId,
-              type: "String",
-            },
-            requestComplete: { value: approve, type: "Boolean" },
-          },
-        };
-      }
-
-      console.log("Submitting request:", requestBody);
-
-      await axiosInstance.post(
-        `${camundaTaskSubmit}/${task.id}/submit-form`,
-        requestBody
-      );
-
-      showAlert(
-        `Task ${approve ? "approved" : "rejected"} successfully!`,
-        approve ? "success" : "warning"
-      );
-      setTasks((prevTasks) => prevTasks.filter((t) => t.id !== task.id));
-      setSelectedPdfUrl(null);
-      setSelectedTask(null);
-    } catch (err) {
-      console.error(`Error ${approve ? "approving" : "rejecting"} task:`, err);
-      showAlert(
-        `Failed to ${approve ? "approve" : "reject"} task. Please try again.`,
-        "danger"
-      );
-    }
-    setConfirmModalOpen(false);
-  };
-
-
-  const handleTaskClick = async (task: Task) => {
-    setSelectedTask(task);
-    try {
-      const stockRequest = await fetchStockRequestByTaskId(
-        task.processInstanceId
-      );
-      if (!stockRequest) {
-        setSelectedPdfUrl(null);
-        setError("No stock request found for this task.");
-        return;
-      }
-
-      const pdfUrl = generatePDF(stockRequest, requestList);
-      setSelectedPdfUrl(pdfUrl);
-      setError(null);
-    } catch (err) {
-      console.error("Error generating PDF:", err);
-      setSelectedPdfUrl(null);
-      setError("Failed to generate PDF. Please try again.");
-    }
-  };
-
-  const handleClosePreview = () => {
-    setSelectedPdfUrl(null);
-    setSelectedTask(null);
-  };
-
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-  const handleSort = () => {
-    const sortedTasks = [...tasks].sort((a, b) => {
-      if (sortOrder === "asc") {
-        return a.created.localeCompare(b.created);
-      } else {
-        return b.created.localeCompare(a.created);
-      }
-    });
-
-    setTasks(sortedTasks);
-    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-  };
+  const {
+    tasks,
+    selectedTask,
+    selectedPdfUrl,
+    userRole,
+    error,
+    loading,
+    sortOrder,
+    isConfirmModalOpen,
+    modalAction,
+    handleTaskClick,
+    handleClosePreview,
+    handleApprove,
+    handleReject,
+    handleSort,
+    setConfirmModalOpen,
+  } = useTaskPage();
 
   if (loading) {
     return <LoadingScreen message="Loading requests..." />;
@@ -304,7 +104,7 @@ export default function TaskPage() {
             pdfUrl={selectedPdfUrl}
             onClose={handleClosePreview}
             onApprove={() => selectedTask && handleApprove(selectedTask)}
-            onReject={() => selectedTask && handleRejecte(selectedTask)}
+            onReject={() => selectedTask && handleReject(selectedTask)}
           />
 
         </div>
