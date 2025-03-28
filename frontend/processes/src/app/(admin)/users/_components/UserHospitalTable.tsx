@@ -10,6 +10,7 @@ import {
   TableRow,
   Button,
   Tooltip,
+  Image,
 } from "@heroui/react";
 import { TrashIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import { Role } from "@/utils/types/role";
@@ -107,7 +108,7 @@ export default function UserHospitalTable({
                     if (columnKey === "signaturePath") {
                       return user.signaturePath ? (
                         <div className="relative group">
-                          <img
+                          <Image
                             src={user.signaturePath}
                             alt="Signature"
                             className="w-16 h-16 object-contain border rounded-md shadow-sm group-hover:opacity-90 transition-all"
