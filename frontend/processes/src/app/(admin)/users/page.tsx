@@ -2,35 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import {
-  Input,
-  Button,
   Card,
   CardBody,
-  CardHeader,
-  CardFooter,
-  Pagination,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
 } from "@heroui/react";
-
-import {
-  MagnifyingGlassIcon,
-  ArrowDownTrayIcon,
-  FunnelIcon,
-  EllipsisVerticalIcon,
-  UserGroupIcon,
-} from "@heroicons/react/24/outline";
 
 import { axiosInstance, userHospitalApi } from "@/utils/api/api";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
 import LoadingScreen from "@/components/loading/loading";
 import EmptyState from "@/components/emptys/EmptyState";
-import BlurModal from "@/components/modals/BlurModal";
 import { getUserHospital } from "@/utils/services/getApi";
 import { UserHospital } from "@/utils/types/user-hospital";
-import UserHospitalTable from "@/app/(admin)/users/_components/UserHospitalTable";
+import UserHospitalTable from "@/app/(admin)/users/_components/tables/UserHospitalTable";
+import UserHeaderCard from "./_components/cards/UserHeaderCard";
+import UserFooterCard from "./_components/cards/UserFooterCard";
+import UserDeleteModal from "./_components/modals/UserDeleteModal";
+
 
 export default function UserPage() {
   const [users, setUsers] = useState<UserHospital[]>([]);
@@ -103,71 +89,11 @@ export default function UserPage() {
   return (
     <div className="flex justify-center w-full min-h-screen bg-gray-50 p-4 md:p-6">
       <Card className="bg-white shadow-md w-full flex flex-col border border-gray-100">
-        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between px-6 py-5 border-b border-gray-100">
-          <div className="flex items-center">
-            <div className="mr-4">
-              <div className="h-12 w-12 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl shadow-md flex items-center justify-center mr-4">
-                <UserGroupIcon className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <div>
-              <h1 className="text-xl font-semibold text-gray-800">
-                ผู้ใช้ทั้งหมด
-              </h1>
-              <p className="text-gray-500 text-sm">
-                {filteredUsers.length} ผู้ใช้ทั้งหมด
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 items-center">
-            <Input
-              classNames={{
-                base: "max-w-full sm:max-w-xs",
-                inputWrapper:
-                  "bg-gray-50 hover:bg-gray-100 focus-within:bg-white border-2 border-gray-200",
-              }}
-              placeholder="ค้นหาผู้ใช้ ..."
-              size="sm"
-              startContent={
-                <MagnifyingGlassIcon className="h-4 w-4 text-gray-400" />
-              }
-              type="search"
-              value={searchQuery}
-              onValueChange={setSearchQuery}
-              isClearable
-              aria-label="Search users"
-            />
-
-            <div className="flex gap-2">
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button
-                    variant="bordered"
-                    className="min-w-0 px-2 border-gray-200"
-                    isIconOnly
-                  >
-                    <EllipsisVerticalIcon className="h-5 w-5 text-gray-500" />
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu aria-label="User actions">
-                  <DropdownItem
-                    key="export-users"
-                    startContent={<ArrowDownTrayIcon className="h-4 w-4" />}
-                  >
-                    ดาวน์โหลดข้อมูล
-                  </DropdownItem>
-                  <DropdownItem
-                    key="filter-options"
-                    startContent={<FunnelIcon className="h-4 w-4" />}
-                  >
-                    การกรอง
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
-            </div>
-          </div>
-        </CardHeader>
+        <UserHeaderCard
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          totalUsers={filteredUsers.length}
+        />
 
         <CardBody className="p-0 overflow-auto flex-grow">
           {filteredUsers.length === 0 ? (
@@ -183,70 +109,29 @@ export default function UserPage() {
             />
           ) : (
             <UserHospitalTable
-            UserHospitals={paginatedUsers}
-            currentPage={currentPage}
-            onDelete={handleConfirmDelete}
-          />          
+              UserHospitals={paginatedUsers}
+              currentPage={currentPage}
+              onDelete={handleConfirmDelete}
+            />
           )}
         </CardBody>
 
-        <CardFooter className="flex justify-between items-center py-3 px-6 border-t border-gray-100">
-          <p className="text-sm text-gray-500">
-            Showing{" "}
-            {Math.min(
-              filteredUsers.length,
-              (currentPage - 1) * itemsPerPage + 1
-            )}{" "}
-            - {Math.min(currentPage * itemsPerPage, filteredUsers.length)} of{" "}
-            {filteredUsers.length} users
-          </p>
+        <UserFooterCard
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={filteredUsers.length}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+        />
 
-          {filteredUsers.length > 0 && (
-            <div className="flex items-center gap-2">
-              <Button
-                size="sm"
-                variant="flat"
-                isDisabled={currentPage === 1}
-                onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className="text-gray-700"
-              >
-                Previous
-              </Button>
-              <Pagination
-                color="secondary"
-                page={currentPage}
-                total={totalPages}
-                onChange={setCurrentPage}
-                showControls={false}
-                className="mx-2"
-              />
-              <Button
-                size="sm"
-                variant="flat"
-                isDisabled={currentPage === totalPages || totalPages === 0}
-                onPress={() =>
-                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                }
-                className="text-gray-700"
-              >
-                Next
-              </Button>
-            </div>
-          )}
-        </CardFooter>
       </Card>
 
-      <BlurModal
+      <UserDeleteModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="ยืนยันการลบผู้ใช้"
-        onAction={handleDelete}
-        actionLabel="ยืนยัน"
-      >
-        <p>
-        คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้รายนี้ การกระทำนี้ไม่สามารถย้อนกลับได้
-        </p>
-      </BlurModal>
+        onConfirm={handleDelete}
+      />
+
     </div>
   );
 }
