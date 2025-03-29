@@ -1,8 +1,8 @@
+import { useCallback, useEffect, useState } from "react";
 import { getStockRequestList, getStockRequestsByPageTable } from "@/utils/services/getApi";
 import { Page } from "@/utils/types/page";
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockRequestList } from "@/utils/types/stock-request-list";
-import { useEffect, useState } from "react";
 
 export const useAllStockRequests = () => {
   const [requests, setRequests] = useState<StockRequest[]>([]);
@@ -14,7 +14,7 @@ export const useAllStockRequests = () => {
   const [refreshing, setRefreshing] = useState(false);
   const itemsPerPage = 12;
 
-  const fetchRequests = async (page = currentPage - 1) => {
+  const fetchRequests = useCallback(async (page = currentPage - 1) => {
     try {
       setRefreshing(true);
       const data: Page<StockRequest> = await getStockRequestsByPageTable(page, itemsPerPage);
@@ -30,11 +30,11 @@ export const useAllStockRequests = () => {
       setRefreshing(false);
       setLoading(false);
     }
-  };
+  }, [currentPage]);
 
   useEffect(() => {
     fetchRequests();
-  }, [currentPage]);
+  }, [fetchRequests]);
 
   return {
     requests,
