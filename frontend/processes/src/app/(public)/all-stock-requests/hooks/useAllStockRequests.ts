@@ -1,25 +1,27 @@
-import { useEffect, useState } from "react";
-import { getStockRequestList, getStockRequests } from "@/utils/services/getApi";
+import { getStockRequestList, getStockRequestsByPageTable } from "@/utils/services/getApi";
+import { Page } from "@/utils/types/page";
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockRequestList } from "@/utils/types/stock-request-list";
+import { useEffect, useState } from "react";
 
 export const useAllStockRequests = () => {
   const [requests, setRequests] = useState<StockRequest[]>([]);
   const [requestList, setRequestList] = useState<StockRequestList[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const itemsPerPage = 12;
 
-  const fetchRequests = async () => {
+  const fetchRequests = async (page = currentPage - 1) => {
     try {
       setRefreshing(true);
-      const data = await getStockRequests();
+      const data: Page<StockRequest> = await getStockRequestsByPageTable(page, itemsPerPage);
       const list = await getStockRequestList();
-      const sortedData = data.sort(
-        (a, b) => new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime()
-      );
-      setRequests(sortedData);
+      setRequests(data.content);
       setRequestList(list);
+      setTotalPages(data.totalPages);
       setError(null);
     } catch (err) {
       console.error("Error fetching stock requests:", err);
@@ -32,14 +34,17 @@ export const useAllStockRequests = () => {
 
   useEffect(() => {
     fetchRequests();
-  }, []);
+  }, [currentPage]);
 
   return {
     requests,
-    requestList,
     loading,
-    error,
     refreshing,
+    error,
     fetchRequests,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    requestList
   };
 };

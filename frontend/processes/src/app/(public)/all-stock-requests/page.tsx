@@ -19,15 +19,17 @@ export default function AllStockRequest() {
   const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openPdfModal, setOpenPdfModal] = useState<boolean>(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
 
   const {
     requests,
-    requestList,
     loading,
     refreshing,
     fetchRequests,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    requestList,
   } = useAllStockRequests();
 
   const handleTaskClick = async (request: StockRequest) => {
@@ -54,18 +56,6 @@ export default function AllStockRequest() {
     fetchRequests();
   };
 
-  const filteredRequests = requests.filter((request) =>
-    (request.requestId?.toString() || "")
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
-
-  const paginatedRequests = filteredRequests.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   if (loading) {
     return <LoadingScreen message="Loading requests..." />;
@@ -74,8 +64,8 @@ export default function AllStockRequest() {
   return (
     <div className="w-full p-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex">
       <StockRequestCard
-        total={requests.length}
-        filtered={filteredRequests.length}
+        total={totalPages * itemsPerPage}
+        filtered={requests.length}
         headerRight={
           <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 items-center">
             <SearchInput value={searchQuery} onChange={setSearchQuery} />
@@ -86,16 +76,16 @@ export default function AllStockRequest() {
           </div>
         }
         table={
-          filteredRequests.length === 0 ? (
+          requests.length === 0 ? (
             <EmptyStateMessage
               onClearFilters={() => {
-                setSearchQuery("");
-                handleRefresh();
+                setCurrentPage(1);
+                fetchRequests();
               }}
             />
           ) : (
             <StockRequestTable
-              stockRequests={paginatedRequests}
+              stockRequests={requests}
               onRequestClick={handleTaskClick}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}
@@ -106,11 +96,10 @@ export default function AllStockRequest() {
         pagination={
           <>
             <div className="text-sm text-gray-500 text-center sm:text-left">
-              Showing {paginatedRequests.length > 0
-                ? (currentPage - 1) * itemsPerPage + 1
-                : 0} to {Math.min(currentPage * itemsPerPage, filteredRequests.length)} of {filteredRequests.length} entries
+              Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+              {(currentPage - 1) * itemsPerPage + requests.length} of {totalPages * itemsPerPage} entries
             </div>
-            {filteredRequests.length > 0 && (
+            {requests.length > 0 && (
               <div className="flex items-center justify-center sm:justify-end gap-2 w-full sm:w-auto">
                 <Button
                   size="sm"
@@ -121,7 +110,7 @@ export default function AllStockRequest() {
                 >
                   Previous
                 </Button>
-
+        
                 <Pagination
                   color="secondary"
                   page={currentPage}
@@ -130,7 +119,7 @@ export default function AllStockRequest() {
                   showControls={false}
                   className="mx-2"
                 />
-
+        
                 <Button
                   size="sm"
                   variant="flat"
@@ -146,6 +135,7 @@ export default function AllStockRequest() {
             )}
           </>
         }
+        
       />
 
       <PdfPreviewModal

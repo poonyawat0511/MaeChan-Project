@@ -6,6 +6,7 @@ import {
   bugetListTrApi,
   dayApi,
   departmentApi,
+  requestPaginatedApi,
   stockPoApi,
   stockRequestListApi,
   targetApi,
@@ -36,6 +37,20 @@ import { StockBudgetType } from "../types/stock-budget-type";
 import { StockBudgetListTr } from "../types/stock-budget-list-tr";
 
 // Function to get stock requests
+import { Page } from "@/utils/types/page"; // ✅ สร้าง type เพิ่ม
+
+export const getStockRequestsByPageTable = async (page = 0, size = 12): Promise<Page<StockRequest>> => {
+  try {
+    const response = await axiosInstance.get<Page<StockRequest>>(
+      `${requestPaginatedApi}?page=${page}&size=${size}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching stock requests:", error);
+    throw error;
+  }
+};
+
 export const getStockRequests = async (): Promise<StockRequest[]> => {
   try {
     const response = await axiosInstance.get<StockRequest[]>(requestApi);
@@ -45,6 +60,7 @@ export const getStockRequests = async (): Promise<StockRequest[]> => {
     throw error;
   }
 };
+
 
 // Function to get Camunda tasks based on user role
 export const getCamundaTasks = async (): Promise<Task[]> => {
