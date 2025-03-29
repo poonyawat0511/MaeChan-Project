@@ -56,6 +56,11 @@ export default function AllStockRequest() {
     fetchRequests();
   };
 
+  const filteredRequests = requests.filter((request) =>
+    request.requestId?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+    request.departmentId?.departmentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    request.budgetId?.budgetName?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (loading) {
     return <LoadingScreen message="Loading requests..." />;
@@ -76,16 +81,17 @@ export default function AllStockRequest() {
           </div>
         }
         table={
-          requests.length === 0 ? (
+          filteredRequests.length === 0 ? (
             <EmptyStateMessage
               onClearFilters={() => {
+                setSearchQuery("");
                 setCurrentPage(1);
                 fetchRequests();
               }}
             />
           ) : (
             <StockRequestTable
-              stockRequests={requests}
+              stockRequests={filteredRequests}
               onRequestClick={handleTaskClick}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}
@@ -93,6 +99,7 @@ export default function AllStockRequest() {
             />
           )
         }
+
         pagination={
           <>
             <div className="text-sm text-gray-500 text-center sm:text-left">
@@ -110,7 +117,7 @@ export default function AllStockRequest() {
                 >
                   Previous
                 </Button>
-        
+
                 <Pagination
                   color="secondary"
                   page={currentPage}
@@ -119,7 +126,7 @@ export default function AllStockRequest() {
                   showControls={false}
                   className="mx-2"
                 />
-        
+
                 <Button
                   size="sm"
                   variant="flat"
@@ -135,7 +142,7 @@ export default function AllStockRequest() {
             )}
           </>
         }
-        
+
       />
 
       <PdfPreviewModal
