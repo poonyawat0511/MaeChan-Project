@@ -4,7 +4,7 @@ import { Task } from "@/utils/types/task";
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockRequestList } from "@/utils/types/stock-request-list";
 import generatePDF from "@/utils/services/generatePDF";
-import { getCamundaTasks, getStockRequestList } from "@/utils/services/getApi";
+import { getPaginatedCamundaTasks, getStockRequestList } from "@/utils/services/getApi";
 import { axiosInstance, camundaTaskSubmit, springRequestByTaskApi } from "@/utils/api/api";
 import { getAuthenticatedUser } from "@/utils/auth/auth";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
@@ -17,10 +17,14 @@ export const useTaskPage = () => {
   const [requestList, setRequestList] = useState<StockRequestList[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<() => void>(() => () => { });
+  const [totalTasks, setTotalTasks] = useState(0);
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
   const { showAlert } = useAlert();
+
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,14 +32,11 @@ export const useTaskPage = () => {
         const user = await getAuthenticatedUser();
         if (user) setUserRole(user.role || "USER");
 
-        const taskData = await getCamundaTasks();
+        const { tasks: pagedTasks, total } = await getPaginatedCamundaTasks(page, size,);
         const stockRequestList = await getStockRequestList();
 
-        setTasks(
-          taskData.sort(
-            (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime()
-          )
-        );
+        setTasks(pagedTasks);
+        setTotalTasks(total);
         setRequestList(stockRequestList);
       } catch {
         setError("Error fetching data.");
@@ -45,7 +46,7 @@ export const useTaskPage = () => {
     };
 
     fetchData();
-  }, []);
+  }, [page, size, sortOrder]);
 
   const handleTaskClick = async (task: Task) => {
     setSelectedTask(task);
@@ -157,5 +158,10 @@ export const useTaskPage = () => {
     handleReject,
     handleSort,
     setConfirmModalOpen,
+    page,
+    size,
+    setPage,
+    setSize,
+    totalTasks,
   };
 };

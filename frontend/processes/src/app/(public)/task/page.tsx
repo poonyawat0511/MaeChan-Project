@@ -1,5 +1,5 @@
 "use client";
-import { Chip, Avatar, Tooltip } from "@heroui/react";
+import { Chip, Avatar, Tooltip, Pagination } from "@heroui/react";
 import {
   UserIcon,
   XCircleIcon,
@@ -29,6 +29,10 @@ export default function TaskPage() {
     handleReject,
     handleSort,
     setConfirmModalOpen,
+    page,
+    size,
+    setPage,
+    totalTasks,
   } = useTaskPage();
 
   if (loading) {
@@ -49,9 +53,9 @@ export default function TaskPage() {
   }
 
   return (
-    <div className="flex-1 py-1 h-screen flex flex-col bg-gradient-to-br from-white to-gray-50">
+    <div className="flex-1 h-screen flex flex-col bg-gradient-to-br from-white to-gray-50">
       <div className="mx-auto w-full max-w-7xl py-6 px-6 rounded-md flex flex-col h-full">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-1">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 flex items-center">
               ภาระงาน
@@ -87,6 +91,7 @@ export default function TaskPage() {
             </Chip>
           </div>
 
+
           <Tooltip content="ดูประวัติงานที่เสร็จสิ้น">
             <HistoryButton />
           </Tooltip>
@@ -108,7 +113,17 @@ export default function TaskPage() {
           />
 
         </div>
+        <div className="flex items-center mt-2">
+          <Pagination
+            total={Math.ceil(totalTasks / size)}
+            page={page + 1}
+            onChange={(newPage) => setPage(newPage - 1)}
+            showControls
+            color="secondary"
+          />
+        </div>
       </div>
+
 
       {/* Confirmation Modal */}
       <ConfirmationModal
