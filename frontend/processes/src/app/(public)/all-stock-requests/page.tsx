@@ -1,11 +1,7 @@
 'use client'
-import React, { useState, useEffect } from "react";
-import generatePDF from "@/utils/services/generatePDF";
-import { StockRequest } from "@/utils/types/stock-request";
-import { getStockRequestList, getStockRequests } from "@/utils/services/getApi";
-import LoadingScreen from "@/components/loading/loading";
+
+import React, { useState } from "react";
 import EmptyStateMessage from "@/components/emptys/EmptyStateMessage";
-import { StockRequestList } from "@/utils/types/stock-request-list";
 import StockRequestCard from "./_components/cards/StockRequestCard";
 import StockRequestTable from "./_components/tables/StockRequest.table";
 import SearchInput from "./_components/buttons/SearchInput";
@@ -14,45 +10,25 @@ import DownloadCSVButton from "./_components/buttons/DownloadCSVButton";
 import { Button } from "@heroui/button";
 import { Pagination } from "@heroui/react";
 import PdfPreviewModal from "./_components/modals/PdfPreviewModal";
+import { useAllStockRequests } from "./hooks/useAllStockRequests";
+import generatePDF from "@/utils/services/generatePDF";
+import LoadingScreen from "@/components/loading/loading";
+import { StockRequest } from "@/utils/types/stock-request";
 
 export default function AllStockRequest() {
-  const [requests, setRequests] = useState<StockRequest[]>([]);
-  const [requestList, setRequestList] = useState<StockRequestList[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openPdfModal, setOpenPdfModal] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [refreshing, setRefreshing] = useState(false);
   const itemsPerPage = 12;
 
-  const fetchRequests = async () => {
-    try {
-      setRefreshing(true);
-      const data = await getStockRequests();
-      const stockRequestList = await getStockRequestList();
-
-      const sortedData = data.sort(
-        (a: StockRequest, b: StockRequest) =>
-          new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime()
-      );
-
-      setRequests(sortedData);
-      setRequestList(stockRequestList);
-      setError(null);
-    } catch {
-      console.log("Session expired. Redirecting to sign-in...", error);
-      setError("Failed to load requests");
-    } finally {
-      setRefreshing(false);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRequests();
-  }, []);
+  const {
+    requests,
+    requestList,
+    loading,
+    refreshing,
+    fetchRequests,
+  } = useAllStockRequests();
 
   const handleTaskClick = async (request: StockRequest) => {
     try {
@@ -62,12 +38,10 @@ export default function AllStockRequest() {
 
       const pdfUrl = generatePDF(request, stockRequestList);
       setSelectedPdfUrl(pdfUrl);
-      setError(null);
       setOpenPdfModal(true);
     } catch (err) {
       console.error("Error generating PDF:", err);
       setSelectedPdfUrl(null);
-      setError("Failed to generate PDF. Please try again.");
     }
   };
 
@@ -80,13 +54,11 @@ export default function AllStockRequest() {
     fetchRequests();
   };
 
-  const filteredRequests = requests.filter((request) => {
-    return (
-      (request.requestId?.toString() || "")
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
-    );
-  });
+  const filteredRequests = requests.filter((request) =>
+    (request.requestId?.toString() || "")
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
+  );
 
   const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
 
@@ -181,7 +153,6 @@ export default function AllStockRequest() {
         onClose={handleClosePreview}
         pdfUrl={selectedPdfUrl}
       />
-
     </div>
   );
 }
