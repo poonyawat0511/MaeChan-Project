@@ -8,15 +8,15 @@ export const axiosInstance = axios.create({
   },
 });
 
-// axiosInstance.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (error.response?.status === 401 || error.response?.status === 403) {
-//       window.location.href = "/signin";
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      window.location.href = "/signin";
+    }
+    return Promise.reject(error);
+  }
+);
 
 // API Endpoints
 export const camundaTaksApiApprover =
@@ -27,6 +27,7 @@ export const camundaTaskSubmit = "/engine-rest/task";
 export const springRequestByTaskApi = (processInstanceId: string) =>
   `/spring-requests/task/${processInstanceId}`;
 export const requestApi = "/stock-requests";
+export const requestPaginatedApi = "/stock-requests/paginated";
 export const userHospitalApi = "/user-hospital";
 export const dayApi = "/notify-days";
 export const timeApi = "/notify-time"

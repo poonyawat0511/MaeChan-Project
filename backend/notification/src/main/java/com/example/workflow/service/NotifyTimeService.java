@@ -1,13 +1,15 @@
 package com.example.workflow.service;
 
-import com.example.workflow.model.NotifyTime;
-import com.example.workflow.repository.NotifyTimeRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.example.workflow.model.NotifyTime;
+import com.example.workflow.repository.NotifyTimeRepository;
 
 @Service
 public class NotifyTimeService {
@@ -24,9 +26,17 @@ public class NotifyTimeService {
         return messageTime.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    public NotifyTime createMessageTime(NotifyTime messageTime) {
-        return messageTimeRepository.save(messageTime);
+    public ResponseEntity<?> createMessageTime(NotifyTime messageTime) {
+        Optional<NotifyTime> existing = messageTimeRepository.findByTime(messageTime.getTime());
+        if (existing.isPresent()) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body("Time already exists: " + messageTime.getTime());
+        }
+        NotifyTime saved = messageTimeRepository.save(messageTime);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
+    
 
     public ResponseEntity<NotifyTime> updateMessageTime(Long id, NotifyTime messageTime) {
         if (!messageTimeRepository.existsById(id)) {

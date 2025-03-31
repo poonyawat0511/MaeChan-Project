@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,10 @@ public class UserHospitalService {
         return userHospitalRepository.save(userHospital);
     }
 
+    public Page<UserHospital> findAllUserHospitals(Pageable pageable){
+        return userHospitalRepository.findAll(pageable);
+    }
+
     public List<UserHospital> findAllUserHospital() {
         return userHospitalRepository.findAll();
     }
@@ -36,7 +42,7 @@ public class UserHospitalService {
         return userHospitalRepository.findById(updatedUserHospital.getId())
                 .map(existingUserHospital -> {
                     existingUserHospital.setEmail(updatedUserHospital.getEmail());
-                    existingUserHospital.setFirstName(updatedUserHospital.getLastName());
+                    existingUserHospital.setFirstName(updatedUserHospital.getFirstName());
                     existingUserHospital.setLastName(updatedUserHospital.getLastName());
                     existingUserHospital.setLineId(updatedUserHospital.getLineId());
                     existingUserHospital.setRole(updatedUserHospital.getRole());

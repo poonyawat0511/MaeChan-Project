@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,17 +26,18 @@ import com.example.workflow.service.JWTService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Validated
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
     private final JWTService jwtService;
 
-    // ✅ API to get user details from JWT
     @GetMapping("/me")
     public ResponseEntity<Map<String, Object>> getUserInfo(
             @CookieValue(name = "jwt", required = false) String token) {
@@ -60,12 +62,12 @@ public class AuthenticationController {
 
     @PostMapping(value = "/signup", consumes = {"multipart/form-data"})
     public ResponseEntity<UserHospital> signup(
-            @RequestPart("firstName") String firstName,
-            @RequestPart("lastName") String lastName,
-            @RequestPart("email") String email,
-            @RequestPart("lineId") String lineId,
-            @RequestPart("stockUserId") String stockUserId,
-            @RequestPart("password") String password,
+            @Valid @RequestPart("firstName") String firstName,
+            @Valid @RequestPart("lastName") String lastName,
+            @Valid @RequestPart("email") String email,
+            @Valid @RequestPart("lineId") String lineId,
+            @Valid @RequestPart("officerId") String officerId,
+            @Valid @RequestPart("password") String password,
             @RequestPart(value = "signature", required = false) MultipartFile signature,
             @RequestPart(value = "role", required = false) String role) {
 
@@ -76,7 +78,7 @@ public class AuthenticationController {
         signUpRequest.setLastName(lastName);
         signUpRequest.setEmail(email);
         signUpRequest.setPassword(password);
-        signUpRequest.setStockUserId(Long.valueOf(stockUserId));
+        signUpRequest.setOfficerId(Long.valueOf(officerId));
         signUpRequest.setLineId(lineId);
         signUpRequest.setSignature(signature);
         signUpRequest.setRole(userRole);

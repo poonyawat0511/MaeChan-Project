@@ -6,6 +6,7 @@ import {
   bugetListTrApi,
   dayApi,
   departmentApi,
+  requestPaginatedApi,
   stockPoApi,
   stockRequestListApi,
   targetApi,
@@ -36,6 +37,20 @@ import { StockBudgetType } from "../types/stock-budget-type";
 import { StockBudgetListTr } from "../types/stock-budget-list-tr";
 
 // Function to get stock requests
+import { Page } from "@/utils/types/page"; // ✅ สร้าง type เพิ่ม
+
+export const getStockRequestsByPageTable = async (page = 0, size = 12): Promise<Page<StockRequest>> => {
+  try {
+    const response = await axiosInstance.get<Page<StockRequest>>(
+      `${requestPaginatedApi}?page=${page}&size=${size}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching stock requests:", error);
+    throw error;
+  }
+};
+
 export const getStockRequests = async (): Promise<StockRequest[]> => {
   try {
     const response = await axiosInstance.get<StockRequest[]>(requestApi);
@@ -45,6 +60,7 @@ export const getStockRequests = async (): Promise<StockRequest[]> => {
     throw error;
   }
 };
+
 
 // Function to get Camunda tasks based on user role
 export const getCamundaTasks = async (): Promise<Task[]> => {
@@ -60,8 +76,8 @@ export const getCamundaTasks = async (): Promise<Task[]> => {
       role === "APPROVER"
         ? camundaTaksApiApprover
         : role === "DIRECTOR"
-        ? camundaTaksApiDirector
-        : "";
+          ? camundaTaksApiDirector
+          : "";
 
     if (!apiUrl) return [];
 
@@ -73,6 +89,53 @@ export const getCamundaTasks = async (): Promise<Task[]> => {
     return [];
   }
 };
+
+export const getPaginatedCamundaTasks = async (
+  page = 0,
+  size = 10,
+  sortBy: "created" | "priority" = "created",
+  sortOrder: "asc" | "desc" = "desc"
+): Promise<{ tasks: Task[]; total: number }> => {
+  try {
+    const user = await getAuthenticatedUser();
+    if (!user) throw new Error("User is not authenticated.");
+
+    const role = user.role || "USER";
+    const candidateGroup =
+      role === "APPROVER" ? "Approver" :
+        role === "DIRECTOR" ? "Director" :
+          null;
+
+    if (!candidateGroup) return { tasks: [], total: 0 };
+
+    const firstResult = page * size;
+
+    // ใช้ endpoint แบบกำหนด params แยก ไม่ต้องแก้ path ตรงๆ
+    const [taskRes, countRes] = await Promise.all([
+      axiosInstance.get<Task[]>("/engine-rest/task", {
+        params: {
+          candidateGroup,
+          firstResult,
+          maxResults: size,
+          sortBy,
+          sortOrder,
+        },
+      }),
+      axiosInstance.post<{ count: number }>("/engine-rest/task/count", {
+        candidateGroup,
+      }),
+    ]);
+
+    return {
+      tasks: taskRes.data,
+      total: countRes.data.count,
+    };
+  } catch (error) {
+    console.error("Error fetching paginated Camunda tasks:", error);
+    return { tasks: [], total: 0 };
+  }
+};
+
 
 // Function to fetch Stock Request by Task ID
 export const getStockRequestByTaskId = async (

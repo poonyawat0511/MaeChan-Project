@@ -1,22 +1,29 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
-import { LineChart, Line, PieChart, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell, } from "recharts";
-import { ArrowRight, ArrowLeft } from "lucide-react";
-import { StockRequest } from "@/utils/types/stock-request";
-import { StockPo } from "@/utils/types/stock-po";
-import { getStockBugetList, getStockBugets, getStockDepartments, getStockPo, getStockRequests, } from "@/utils/services/getApi";
+import {
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Cell,
+} from "recharts";
+import { ArrowRight, ArrowLeft, RotateCcw } from "lucide-react";
 import LoadingScreen from "@/components/loading/loading";
-import UnauthorizedCard from "@/components/cards/UnauthorizedCard";
 import CustomCard from "@/components/cards/CustomCard";
 import { Button, Pagination } from "@heroui/react";
-import { StockDepartment } from "@/utils/types/stock-department";
 import PrVsPoComparisonChart from "./_components/cards/PrVsPoComparisonChart";
 import PrVsPoByDepartmentChart from "./_components/cards/PrVsPoByDepartmentChart";
 import YearFilter from "./_components/buttons/YearFilter";
 import DepartmentFilter from "./_components/buttons/DepartmentFilter";
 import ClearFilterButton from "./_components/buttons/ClearFilterButton";
 import MonthFilter from "./_components/buttons/MonthFilter";
-import { StockBudgetList } from "@/utils/types/stock-buget-list";
 import PRSummaryCard from "./_components/cards/PrSummaryCard";
 import POSummaryCard from "./_components/cards/PoSummaryCard";
 import EfficiencySummaryCard from "./_components/cards/EfficiencySummaryCard";
@@ -24,27 +31,13 @@ import TotalBudgetCard from "./_components/cards/TotalBudgetCard";
 import UsedBudgetCard from "./_components/cards/UsedBudgetCard";
 import RemainBudgetCard from "./_components/cards/RemainBudgetCard";
 import MonthlyPurchaseCard from "./_components/cards/MonthlyPurchaseCard";
-import { StockBudget } from "@/utils/types/stock-budget";
 import StockBudgetTable from "@/app/(public)/dashboard/_components/tables/StockBudgetTable";
-
-interface PRPOData {
-  month: string;
-  pr: number;
-  po: number;
-}
+import StockBudgetListTable from "./_components/tables/StockBudgetListTable";
+import { motion, AnimatePresence } from "framer-motion";
+import { useDashboardPage } from "./hooks/useDashboardPage";
+import { useDashboardData } from "./hooks/useDashboardData";
 
 const colors = {
-  primary: "#3b82f6",
-  secondary: "#64748b",
-  accent: "#0ea5e9",
-  background: "#f8fafc",
-  card: "#ffffff",
-  border: "#e2e8f0",
-  text: {
-    primary: "#0f172a",
-    secondary: "#64748b",
-    light: "#94a3b8",
-  },
   chart: [
     "#3b82f6",
     "#0ea5e9",
@@ -75,89 +68,61 @@ const months = [
 ];
 
 export default function Dashboard() {
-  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState(0);
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [StockRequest, setRequests] = useState<StockRequest[]>([]);
-  const [stockDepartments, setStockDepartments] = useState<StockDepartment[]>([]);
-  const [po, setPo] = useState<StockPo[]>([]);
-  const [stockBudgetPage, setStockBudgetPage] = useState(1);
-  const itemsPerPage = 15;
   const [filterYear, setFilterYear] = useState<number>(new Date().getFullYear());
-  const [filterMonth, setFilterMonth] = useState<string>(new Date().toLocaleString("th-TH", { month: "short" }));
-  const [stockBudgetList, setStockBudgetList] = useState<StockBudgetList[]>([]);
-  const [stockBudget , setStockBudget ] = useState <StockBudget[]>([]);
+  const [filterMonth, setFilterMonth] = useState<string>(
+    new Date().toLocaleString("th-TH", { month: "short" })
+  );
+  const [showBudgetList, setShowBudgetList] = useState(false);
+  const [stockBudgetPage, setStockBudgetPage] = useState(1);
+  const [stockBudgetListPage, setStockBudgetListPage] = useState(1);
+  const itemsPerPage = 15;
 
-  const fetchData = async () => {
-    try {
-      const data = await getStockRequests();
-      const stockPo = await getStockPo();
-      const stockDepartments = await getStockDepartments();
-      const stockBudgetLists = await getStockBugetList();
-      const stockBudget  = await getStockBugets();
-      setRequests(data);
-      setPo(stockPo);
-      setStockDepartments(stockDepartments);
-      setStockBudgetList(stockBudgetLists);
-      setStockBudget(stockBudget);
-      setError(null);
-    } catch {
-      console.log("Session expired. Redirecting to sign-in...");
-      setError("Failed to load requests");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    loading,
+    requests,
+    po,
+    departments,
+    budgetList,
+    budgets,
+  } = useDashboardPage();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const clearDepartmentFilter = () => {
-    setSelectedDepartments([]);
-  };
-
-  const limitTop = selectedDepartments.length === 0;
-  const allDepartmentNames = stockDepartments.map((dept) => dept.departmentName);
-
-  const filteredDepartmentData = (selectedDepartments.length > 0
-    ? selectedDepartments
-    : allDepartmentNames
-  )
-    .map((deptName) => {
-      const prTotal = StockRequest.filter(
-        (req) =>
-          req.departmentId?.departmentName === deptName &&
-          new Date(req.requestDate).getFullYear() === filterYear
-      ).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
-  
-      const poTotal = po
-        .filter((poItem) => {
-          const relatedRequest = StockRequest.find(
-            (req) => req.requestId === poItem.refRequestId?.requestId
-          );
-          return (
-            relatedRequest?.departmentId?.departmentName === deptName &&
-            new Date(poItem.stockPoDate).getFullYear() === filterYear
-          );
-        })
-        .reduce((sum, poItem) => sum + (poItem.poDeliverAmount || 0), 0);
-  
-      return {
-        department: deptName,
-        pr: prTotal,
-        po: poTotal,
-      };
-    })
-    .filter((entry) => entry.pr > 0 || entry.po > 0)
-    .sort((a, b) => b.pr + b.po - (a.pr + a.po))
-    .slice(0, limitTop ? 8 : undefined);
+  const {
+    monthlyPurchases,
+    totalBudgetListValue,
+    totalBudgetUsed,
+    totalBudgetRemain,
+    formattedInventoryData,
+    formattedWarehouseData,
+    filteredDepartmentData,
+    prPoData,
+    totalStockPo,
+    totalStockPoValue,
+    avgStockPoValue,
+    highestStockPo,
+    totalStockRequests,
+    totalStockRequestValue,
+    avgStockRequestValue,
+    highestStockRequest,
+    poPrRatio,
+    budgetSaved,
+    avgProcessingTime,
+    pendingPr,
+  } = useDashboardData(
+    requests,
+    po,
+    budgetList,
+    filterYear,
+    filterMonth,
+    selectedDepartments,
+    departments.map((d) => d.departmentName)
+  );
 
   const allYears = Array.from(
     new Set([
       ...po.map((poItem) => new Date(poItem.stockPoDate).getFullYear()),
-      ...StockRequest.map((req) => new Date(req.requestDate).getFullYear()),
+      ...requests.map((req) => new Date(req.requestDate).getFullYear()),
     ])
   ).sort((a, b) => b - a);
 
@@ -166,186 +131,31 @@ export default function Dashboard() {
       setFilterYear(allYears[allYears.length - 1]);
     }
   }, [allYears, filterYear]);
-  const monthlyPurchases = po
-    .filter(
-      (po) =>
-        new Date(po.stockPoDate).getFullYear() === filterYear &&
-        new Date(po.stockPoDate).toLocaleString("th-TH", { month: "short" }) ===
-        filterMonth
-    )
-    .reduce((sum, po) => sum + (po.stockBudgetUse || 0), 0);
 
-  const formattedInventoryData = po
-    .filter((po) => new Date(po.stockPoDate).getFullYear() === filterYear)
-    .reduce((acc, po) => {
-      if (!po.stockPoDate || !po.poAmount) return acc;
-
-      const month = new Date(po.stockPoDate).toLocaleString("th-TH", {
-        month: "short",
-      });
-
-      const existingEntry = acc.find((entry) => entry.month === month);
-      if (existingEntry) {
-        existingEntry.value += po.poAmount;
-      } else {
-        acc.push({ month, value: po.poAmount });
-      }
-
-      return acc;
-    }, [] as { month: string; value: number }[]);
-
-  const formattedWarehouseData = po
-    .filter(
-      (po) =>
-        new Date(po.stockPoDate).toLocaleString("th-TH", { month: "short" }) ===
-        filterMonth
-    )
-    .reduce((acc, po) => {
-      const warehouseName = po.warehouseId?.warehouseName || "Unknown";
-      const existingWarehouse = acc.find((w) => w.name === warehouseName);
-
-      if (existingWarehouse) {
-        existingWarehouse.value += 1;
-      } else {
-        acc.push({ name: warehouseName, value: 1 });
-      }
-
-      return acc;
-    }, [] as { name: string; value: number }[]);
-
-  const budgetYearThai = (filterYear + 543).toString();
-
-  const totalBudgetListValue = stockBudgetList
-    .filter((b) => b.stockBudgetYear === budgetYearThai)
-    .reduce((sum, b) => sum + (b.stockBudgetPrice || 0), 0);
-
-  const totalBudgetUsed = stockBudgetList
-    .filter((b) => b.stockBudgetYear === budgetYearThai)
-    .reduce((sum, b) => sum + (b.stockBudgetUse || 0), 0);
-
-  const totalBudgetRemain = stockBudgetList
-    .filter((b) => b.stockBudgetYear === budgetYearThai)
-    .reduce((sum, b) => sum + (b.stockBudgetRemain || 0), 0);
-
-  const prPoData: PRPOData[] = Array.from({ length: 12 }, (_, i) => {
-    const month = new Date(2025, i).toLocaleString("th-TH", { month: "short" });
-
-    const prTotal = StockRequest.filter(
-      (req) =>
-        new Date(req.requestDate).getMonth() === i &&
-        new Date(req.requestDate).getFullYear() === filterYear
-    ).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
-
-    const poTotal = po
-      .filter(
-        (po) =>
-          new Date(po.stockPoDate).getMonth() === i &&
-          new Date(po.stockPoDate).getFullYear() === filterYear
-      )
-      .reduce((sum, po) => sum + (po.poDeliverAmount || 0), 0);
-
-    return { month, pr: prTotal, po: poTotal };
-  });
-
-  const totalStockPo = po.length;
-
-  const totalStockPoValue = po.reduce(
-    (sum, poItem) => sum + (poItem.stockBudgetUse || 0),
-    0
-  );
-
-  const avgStockPoValue = totalStockPoValue / 12;
-
-  const highestStockPo = po.reduce(
-    (max, poItem) =>
-      poItem.stockBudgetUse && poItem.stockBudgetUse > max
-        ? poItem.stockBudgetUse
-        : max,
-    0
-  );
-
-  const   totalStockRequests = StockRequest.length;
-  const totalStockRequestValue = StockRequest.reduce(
-    (sum, req) => sum + (req.requestTotalPrice || 0),
-    0
-  );
-  const avgStockRequestValue = totalStockRequestValue / 12;
-
-  const highestStockRequest = StockRequest.reduce(
-    (max, req) =>
-      req.requestTotalPrice && req.requestTotalPrice > max
-        ? req.requestTotalPrice
-        : max,
-    0
-  );
-
-  const poPrRatio =
-    totalStockRequests > 0 ? (totalStockRequests / totalStockPo) * 100 : 0;
-
-  const totalPrValue = StockRequest.reduce(
-    (sum, req) => sum + (req.requestTotalPrice || 0),
-    0
-  );
-  const totalPoValue = po.reduce(
-    (sum, poItem) => sum + (poItem.poDeliverAmount || 0),
-    0
-  );
-  const budgetSaved = totalPrValue - totalPoValue;
-
-  const totalProcessingTime = po.reduce((sum, poItem) => {
-    const request = StockRequest.find(
-      (req) => req.requestId === poItem.refRequestId?.requestId
-    );
-    if (!request) return sum;
-    const prDate = new Date(request.requestDate);
-    const poDate = new Date(poItem.stockPoDate);
-    return sum + (poDate.getTime() - prDate.getTime()) / (1000 * 60 * 60 * 24);
-  }, 0);
-
-  const avgProcessingTime =
-    totalStockPo > 0 ? (totalProcessingTime / totalStockPo).toFixed(1) : 0;
-
-  const pendingPr = StockRequest.filter(
-    (req) =>
-      !po.some((poItem) => poItem.refRequestId?.requestId === req?.requestId)
-  ).length;
-
-  const handleSignIn = () => {
-    window.location.href = "/signin";
+  const clearDepartmentFilter = () => {
+    setSelectedDepartments([]);
   };
 
-  if (loading) {
-    return <LoadingScreen message="Loading requests..." />;
-  }
-
-  if (error) {
-    return (
-      <UnauthorizedCard
-        message="No users available"
-        onSignin={() => {
-          handleSignIn();
-        }}
-      />
-    );
-  }
-
-  const paginatedStockBudget = stockBudget.slice(
+  const paginatedStockBudget = budgets.slice(
     (stockBudgetPage - 1) * itemsPerPage,
     stockBudgetPage * itemsPerPage
   );
 
-  // Pages
-  const Page1: React.FC = () => (
+  const paginatedStockBudgetList = budgetList.slice(
+    (stockBudgetListPage - 1) * itemsPerPage,
+    stockBudgetListPage * itemsPerPage
+  );
+
+  if (loading) return <LoadingScreen message="Loading requests..." />;
+
+  const Page1 = () => (
     <div className="space-y-6">
-      {/* Filter Section */}
       <div className="flex flex-wrap gap-3">
-        {/* Year Filter Dropdown */}
         <YearFilter
           filterYear={filterYear}
           allYears={allYears}
           setFilterYear={setFilterYear}
         />
-        {/* Month Filter Dropdown */}
         <MonthFilter
           filterMonth={filterMonth}
           setFilterMonth={setFilterMonth}
@@ -353,7 +163,6 @@ export default function Dashboard() {
         />
       </div>
 
-      {/* Stats row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <TotalBudgetCard value={totalBudgetListValue} />
         <UsedBudgetCard value={totalBudgetUsed} />
@@ -361,22 +170,15 @@ export default function Dashboard() {
         <MonthlyPurchaseCard value={monthlyPurchases} />
       </div>
 
-      {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CustomCard title="มูลค่าการจัดซื้อรายเดือน">
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={formattedInventoryData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="month" stroke="#64748b" />
-                <YAxis stroke="#64748b" />
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: "8px",
-                    border: "1px solid #e2e8f0",
-                    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-                  }}
-                />
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
                 <Legend />
                 <Line
                   type="monotone"
@@ -405,7 +207,6 @@ export default function Dashboard() {
                     `${name} ${(percent * 100).toFixed(0)}%`
                   }
                   outerRadius={100}
-                  fill="#8884d8"
                   dataKey="value"
                 >
                   {formattedWarehouseData.map((entry, index) => (
@@ -422,25 +223,81 @@ export default function Dashboard() {
         </CustomCard>
       </div>
 
-      {/* Recent POs section */}
-      <CustomCard title="รายชื่องบประมาณ">
-        <StockBudgetTable stockBudget={paginatedStockBudget} />
+      <div className="w-full">
+        <CustomCard
+          className="min-h-[600px]"
+          title={
+            <div className="flex justify-between items-center w-full gap-5">
+              <span className="font-semibold text-gray-800">
+                {showBudgetList ? "รายการงบประมาณ" : "รายชื่องบประมาณ"}
+              </span>
+              <Button
+                onPress={() => setShowBudgetList((prev) => !prev)}
+                className="flex items-center gap-2 text-sm px-3 py-1 border border-gray-300 rounded-md bg-white hover:bg-gray-100"
+              >
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 0.6 }}
+                  key={showBudgetList ? "table" : "list"}
+                >
+                  <RotateCcw size={16} />
+                </motion.div>
+                {showBudgetList ? "แสดงตารางรวม" : "แสดงรายการย่อย"}
+              </Button>
+            </div>
+          }
+        >
+          <div className="relative min-h-[50rem]">
+            <AnimatePresence mode="wait">
+              {showBudgetList ? (
+                <motion.div
+                  key="list"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  className="w-full"
+                >
+                  <StockBudgetListTable stockBudgetList={paginatedStockBudgetList} />
+                  <div className="flex justify-center mt-4">
+                    <Pagination
+                      total={Math.ceil(budgetList.length / itemsPerPage)}
+                      page={stockBudgetListPage}
+                      onChange={setStockBudgetListPage}
+                      showControls
+                    />
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="table"
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                  className="w-full"
+                >
+                  <StockBudgetTable stockBudget={paginatedStockBudget} />
+                  <div className="flex justify-center mt-4">
+                    <Pagination
+                      total={Math.ceil(budgets.length / itemsPerPage)}
+                      page={stockBudgetPage}
+                      onChange={setStockBudgetPage}
+                      showControls
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-        <div className="flex justify-center mt-4">
-          <Pagination
-            total={Math.ceil(stockBudget.length / itemsPerPage)}
-            page={stockBudgetPage}
-            onChange={setStockBudgetPage}
-            showControls
-          />
-        </div>
-      </CustomCard>
+          </div>
+        </CustomCard>
+      </div>
     </div>
   );
 
-  const Page2: React.FC = () => (
+  const Page2 = () => (
     <div className="space-y-6">
-      {/* Filter Section */}
       <div className="flex flex-wrap gap-3">
         <YearFilter
           filterYear={filterYear}
@@ -450,19 +307,14 @@ export default function Dashboard() {
         <DepartmentFilter
           selectedDepartments={selectedDepartments}
           setSelectedDepartments={setSelectedDepartments}
-          stockDepartments={stockDepartments}
+          stockDepartments={departments}
         />
         <ClearFilterButton onClear={clearDepartmentFilter} />
       </div>
 
-      {/* PR vs PO Comparison chart */}
       <PrVsPoComparisonChart prPoData={prPoData} colors={colors.chart} />
+      <PrVsPoByDepartmentChart data={filteredDepartmentData} colors={colors.chart} />
 
-      {/* PR vs PO by Department chart */}
-      <PrVsPoByDepartmentChart
-        data={filteredDepartmentData}
-        colors={colors.chart}
-      />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <PRSummaryCard
           total={totalStockRequests}
@@ -483,41 +335,30 @@ export default function Dashboard() {
           pendingPr={pendingPr}
         />
       </div>
-    </div >
+    </div>
   );
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Main */}
       <main className="container mx-auto px-4 py-6">
-        {/* Page navigation */}
         <div className="flex justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-gray-800">
-            ภาพรวมข้อมูล
-          </h1>
+          <h1 className="text-2xl font-semibold text-gray-800">ภาพรวมข้อมูล</h1>
           <div className="flex space-x-2">
             <Button
               onPress={() => setCurrentPage(0)}
-              className={`px-4 py-2 rounded-md text-sm flex items-center gap-2 transition-colors ${currentPage === 0
-                ? "bg-blue-500 text-white"
-                : "bg-white text-gray-600 border border-gray-200"
-                }`}
+              className={`px-4 py-2 rounded-md text-sm ${currentPage === 0 ? "bg-blue-500 text-white" : "bg-white text-gray-600 border"}`}
             >
               ภาพรวม
             </Button>
             <Button
               onPress={() => setCurrentPage(1)}
-              className={`px-4 py-2 rounded-md text-sm flex items-center gap-2 transition-colors ${currentPage === 1
-                ? "bg-blue-500 text-white"
-                : "bg-white text-gray-600 border border-gray-200"
-                }`}
+              className={`px-4 py-2 rounded-md text-sm ${currentPage === 1 ? "bg-blue-500 text-white" : "bg-white text-gray-600 border"}`}
             >
               เปรียบเทียบ PR/PO
             </Button>
           </div>
         </div>
 
-        {/* Page content */}
         <div className="relative overflow-hidden">
           <div
             className="flex transition-transform duration-300"
@@ -532,24 +373,17 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Pagination */}
         <div className="flex justify-center mt-6 space-x-2">
           <button
             onClick={() => currentPage > 0 && setCurrentPage(currentPage - 1)}
-            className={`p-2 rounded-full ${currentPage > 0
-              ? "text-blue-600 hover:bg-blue-50"
-              : "text-gray-300"
-              }`}
+            className={`p-2 rounded-full ${currentPage > 0 ? "text-blue-600 hover:bg-blue-50" : "text-gray-300"}`}
             disabled={currentPage === 0}
           >
             <ArrowLeft size={20} />
           </button>
           <button
             onClick={() => currentPage < 1 && setCurrentPage(currentPage + 1)}
-            className={`p-2 rounded-full ${currentPage < 1
-              ? "text-blue-600 hover:bg-blue-50"
-              : "text-gray-300"
-              }`}
+            className={`p-2 rounded-full ${currentPage < 1 ? "text-blue-600 hover:bg-blue-50" : "text-gray-300"}`}
             disabled={currentPage === 1}
           >
             <ArrowRight size={20} />

@@ -1,241 +1,39 @@
 "use client";
-import { useEffect, useState } from "react";
-import { Task } from "@/utils/types/task";
-import { StockRequest } from "@/utils/types/stock-request";
-import generatePDF from "@/utils/services/generatePDF";
-import { Button, Chip, Avatar, Tooltip } from "@heroui/react";
+import { Chip, Avatar, Tooltip, Pagination } from "@heroui/react";
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  DocumentIcon,
   UserIcon,
-  CheckCircleIcon,
   XCircleIcon,
-  ClockIcon,
-  XMarkIcon,
 } from "@heroicons/react/24/solid";
-import BlurModal from "@/components/modals/BlurModal";
-import { useAlert } from "@/components/alerts/GlobalAlertProvider";
-import {
-  axiosInstance,
-  camundaTaskSubmit,
-  springRequestByTaskApi,
-} from "@/utils/api/api";
-import { getCamundaTasks, getStockRequestList } from "@/utils/services/getApi";
-import PdfPreview from "@/components/pdf/PdfPreview";
 import LoadingScreen from "@/components/loading/loading";
-import { StockRequestList } from "@/utils/types/stock-request-list";
-import TaskCard from "./_components/Task.Card";
-import { getAuthenticatedUser } from "@/utils/auth/auth";
+import SortButton from "./_components/buttons/SortButton";
+import HistoryButton from "./_components/buttons/HistoryButton";
+import ConfirmationModal from "./_components/modals/ConfirmationModal";
+import TaskPanelCard from "./_components/cards/TaskPanelCard";
+import PdfPreviewPanelCard from "./_components/cards/PdfPreviewPanelCard";
+import { useTaskPage } from "./hooks/useTaskPage";
 
 export default function TaskPage() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<() => void>(() => () => {});
-  const { showAlert } = useAlert();
-  const [userRole, setUserRole] = useState<string>("USER");
-  const [requestList, setRequestList] = useState<StockRequestList[]>([]);
-
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      try {
-        const user = await getAuthenticatedUser();
-        if (user) {
-          setUserRole(user.role || "USER");
-        }
-      } catch (error) {
-        console.error("Error fetching user role:", error);
-        setUserRole("USER");
-      }
-    };
-
-    const fetchTasks = async () => {
-      try {
-        const tasksData = await getCamundaTasks();
-        const stockRequestList = await getStockRequestList();
-
-        // Sort tasks by 'created' date in descending order (newest first)
-        const sortedTasks = tasksData.sort(
-          (a: Task, b: Task) =>
-            new Date(b.created).getTime() - new Date(a.created).getTime()
-        );
-
-        setTasks(sortedTasks);
-        setRequestList(stockRequestList);
-      } catch {
-        setError("Error fetching tasks. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserRole();
-    fetchTasks();
-  }, []);
-
-  const fetchStockRequestByTaskId = async (
-    processInstanceId: string
-  ): Promise<StockRequest | null> => {
-    try {
-      console.log(
-        `Fetching stock request for processInstanceId: ${processInstanceId}`
-      );
-
-      // Ensure we fetch the correct structure
-      const response = await axiosInstance.get<{ stockRequest: StockRequest }>(
-        springRequestByTaskApi(processInstanceId)
-      );
-
-      console.log("Full API Response:", response.data);
-
-      if (!response.data || !response.data.stockRequest) {
-        console.warn("Stock request is missing or invalid:", response.data);
-        return null;
-      }
-
-      return response.data.stockRequest;
-    } catch (error) {
-      console.error("Error fetching stock request:", error);
-      return null;
-    }
-  };
-
-  const handleRejecte = (task: Task) => {
-    confirmAction(() => executeTaskAction(task, false));
-  };
-
-  const confirmAction = (action: () => void) => {
-    setModalAction(() => action);
-    setConfirmModalOpen(true);
-  };
-
-  const handleApprove = (task: Task) => {
-    confirmAction(() => executeTaskAction(task, true));
-  };
-
-  const executeTaskAction = async (task: Task, approve: boolean) => {
-    try {
-      const user = await getAuthenticatedUser();
-      if (!user || !user.id) {  // ✅ Ensure user ID is not null
-        showAlert("User ID not found. Please log in again.", "warning");
-        return;
-      }
-
-      const stockRequest = await fetchStockRequestByTaskId(task.processInstanceId);
-
-      if (!stockRequest || !stockRequest.requestId) {
-        showAlert("Stock request not found or missing requestId.", "danger");
-        console.warn("Stock request is invalid:", stockRequest);
-        return;
-      }
-
-      console.log("Executing task with stockRequest:", stockRequest);
-
-      const userHospitalId = user.id.toString();  // ✅ Correct field
-      const userRole = user.role || "USER";
-
-      let requestBody = {};
-
-      if (userRole === "DIRECTOR") {
-        requestBody = {
-          variables: {
-            requestId: {
-              value: stockRequest.requestId.toString(),
-              type: "String",
-            },
-            stockSubjectPerson: {  // ✅ Correct field
-              value: userHospitalId,
-              type: "String",
-            },
-            approve: { value: approve, type: "Boolean" },
-          },
-        };
-      } else {
-        requestBody = {
-          variables: {
-            requestId: {
-              value: stockRequest.requestId.toString(),
-              type: "String",
-            },
-            stockUserApprove: {  // ✅ Correct field
-              value: userHospitalId,
-              type: "String",
-            },
-            requestComplete: { value: approve, type: "Boolean" },
-          },
-        };
-      }
-
-      console.log("Submitting request:", requestBody);
-
-      await axiosInstance.post(
-        `${camundaTaskSubmit}/${task.id}/submit-form`,
-        requestBody
-      );
-
-      showAlert(
-        `Task ${approve ? "approved" : "rejected"} successfully!`,
-        approve ? "success" : "warning"
-      );
-      setTasks((prevTasks) => prevTasks.filter((t) => t.id !== task.id));
-      setSelectedPdfUrl(null);
-      setSelectedTask(null);
-    } catch (err) {
-      console.error(`Error ${approve ? "approving" : "rejecting"} task:`, err);
-      showAlert(
-        `Failed to ${approve ? "approve" : "reject"} task. Please try again.`,
-        "danger"
-      );
-    }
-    setConfirmModalOpen(false);
-  };
-
-
-  const handleTaskClick = async (task: Task) => {
-    setSelectedTask(task);
-    try {
-      const stockRequest = await fetchStockRequestByTaskId(
-        task.processInstanceId
-      );
-      if (!stockRequest) {
-        setSelectedPdfUrl(null);
-        setError("No stock request found for this task.");
-        return;
-      }
-
-      const pdfUrl = generatePDF(stockRequest, requestList);
-      setSelectedPdfUrl(pdfUrl);
-      setError(null);
-    } catch (err) {
-      console.error("Error generating PDF:", err);
-      setSelectedPdfUrl(null);
-      setError("Failed to generate PDF. Please try again.");
-    }
-  };
-
-  const handleClosePreview = () => {
-    setSelectedPdfUrl(null);
-    setSelectedTask(null);
-  };
-
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-  const handleSort = () => {
-    const sortedTasks = [...tasks].sort((a, b) => {
-      if (sortOrder === "asc") {
-        return a.created.localeCompare(b.created);
-      } else {
-        return b.created.localeCompare(a.created);
-      }
-    });
-
-    setTasks(sortedTasks);
-    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-  };
+  const {
+    tasks,
+    selectedTask,
+    selectedPdfUrl,
+    userRole,
+    error,
+    loading,
+    sortOrder,
+    isConfirmModalOpen,
+    modalAction,
+    handleTaskClick,
+    handleClosePreview,
+    handleApprove,
+    handleReject,
+    handleSort,
+    setConfirmModalOpen,
+    page,
+    size,
+    setPage,
+    totalTasks,
+  } = useTaskPage();
 
   if (loading) {
     return <LoadingScreen message="Loading requests..." />;
@@ -255,9 +53,9 @@ export default function TaskPage() {
   }
 
   return (
-    <div className="flex-1 py-1 h-screen flex flex-col bg-gradient-to-br from-white to-gray-50">
+    <div className="flex-1 h-screen flex flex-col bg-gradient-to-br from-white to-gray-50">
       <div className="mx-auto w-full max-w-7xl py-6 px-6 rounded-md flex flex-col h-full">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-1">
           <div>
             <h1 className="text-3xl font-bold text-gray-800 flex items-center">
               ภาระงาน
@@ -287,150 +85,53 @@ export default function TaskPage() {
 
         <div className="flex items-center justify-between gap-4 mb-6 pb-3 border-b border-gray-200">
           <div className="flex items-center">
-            <Button
-              onPress={handleSort}
-              className="rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 flex items-center space-x-2 transition-all"
-              variant="flat"
-              size="sm"
-            >
-              {sortOrder === "asc" ? (
-                <ArrowUpIcon className="h-4 w-4" />
-              ) : (
-                <ArrowDownIcon className="h-4 w-4" />
-              )}
-              <span>เรียงตามวันที่</span>
-            </Button>
-
+            <SortButton sortOrder={sortOrder} onClick={handleSort} />
             <Chip className="ml-4" variant="flat" color="primary">
               {tasks.length} งานที่รอดำเนินการ
             </Chip>
           </div>
 
+
           <Tooltip content="ดูประวัติงานที่เสร็จสิ้น">
-            <Button
-              variant="light"
-              size="sm"
-              className="text-gray-600"
-              startContent={<ClockIcon className="h-4 w-4" />}
-            >
-              ประวัติงานที่เสร็จสิ้น
-            </Button>
+            <HistoryButton />
           </Tooltip>
         </div>
 
         <div className="flex justify-between gap-6 flex-grow h-full">
           {/* Task List Panel */}
-          <div className="p-5 bg-white rounded-xl border border-gray-100 shadow-sm flex-1 max-w-[30%] h-[calc(100vh-220px)] overflow-auto scrollbar-hidden">
-            <div className="mb-4">
-              <h2 className="text-lg font-semibold text-gray-700">
-                <div className="flex items-center gap-x-2">
-                  <Chip
-                    color="secondary"
-                    variant="dot"
-                    className="border-none"
-                  />
-                  <p>ภาระงานที่รอดำเนินการ</p>
-                  <Chip
-                    radius="full"
-                    color="default"
-                    size="sm"
-                    className="ml-2"
-                  >
-                    {tasks.length}
-                  </Chip>
-                </div>
-              </h2>
-            </div>
-            {tasks.length > 0 ? (
-              <TaskCard
-                tasks={tasks}
-                onTaskClick={(task) => handleTaskClick(task)}
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-                <DocumentIcon className="h-12 w-12 mb-2 opacity-30" />
-                <p className="text-center">No pending tasks</p>
-              </div>
-            )}
-          </div>
+          <TaskPanelCard tasks={tasks}
+            onTaskClick={handleTaskClick}
+          />
 
           {/* PDF Preview Panel */}
-          <div className="p-5 bg-white rounded-xl border border-gray-100 shadow-sm flex-1 overflow-hidden ml-5 flex flex-col h-[calc(100vh-220px)] justify-center items-center">
-            {selectedPdfUrl ? (
-              <div className="w-full h-full flex flex-col flex-grow min-h-0">
-                <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
-                  <h3 className="font-medium text-gray-700">
-                    {selectedTask?.name || "Document Preview"}
-                  </h3>
-                  <Chip color="warning" size="sm" variant="flat">
-                    จำเป็นต้องตรวจสอบ
-                  </Chip>
-                </div>
+          <PdfPreviewPanelCard
+            selectedTask={selectedTask}
+            pdfUrl={selectedPdfUrl}
+            onClose={handleClosePreview}
+            onApprove={() => selectedTask && handleApprove(selectedTask)}
+            onReject={() => selectedTask && handleReject(selectedTask)}
+          />
 
-                <div className="flex-grow overflow-hidden rounded-md border border-gray-200">
-                  <PdfPreview pdfUrl={selectedPdfUrl} />
-                </div>
-
-                <div className="flex justify-between items-center mt-4 pt-2 border-t border-gray-100">
-                  <Button
-                    className="rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700"
-                    onPress={handleClosePreview}
-                    size="sm"
-                    startContent={<XMarkIcon className="h-4 w-4" />}
-                  >
-                    ปิด
-                  </Button>
-
-                  <div className="flex gap-3">
-                    <Button
-                      className="rounded-md bg-red-50 hover:bg-red-100 text-red-600 transition-all"
-                      startContent={<XCircleIcon className="h-4 w-4" />}
-                      size="sm"
-                      onPress={() =>
-                        selectedTask && handleRejecte(selectedTask)
-                      }
-                    >
-                      ไม่อนุมัติ
-                    </Button>
-
-                    <Button
-                      className="rounded-md bg-green-50 hover:bg-green-100 text-green-600 transition-all"
-                      endContent={<CheckCircleIcon className="h-4 w-4" />}
-                      size="sm"
-                      onPress={() =>
-                        selectedTask && handleApprove(selectedTask)
-                      }
-                    >
-                      อนุมัติ
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center text-gray-400">
-                <DocumentIcon className="h-16 w-16 mb-3 opacity-20" />
-                <p className="text-lg font-medium text-gray-500 mb-1">
-                  ไม่มีเอกสารที่เลือก
-                </p>
-                <p className="text-sm text-gray-400">
-                  เลือกงานจากรายการเพื่อดูรายละเอียด
-                </p>
-              </div>
-            )}
-          </div>
+        </div>
+        <div className="flex items-center mt-2">
+          <Pagination
+            total={Math.ceil(totalTasks / size)}
+            page={page + 1}
+            onChange={(newPage) => setPage(newPage - 1)}
+            showControls
+            color="secondary"
+          />
         </div>
       </div>
 
+
       {/* Confirmation Modal */}
-      <BlurModal
+      <ConfirmationModal
         isOpen={isConfirmModalOpen}
         onClose={() => setConfirmModalOpen(false)}
-        onAction={modalAction}
-        title="Decision Confirm"
-        actionLabel="ยืนยัน"
-      >
-        <p>คุณแน่ใจว่าต้องการดำเนินการนี้หรือไม่?</p>
-      </BlurModal>
+        onConfirm={modalAction}
+      />
+
     </div>
   );
 }

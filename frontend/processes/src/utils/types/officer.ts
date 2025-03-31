@@ -1,4 +1,4 @@
 export interface Officer {
-  officerId: string;
+  officerId: number;
   officerName: string;
 }

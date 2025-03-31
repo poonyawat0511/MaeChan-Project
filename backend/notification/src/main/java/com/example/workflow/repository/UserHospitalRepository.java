@@ -12,4 +12,6 @@ public interface UserHospitalRepository extends JpaRepository<UserHospital, Long
     Optional<UserHospital> findByEmail(String email);
 
     UserHospital findByRole(Role role);
+
+    boolean existsByEmail(String email);
 }

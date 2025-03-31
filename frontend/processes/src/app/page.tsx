@@ -8,7 +8,6 @@ import {
   DollarSign,
   LucideIcon,
   ArrowRight,
-  Star,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -80,18 +79,24 @@ export default function LandingPage() {
 
   const testimonials = [
     {
-      name: "Sarah Johnson",
-      role: "Product Manager",
-      company: "Tech Co",
-      content:
-        "This platform has transformed how our team collaborates and manages tasks.",
+      name: "นายอนุวัตร ฟูเฟื่อง",
+      role: "Stakeholder",
+      company: "โรงพยาบาลแม่จัน",
     },
     {
-      name: "Mark Chen",
+      name: "นายปุณยวัจน์ ขมเล็ก",
       role: "Team Lead",
-      company: "Innovation Labs",
-      content:
-        "The analytics features have helped us optimize our workflow significantly.",
+      company: "มหาวิทยาลัยแม่ฟ้าหลวง",
+    },
+    {
+      name: "นายโอสาธี จันทศรี",
+      role: "Team Lead",
+      company: "มหาวิทยาลัยแม่ฟ้าหลวง",
+    },
+    {
+      name: "นางสาวคีรีมาศ ศรีบัว",
+      role: "UX/UI , Frontend",
+      company: "มหาวิทยาลัยแม่ฟ้าหลวง",
     },
   ];
 
@@ -156,7 +161,7 @@ export default function LandingPage() {
             </span>
             <h2 className="text-3xl font-bold text-white relative">
               <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-300 blur-3xl opacity-20 animate-pulse" />
-              Powerful Features
+              ระบบการทำงานที่ทรงพลัง
             </h2>
             <p className="mt-4 text-gray-400 max-w-2xl mx-auto">
             ทุกสิ่งที่คุณต้องการเพื่อจัดการงานของคุณอย่างมีประสิทธิภาพและเพิ่มประสิทธิภาพให้กับทีมของคุณ
@@ -187,11 +192,11 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span className="inline-block px-4 py-2 rounded-full bg-blue-500/10 text-blue-400 text-sm mb-4">
-              Testimonials
+              เกี่ยวกับเรา
             </span>
             <h2 className="text-3xl font-bold text-white relative">
               <span className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-300 blur-3xl opacity-20 animate-pulse" />
-              What Our Users Say
+              ผู้ดำเนินโครงการ
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -211,15 +216,9 @@ export default function LandingPage() {
                         {testimonial.name}
                       </h4>
                       <p className="text-gray-400 text-sm">
-                        {testimonial.role} at {testimonial.company}
+                        {testimonial.role} ที่ {testimonial.company}
                       </p>
                     </div>
-                  </div>
-                  <p className="text-gray-300">{testimonial.content}</p>
-                  <div className="flex items-center mt-4 text-blue-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current" />
-                    ))}
                   </div>
                 </div>
               </div>

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.workflow.model.StockRequest;
@@ -21,9 +23,14 @@ public class StockRequestService {
         return stockRequestRepository.save(stockRequest);
     }
 
+    public Page<StockRequest> findAllStockRequests(Pageable pageable) {
+        return stockRequestRepository.findAll(pageable);
+    }
+
     public List<StockRequest> findAllStockRequest() {
         return stockRequestRepository.findAll();
     }
+
 
     public StockRequest findStockRequestById(Long requestId) {
         Optional<StockRequest> purchaseRequest = stockRequestRepository.findById(requestId);

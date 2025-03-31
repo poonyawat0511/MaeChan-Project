@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.workflow.dto.StockRequestDto;
@@ -35,6 +39,18 @@ public class StockRequestController {
         return new ResponseEntity<>(createdStockRequestDto, HttpStatus.CREATED);
     }
 
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<StockRequestDto>> getStockRequestList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<StockRequest> stockRequestPage = stockRequestService.findAllStockRequests(pageable);
+        Page<StockRequestDto> dtoPage = stockRequestPage.map(StockRequestMapper::mapToStockRequestDto);
+
+        return new ResponseEntity<>(dtoPage, HttpStatus.OK);
+    }
+
     @GetMapping
     public ResponseEntity<List<StockRequestDto>> getStockRequestList() {
         List<StockRequest> stockRequests = stockRequestService.findAllStockRequest();
@@ -54,7 +70,7 @@ public class StockRequestController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
+
     @PatchMapping("/{requestId}")
     public ResponseEntity<StockRequestDto> updateStockRequestById(@PathVariable Long requestId, @RequestBody StockRequestDto stockRequestDto) {
         StockRequest stockRequest = StockRequestMapper.mapToStockRequest(stockRequestDto);
