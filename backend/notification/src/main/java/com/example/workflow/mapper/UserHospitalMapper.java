@@ -24,7 +24,7 @@ public class UserHospitalMapper {
         return dto;
     }
 
-    public static UserHospital mapToStockUser(UserHospitalDto userHospitalDto) {
+    public static UserHospital mapToUserHospital(UserHospitalDto userHospitalDto) {
         if (userHospitalDto == null) {
             return null;
         }
