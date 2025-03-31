@@ -40,18 +40,18 @@ public class StockRequestController {
     }
 
     @GetMapping("/paginated")
-public ResponseEntity<Page<StockRequestDto>> getStockRequestList(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "12") int size) {
+    public ResponseEntity<Page<StockRequestDto>> getStockRequestList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size) {
 
-    Pageable pageable = PageRequest.of(page, size);
-    Page<StockRequest> stockRequestPage = stockRequestService.findAllStockRequests(pageable);
-    Page<StockRequestDto> dtoPage = stockRequestPage.map(StockRequestMapper::mapToStockRequestDto);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<StockRequest> stockRequestPage = stockRequestService.findAllStockRequests(pageable);
+        Page<StockRequestDto> dtoPage = stockRequestPage.map(StockRequestMapper::mapToStockRequestDto);
 
-    return new ResponseEntity<>(dtoPage, HttpStatus.OK);
-}
+        return new ResponseEntity<>(dtoPage, HttpStatus.OK);
+    }
 
-@GetMapping
+    @GetMapping
     public ResponseEntity<List<StockRequestDto>> getStockRequestList() {
         List<StockRequest> stockRequests = stockRequestService.findAllStockRequest();
         List<StockRequestDto> stockRequestDtos = stockRequests.stream()
@@ -70,7 +70,7 @@ public ResponseEntity<Page<StockRequestDto>> getStockRequestList(
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
+
     @PatchMapping("/{requestId}")
     public ResponseEntity<StockRequestDto> updateStockRequestById(@PathVariable Long requestId, @RequestBody StockRequestDto stockRequestDto) {
         StockRequest stockRequest = StockRequestMapper.mapToStockRequest(stockRequestDto);

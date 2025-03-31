@@ -6,7 +6,7 @@ import com.example.workflow.model.UserHospital;
 
 public class UserHospitalMapper {
 
-    public static UserHospitalDto mapToStockUserDto(UserHospital userHospital) {
+    public static UserHospitalDto mapToUserHospitalDto(UserHospital userHospital) {
         if (userHospital == null) {
             return null;
         }
