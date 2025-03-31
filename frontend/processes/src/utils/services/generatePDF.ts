@@ -116,8 +116,11 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
     formatNumber(item.totalPrice),
     "-",
     formatNumber(item.lastPrice) || "-",
-    stockRequest.transportDay,
+    `${stockRequest?.transportDay || '-'}` + ' วัน',
   ]);
+
+  const itemCount = itemRows.length;
+  const sumTotalPrice = filteredStockRequestList.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
 
   doc.autoTable({
     startY: margin + 100,
@@ -143,18 +146,19 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
     },
 });
 
-  const finalY = doc.lastAutoTable?.finalY ?? margin + 120;
+const finalY = doc.lastAutoTable?.finalY ?? margin + 120;
+
+  //line 7.1 total summary
+  thaitext(doc, "รวม " + itemCount + " รายการ เป็นเงินทั้งสิ้น  " + formatNumber(sumTotalPrice) + "  บาท", margin, finalY+10);
 
   //table summary
-  const summaryColumns = ["รายการ", "จำนวนเงิน (บาท)"];
+  const summaryColumns = ["ยอดเงินที่ได้รับจัดสรร", "ยอดเงินที่ซื้อแล้ว", "ยอดเงินที่เหลือ"];
   const summaryRows = [
-    ["ยอดเงินที่ได้รับจัดสรร", formatNumber(stockRequest.stockBudgetTotal), "บาท"],
-    ["ยอดเงินที่ซื้อแล้ว", formatNumber(stockRequest.stockBudgetUse), "บาท"],
-    ["ยอดเงินที่เหลือ", formatNumber(stockRequest.stockBudgetRemain), "บาท"],
+    [formatNumber(stockRequest.stockBudgetTotal)+ " บาท",formatNumber(stockRequest.stockBudgetUse) + " บาท", formatNumber(stockRequest.stockBudgetRemain) + " บาท"],
   ];
 
   doc.autoTable({
-    startY: finalY + 10,
+    startY: finalY + 20,
     head: [summaryColumns],
     body: summaryRows,
     styles: { 
@@ -172,12 +176,18 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
         lineWidth: 0.2 // Set thickness of the header border
     },
     columnStyles: { 
-        0: { cellWidth: 80, halign: "left" }, 
+        0: { cellWidth: 60, halign: "left" }, 
         1: { halign: "left" } 
     },
 });
 
-  const finalY2 = doc.lastAutoTable?.finalY ?? finalY + 30;
+  let finalY2 = doc.lastAutoTable?.finalY ?? finalY + 20;
+
+  // Check if the content exceeds the page height and add a new page if necessary
+  if (finalY2 + 30 > doc.internal.pageSize.getHeight() - margin) {
+    doc.addPage();
+    finalY2 = margin; // Reset finalY2 for the new page
+  }
 
   //line 8 //stockRequest.purchaseType relation needed
   thaitext(doc, `ด้วยวิธี `, margin, finalY2 + 10);
@@ -187,8 +197,14 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
 
   thaitext(doc, ` และขอแต่งตั้งคณะกรรมการตรวจรับพัสดุ ตามารายนามดังนี้`, margin + 81, finalY2 + 10);
 
+  // Check again for overflow before adding more content
+  if (finalY2 + 50 > doc.internal.pageSize.getHeight() - margin) {
+    doc.addPage();
+    finalY2 = margin; // Reset finalY2 for the new page
+  }
+
   //line 9
-  doc.text('สถานะ __________________________________', margin +100, finalY2 + 30);
+  doc.text('สถานะ __________________________________', margin + 100, finalY2 + 30);
   if (stockRequest.requestComplete === "Y") {
     thaitext(doc, `ผ่านการตรวจสอบ`, margin + 115, finalY2 + 30);
   } else if (stockRequest.requestComplete === null) {
