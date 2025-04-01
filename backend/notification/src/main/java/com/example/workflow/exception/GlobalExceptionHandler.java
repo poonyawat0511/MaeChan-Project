@@ -10,6 +10,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.example.workflow.exception.notifyTargetUser.NotifyTargetUserAlreadyExistsException;
+import com.example.workflow.exception.notifyTargetUser.NotifyTargetUserNotFoundException;
 import com.example.workflow.exception.notifyTime.NotifyTimeAlreadyExistsException;
 import com.example.workflow.exception.notifyTime.NotifyTimeNotFoundException;
 import com.example.workflow.exception.userHospital.UserHospitalAlreadyExistsException;
@@ -33,8 +35,18 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
+    @ExceptionHandler(NotifyTargetUserNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNotifyTimeNotFound(NotifyTargetUserNotFoundException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
     @ExceptionHandler(NotifyTimeAlreadyExistsException.class)
     public ResponseEntity<Map<String, Object>> handleNotifyTimeAlreadyExists(NotifyTimeAlreadyExistsException ex) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(NotifyTargetUserAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleNotifyTargetUserAlreadyExists(NotifyTargetUserAlreadyExistsException ex) {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 
