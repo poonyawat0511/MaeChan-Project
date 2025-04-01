@@ -24,35 +24,35 @@ import jakarta.validation.Valid;
 public class NotifyTimeController {
 
     @Autowired
-    private NotifyTimeService messageTimeService;
+    private NotifyTimeService notifyTimeService;
+
+    @PostMapping
+    public ResponseEntity<NotifyTime> createTime(@Valid @RequestBody NotifyTime notifyTime) {
+        NotifyTime created = notifyTimeService.createTime(notifyTime);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
 
     @GetMapping
-    public ResponseEntity<List<NotifyTime>> getAllMessageTimes() {
-        List<NotifyTime> messageTimes = messageTimeService.getAllMessageTimes();
-        return new ResponseEntity<>(messageTimes, HttpStatus.OK);
+    public ResponseEntity<List<NotifyTime>> getAllTimes() {
+        List<NotifyTime> messageTimes = notifyTimeService.getAllTimes();
+        return ResponseEntity.ok(messageTimes);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<NotifyTime> getMessageTimeById(@PathVariable Long id) {
-        ResponseEntity<NotifyTime> responseEntity = messageTimeService.getMessageTimeById(id);
-        return responseEntity.getStatusCode().is2xxSuccessful() ? ResponseEntity.ok(responseEntity.getBody()) : ResponseEntity.notFound().build();
+    public ResponseEntity<NotifyTime> getTimeById(@PathVariable Long id) {
+        NotifyTime notifyTime = notifyTimeService.getTimeById(id);
+        return ResponseEntity.ok(notifyTime);
     }
-
-    @PostMapping
-    public ResponseEntity<?> createMessageTime(@Valid @RequestBody NotifyTime messageTime) {
-        return messageTimeService.createMessageTime(messageTime);
-    }
-    
 
     @PatchMapping("/{id}")
-    public ResponseEntity<NotifyTime> updateMessageTime(@PathVariable Long id, @RequestBody NotifyTime messageTime) {
-        ResponseEntity<NotifyTime> responseEntity = messageTimeService.updateMessageTime(id, messageTime);
-        return responseEntity.getStatusCode().is2xxSuccessful() ? ResponseEntity.ok(responseEntity.getBody()) : ResponseEntity.notFound().build();
+    public ResponseEntity<NotifyTime> updateTime(@PathVariable Long id, @RequestBody NotifyTime messageTime) {
+        NotifyTime updated = notifyTimeService.updateTime(id, messageTime);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMessageTime(@PathVariable Long id) {
-        ResponseEntity<Void> responseEntity = messageTimeService.deleteMessageTime(id);
-        return responseEntity.getStatusCode().is2xxSuccessful() ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deleteTime(@PathVariable Long id) {
+        notifyTimeService.deleteTime(id);
+        return ResponseEntity.noContent().build();
     }
 }
