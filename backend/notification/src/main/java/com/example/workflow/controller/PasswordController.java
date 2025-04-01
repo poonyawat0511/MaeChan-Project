@@ -12,13 +12,13 @@ import com.example.workflow.dto.ForgotPasswordDto;
 import com.example.workflow.service.UserHospitalService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/forgot-password")
 public class PasswordController {
 
     @Autowired
     private UserHospitalService userHospitalService;
 
-    @PostMapping("/forgot-password")
+    @PostMapping
     public ResponseEntity<String> forgotPassword(@RequestBody ForgotPasswordDto forgotPasswordDto) {
         String result = userHospitalService.validateAndProcessForgotPassword(forgotPasswordDto);
 
