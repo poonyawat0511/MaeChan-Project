@@ -25,8 +25,14 @@ public class UserHospitalService {
         return userHospitalRepository.save(userHospital);
     }
 
-    public Page<UserHospital> findAllUserHospitals(Pageable pageable){
-        return userHospitalRepository.findAll(pageable);
+    public Page<UserHospital> findAllUserHospitals(String search,Pageable pageable){
+        if (search == null || search.isBlank()) {
+            return userHospitalRepository.findAll(pageable);
+        }
+        return userHospitalRepository
+        .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+            search, search, search, pageable
+        );
     }
 
     public List<UserHospital> findAllUserHospital() {

@@ -12,6 +12,7 @@ import {
   targetApi,
   timeApi,
   userHospitalApi,
+  userHospitalPaginatedApi,
   warehouseApi,
 } from "../api/api";
 import { StockRequest } from "../types/stock-request";
@@ -158,6 +159,18 @@ export const getUserHospital = async (): Promise<UserHospital[]> => {
     return response.data;
   } catch (error) {
     console.error("Error fetching stock users:", error);
+    throw error;
+  }
+};
+
+export const getUserHospitalByPageTable = async (page = 0, size = 12): Promise<Page<UserHospital>> => {
+  try {
+    const response = await axiosInstance.get<Page<UserHospital>>(
+      `${userHospitalPaginatedApi}?page=${page}&size=${size}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user Hospital :", error);
     throw error;
   }
 };
