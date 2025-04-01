@@ -1,6 +1,7 @@
 package com.example.workflow.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.workflow.exception.userHospital.UserHospitalAlreadyExistsException;
 import com.example.workflow.exception.userHospital.UserHospitalNotFoundException;
 import com.example.workflow.model.UserHospital;
 import com.example.workflow.repository.UserHospitalRepository;
@@ -45,24 +47,32 @@ public class UserHospitalService {
     }
 
     public UserHospital updateUserHospital(UserHospital updatedUserHospital) {
-        return userHospitalRepository.findById(updatedUserHospital.getId())
-                .map(existingUserHospital -> {
-                    existingUserHospital.setEmail(updatedUserHospital.getEmail());
-                    existingUserHospital.setFirstName(updatedUserHospital.getFirstName());
-                    existingUserHospital.setLastName(updatedUserHospital.getLastName());
-                    existingUserHospital.setLineId(updatedUserHospital.getLineId());
-                    existingUserHospital.setRole(updatedUserHospital.getRole());
-                    existingUserHospital.setSignaturePath(updatedUserHospital.getSignaturePath());
-    
-                    if (updatedUserHospital.getPassword() != null && !updatedUserHospital.getPassword().isEmpty()) {
-                        String hashedPassword = passwordEncoder.encode(updatedUserHospital.getPassword());
-                        existingUserHospital.setPassword(hashedPassword);
-                    }
-    
-                    return userHospitalRepository.save(existingUserHospital);
-                })
-                .orElseThrow(() -> new UserHospitalNotFoundException(updatedUserHospital.getId()));
+    Long id = updatedUserHospital.getId();
+
+    Optional<UserHospital> duplicateEmail = userHospitalRepository.findByEmail(updatedUserHospital.getEmail());
+    if (duplicateEmail.isPresent() && !duplicateEmail.get().getId().equals(id)) {
+        throw new UserHospitalAlreadyExistsException(updatedUserHospital.getEmail());
     }
+
+    return userHospitalRepository.findById(id)
+            .map(existingUserHospital -> {
+                existingUserHospital.setEmail(updatedUserHospital.getEmail());
+                existingUserHospital.setFirstName(updatedUserHospital.getFirstName());
+                existingUserHospital.setLastName(updatedUserHospital.getLastName());
+                existingUserHospital.setLineId(updatedUserHospital.getLineId());
+                existingUserHospital.setRole(updatedUserHospital.getRole());
+                existingUserHospital.setSignaturePath(updatedUserHospital.getSignaturePath());
+
+                if (updatedUserHospital.getPassword() != null && !updatedUserHospital.getPassword().isEmpty()) {
+                    String hashedPassword = passwordEncoder.encode(updatedUserHospital.getPassword());
+                    existingUserHospital.setPassword(hashedPassword);
+                }
+
+                return userHospitalRepository.save(existingUserHospital);
+            })
+            .orElseThrow(() -> new UserHospitalNotFoundException(id));
+}
+
 
     public void deleteUserHospitalById(Long userHospitalId) {
         if (!userHospitalRepository.existsById(userHospitalId)) {
