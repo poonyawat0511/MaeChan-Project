@@ -14,7 +14,7 @@ export function useUserPage() {
   const [totalItems, setTotalItems] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-  const itemsPerPage = 12;
+  const itemsPerPage = 7;
   const debouncedSearch = useDebounce(searchQuery, 500);
 
   const { showAlert } = useAlert();

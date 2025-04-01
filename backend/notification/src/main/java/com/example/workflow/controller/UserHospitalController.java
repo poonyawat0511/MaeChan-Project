@@ -37,7 +37,7 @@ public class UserHospitalController {
     }
 
     @GetMapping("/paginated")
-    public ResponseEntity<Page<UserHospitalDto>> getUserhospitalList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size, @RequestParam(required = false) String search) {
+    public ResponseEntity<Page<UserHospitalDto>> getUserhospitalList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "7") int size, @RequestParam(required = false) String search) {
         Pageable pageable = PageRequest.of(page, size);
         Page<UserHospital> userHospitalsPage = userHospitalService.findAllUserHospitals(search,pageable);
         Page<UserHospitalDto> dtoPage = userHospitalsPage.map(UserHospitalMapper::mapToUserHospitalDto);
