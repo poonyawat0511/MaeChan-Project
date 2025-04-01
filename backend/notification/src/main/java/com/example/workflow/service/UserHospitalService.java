@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.workflow.model.UserHospital;
 import com.example.workflow.repository.UserHospitalRepository;
+import com.example.workflow.dto.ForgotPasswordDto;
 
 @Service
 public class UserHospitalService {
@@ -62,5 +63,33 @@ public class UserHospitalService {
     public String deleteUserHospitalById(Long userHospitalId) {
         userHospitalRepository.deleteById(userHospitalId);
         return "UserHospital id:" + userHospitalId + " has been deleted";
+    }
+
+    public String validateAndProcessForgotPassword(ForgotPasswordDto forgotPasswordDto) {
+        // Check if passwords match
+        if (!forgotPasswordDto.getNewPassword().equals(forgotPasswordDto.getConfirmPassword())) {
+            return "PASSWORDS_DO_NOT_MATCH";
+        }
+
+        // Check if password meets minimum length requirement
+        if (forgotPasswordDto.getNewPassword().length() < 8) {
+            return "PASSWORD_TOO_SHORT";
+        }
+
+        UserHospital userHospital = userHospitalRepository.findByFirstNameAndLastNameAndEmail(
+            forgotPasswordDto.getFirstName(),
+            forgotPasswordDto.getLastName(),
+            forgotPasswordDto.getEmail()
+        );
+
+        if (userHospital == null) {
+            return "USER_NOT_FOUND";
+        }
+
+        // Encrypt the new password before saving
+        String hashedPassword = passwordEncoder.encode(forgotPasswordDto.getNewPassword());
+        userHospital.setPassword(hashedPassword);
+        userHospitalRepository.save(userHospital);
+        return "SUCCESS";
     }
 }
