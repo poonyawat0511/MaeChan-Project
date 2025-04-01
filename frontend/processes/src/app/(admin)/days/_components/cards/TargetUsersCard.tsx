@@ -16,6 +16,8 @@ import {
   UserMinusIcon,
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
+import { usePagination } from "@heroui/react";
+import Pagination from "../paginations/Pagination";
 
 interface Props {
   users: UserHospital[];
@@ -49,6 +51,16 @@ export default function TargetUsersCard({
   paginatedUsers,
   paginatedSelectedUsers,
 }: Props) {
+  const {
+  } = usePagination({
+    total: totalPages,
+    showControls: true,
+    siblings: 1,
+    boundaries: 1,
+    page: currentPage,
+    onChange: (page) => setCurrentPage(page),
+  });
+
   return (
     <Card className="h-full flex flex-col">
       <CardHeader className="px-3 py-2 flex-shrink-0">
@@ -83,26 +95,14 @@ export default function TargetUsersCard({
 
         {/* Pagination */}
         {totalSelectedPages > 1 && (
-          <div className="flex justify-center mt-2 gap-2">
-            <Button size="sm" variant="flat" onPress={() => setSelectedCurrentPage(Math.max(selectedCurrentPage - 1, 1))} isDisabled={selectedCurrentPage === 1}>ก่อนหน้า</Button>
-            {[...Array(totalSelectedPages)].map((_, index) => (
-              <Button
-                key={index}
-                size="sm"
-                variant={selectedCurrentPage === index + 1 ? "solid" : "flat"}
-                onPress={() => setSelectedCurrentPage(index + 1)}
-              >
-                {index + 1}
-              </Button>
-            ))}
-            <Button
-              size="sm"
-              variant="flat"
-              onPress={() => setSelectedCurrentPage(Math.min(selectedCurrentPage + 1, totalSelectedPages))}
-              isDisabled={selectedCurrentPage === totalSelectedPages}
-            >
-              ถัดไป
-            </Button>
+          <div className="flex justify-center mt-2">
+            <Pagination
+              total={totalSelectedPages}
+              currentPage={selectedCurrentPage}
+              onPageChange={setSelectedCurrentPage}
+              variant="compact"
+            />
+
           </div>
         )}
 
@@ -156,27 +156,11 @@ export default function TargetUsersCard({
         </div>
 
         {totalPages > 1 && (
-          <div className="flex justify-center mt-3 gap-2">
-            <Button size="sm" variant="flat" onPress={() => setCurrentPage(Math.max(currentPage - 1, 1))} isDisabled={currentPage === 1}>ก่อนหน้า</Button>
-            {[...Array(totalPages)].map((_, index) => (
-              <Button
-                key={index}
-                size="sm"
-                variant={currentPage === index + 1 ? "solid" : "flat"}
-                onPress={() => setCurrentPage(index + 1)}
-              >
-                {index + 1}
-              </Button>
-            ))}
-            <Button
-              size="sm"
-              variant="flat"
-              onPress={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
-              isDisabled={currentPage === totalPages}
-            >
-              ถัดไป
-            </Button>
-          </div>
+          <Pagination
+            total={totalPages}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+          />
         )}
       </CardBody>
     </Card>
