@@ -1,7 +1,6 @@
 package com.example.workflow.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.workflow.exception.userHospital.UserHospitalNotFoundException;
 import com.example.workflow.model.UserHospital;
 import com.example.workflow.repository.UserHospitalRepository;
 
@@ -25,14 +25,14 @@ public class UserHospitalService {
         return userHospitalRepository.save(userHospital);
     }
 
-    public Page<UserHospital> findAllUserHospitals(String search,Pageable pageable){
+    public Page<UserHospital> findAllUserHospitals(String search, Pageable pageable) {
         if (search == null || search.isBlank()) {
             return userHospitalRepository.findAll(pageable);
         }
         return userHospitalRepository
-        .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-            search, search, search, pageable
-        );
+                .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+                        search, search, search, pageable
+                );
     }
 
     public List<UserHospital> findAllUserHospital() {
@@ -40,8 +40,8 @@ public class UserHospitalService {
     }
 
     public UserHospital findUserHospitalById(Long userHospitalId) {
-        Optional<UserHospital> userHospital = userHospitalRepository.findById(userHospitalId);
-        return userHospital.orElse(null);
+        return userHospitalRepository.findById(userHospitalId)
+                .orElseThrow(() -> new UserHospitalNotFoundException(userHospitalId));
     }
 
     public UserHospital updateUserHospital(UserHospital updatedUserHospital) {
@@ -53,20 +53,21 @@ public class UserHospitalService {
                     existingUserHospital.setLineId(updatedUserHospital.getLineId());
                     existingUserHospital.setRole(updatedUserHospital.getRole());
                     existingUserHospital.setSignaturePath(updatedUserHospital.getSignaturePath());
-                    existingUserHospital.setId(updatedUserHospital.getId());
-
+    
                     if (updatedUserHospital.getPassword() != null && !updatedUserHospital.getPassword().isEmpty()) {
                         String hashedPassword = passwordEncoder.encode(updatedUserHospital.getPassword());
                         existingUserHospital.setPassword(hashedPassword);
                     }
-
+    
                     return userHospitalRepository.save(existingUserHospital);
                 })
-                .orElseThrow(() -> new RuntimeException("UserHospital not found with id: " + updatedUserHospital.getId()));
+                .orElseThrow(() -> new UserHospitalNotFoundException(updatedUserHospital.getId()));
     }
 
-    public String deleteUserHospitalById(Long userHospitalId) {
+    public void deleteUserHospitalById(Long userHospitalId) {
+        if (!userHospitalRepository.existsById(userHospitalId)) {
+            throw new UserHospitalNotFoundException(userHospitalId);
+        }
         userHospitalRepository.deleteById(userHospitalId);
-        return "UserHospital id:" + userHospitalId + " has been deleted";
     }
 }
