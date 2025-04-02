@@ -1,4 +1,4 @@
-package com.example.workflow.service;
+package com.example.workflow.service.notify;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.workflow.exception.notifyTime.NotifyTimeAlreadyExistsException;
 import com.example.workflow.exception.notifyTime.NotifyTimeNotFoundException;
-import com.example.workflow.model.NotifyTime;
-import com.example.workflow.repository.NotifyTimeRepository;
+import com.example.workflow.model.notify.NotifyTime;
+import com.example.workflow.repository.notify.NotifyTimeRepository;
 
 @Service
 public class NotifyTimeService {

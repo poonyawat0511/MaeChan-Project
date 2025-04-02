@@ -1,7 +1,9 @@
-package com.example.workflow.model;
+package com.example.workflow.model.notify;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+
+import com.example.workflow.model.UserHospital;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
