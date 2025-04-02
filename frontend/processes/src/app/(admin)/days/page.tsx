@@ -17,32 +17,28 @@ export default function DayPage() {
     days,
     times,
     users,
-    selectedUsers,
     loading,
     refreshing,
     userSearchQuery,
     currentPage,
     selectedCurrentPage,
-    filteredUsers,
-    paginatedUsers,
     paginatedSelectedUsers,
     setUserSearchQuery,
     setCurrentPage,
     setSelectedCurrentPage,
+    totalSelectedPages,
     fetchData,
     handleToggleActive,
     handleDeleteTime,
     handleAddUser,
     handleRemoveUser,
+    paginatedUsers,
   } = useDayPage();
 
   const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
   const [editDataTime, setEditDataTime] = useState<{ id?: string; time: string } | null>(null);
   const [selectedTime, setSelectedTime] = useState("รายการเวลาที่แจ้งเตือน");
   const { showAlert } = useAlert();
-
-  const totalPages = Math.ceil(filteredUsers.length / 5);
-  const totalSelectedPages = Math.ceil(selectedUsers.length / 5);
 
   const handleCreateTime = () => {
     setEditDataTime(null);
@@ -108,20 +104,22 @@ export default function DayPage() {
         <div className="w-full lg:w-72 xl:w-80 min-h-0 flex flex-col">
           <TargetUsersCard
             users={users}
-            selectedUsers={selectedUsers}
             userSearchQuery={userSearchQuery}
             onSearchChange={setUserSearchQuery}
             onAddUser={handleAddUser}
             onRemoveUser={handleRemoveUser}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            totalPages={totalPages}
+            totalPages={Math.ceil(users.length / 5)}
             selectedCurrentPage={selectedCurrentPage}
             setSelectedCurrentPage={setSelectedCurrentPage}
             totalSelectedPages={totalSelectedPages}
-            paginatedUsers={paginatedUsers}
             paginatedSelectedUsers={paginatedSelectedUsers}
+            paginatedUsers={paginatedUsers}
           />
+
+
+
         </div>
       </div>
 

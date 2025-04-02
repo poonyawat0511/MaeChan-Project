@@ -33,6 +33,7 @@ export const userHospitalPaginatedApi = "/user-hospital/paginated"
 export const dayApi = "/notify-days";
 export const timeApi = "/notify-time"
 export const targetApi = "/notify-target-user"
+export const targetPaginatedApi = "/notify-target-user/paginated"
 export const stockRequestListApi = "/stock-request-list"
 export const stockPoApi = "/stock-po"
 export const warehouseApi = "/stock-warehouse"

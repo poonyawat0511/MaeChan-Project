@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
-import { axiosInstance, dayApi, targetApi, timeApi } from "@/utils/api/api";
-import { getNotifyDay, getNotifyTime, getUserHospital } from "@/utils/services/getApi";
+import {
+  axiosInstance,
+  dayApi,
+  targetApi,
+  timeApi,
+} from "@/utils/api/api";
+import {
+  getNotifyDay,
+  getNotifyTime,
+  getUserHospital,
+  getNotifyTargetByPageTable,
+} from "@/utils/services/getApi";
 import { Days } from "@/utils/types/day";
 import { Times } from "@/utils/types/time";
 import { UserHospital } from "@/utils/types/user-hospital";
@@ -11,32 +21,18 @@ export function useDayPage() {
   const [days, setDays] = useState<Days[]>([]);
   const [times, setTimes] = useState<Times[]>([]);
   const [users, setUsers] = useState<UserHospital[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState<UserHospital[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [userSearchQuery, setUserSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCurrentPage, setSelectedCurrentPage] = useState(1);
   const usersPerPage = 5;
-  const selectedUsersPerPage = 5;
+  const [paginatedTargetUsers, setPaginatedTargetUsers] = useState<UserHospital[]>([]);
+  const [targetPage, setTargetPage] = useState(1);
+  const [targetTotalPages, setTargetTotalPages] = useState(1);
+  const [targetSearch, setTargetSearch] = useState("");
+
   const { showAlert } = useAlert();
-
-  useEffect(() => {
-    const fetchSelectedUsers = async () => {
-      try {
-        const response = await axiosInstance.get<Target[]>(targetApi);
-        const users = response.data
-          .map((record) => record.targetUser)
-          .filter((user): user is UserHospital => user !== null);
-        setSelectedUsers(users);
-      } catch (error) {
-        console.error("Error fetching selected users:", error, isAuthorized);
-      }
-    };
-
-    fetchSelectedUsers();
-  }, []);
 
   const fetchData = async () => {
     try {
@@ -59,17 +55,31 @@ export function useDayPage() {
     }
   };
 
+  const fetchPaginatedTargetUsers = async () => {
+    try {
+      const response = await getNotifyTargetByPageTable(targetPage - 1, usersPerPage);
+      const users = response.content
+        .map((record: Target) => record.targetUser)
+        .filter((user): user is UserHospital => user !== null);
+
+      setPaginatedTargetUsers(users);
+      setTargetTotalPages(response.totalPages);
+    } catch (error) {
+      console.error("Error fetching paginated target users:", error);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
 
   useEffect(() => {
-    setCurrentPage(1);
-  }, [userSearchQuery]);
+    fetchPaginatedTargetUsers();
+  }, [targetPage, targetSearch]);
 
   useEffect(() => {
-    setSelectedCurrentPage(1);
-  }, [selectedUsers]);
+    setCurrentPage(1);
+  }, [userSearchQuery]);
 
   const handleToggleActive = async (updatedDay: Days) => {
     try {
@@ -77,7 +87,7 @@ export function useDayPage() {
         name: updatedDay.name,
         active: updatedDay.active,
       });
-      showAlert(`Update Active Status Sucessfully!`, `success`);
+      showAlert(`Update Active Status Successfully!`, `success`);
       setDays((prevDays) =>
         prevDays.map((day) =>
           day.id === updatedDay.id ? (response.data as Days) : day
@@ -99,14 +109,17 @@ export function useDayPage() {
   };
 
   const handleAddUser = async (user: UserHospital) => {
-    if (!selectedUsers.some((selectedUser) => selectedUser.id === user.id)) {
-      try {
-        await axiosInstance.post(targetApi, {
-          targetUser: user.id,
-        });
-        showAlert("User Added Successfully", "success");
-        setSelectedUsers((prevUsers) => [...prevUsers, user]);
-      } catch (error) {
+    try {
+      await axiosInstance.post(targetApi, { targetUser: user.id });
+      showAlert("User Added Successfully", "success");
+      fetchPaginatedTargetUsers();
+    } catch (error: unknown) {
+      const status = (error as { response?: { status?: number } })?.response?.status;
+  
+      if (status === 409) {
+        showAlert("ผู้ใช้นี้ถูกเพิ่มไปแล้ว", "warning");
+      } else {
+        showAlert("เกิดข้อผิดพลาดในการเพิ่มผู้ใช้", "danger");
         console.error("Error adding user:", error);
       }
     }
@@ -115,28 +128,19 @@ export function useDayPage() {
   const handleRemoveUser = async (id: number) => {
     try {
       const response = await axiosInstance.get<Target[]>(targetApi);
-      const targetUsers = response.data;
-      const targetRecord = targetUsers.find(
-        (record) => record.targetUser && record.targetUser.id === id
+      const targetRecord = response.data.find(
+        (record) => record.targetUser?.id === id
       );
-  
-      if (!targetRecord) {
-        console.warn(`No matching target record found for UserId: ${id}`);
-        return;
-      }
-  
+
+      if (!targetRecord) return;
+
       await axiosInstance.delete(`${targetApi}/${targetRecord.id}`);
-  
-      setSelectedUsers((prevUsers) =>
-        prevUsers.filter((user) => user.id !== id)
-      );
-  
+      fetchPaginatedTargetUsers();
       showAlert("User Removed Successfully", "success");
     } catch (error) {
       console.error("Error removing user:", error);
     }
   };
-  
 
   const filteredUsers = users.filter(
     (user) =>
@@ -150,34 +154,28 @@ export function useDayPage() {
     currentPage * usersPerPage
   );
 
-  const paginatedSelectedUsers = selectedUsers.slice(
-    (selectedCurrentPage - 1) * selectedUsersPerPage,
-    selectedCurrentPage * selectedUsersPerPage
-  );
-
   return {
     days,
     times,
     users,
-    selectedUsers,
     loading,
     refreshing,
     isAuthorized,
     userSearchQuery,
     currentPage,
-    selectedCurrentPage,
-    usersPerPage,
-    selectedUsersPerPage,
-    filteredUsers,
-    paginatedUsers,
-    paginatedSelectedUsers,
     setUserSearchQuery,
     setCurrentPage,
-    setSelectedCurrentPage,
     fetchData,
     handleToggleActive,
     handleDeleteTime,
     handleAddUser,
     handleRemoveUser,
+    paginatedUsers,
+    paginatedSelectedUsers: paginatedTargetUsers,
+    selectedCurrentPage: targetPage,
+    setSelectedCurrentPage: setTargetPage,
+    totalSelectedPages: targetTotalPages,
+    targetSearch,
+    setTargetSearch,
   };
 }
