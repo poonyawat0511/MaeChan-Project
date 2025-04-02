@@ -8,7 +8,7 @@ import {
 import {
   getNotifyDay,
   getNotifyTime,
-  getUserHospital,
+  getUserHospitalByPageTable,
   getNotifyTargetByPageTable,
 } from "@/utils/services/getApi";
 import { Days } from "@/utils/types/day";
@@ -20,13 +20,15 @@ import { useAlert } from "@/components/alerts/GlobalAlertProvider";
 export function useDayPage() {
   const [days, setDays] = useState<Days[]>([]);
   const [times, setTimes] = useState<Times[]>([]);
-  const [users, setUsers] = useState<UserHospital[]>([]);
+  const [paginatedUsers, setPaginatedUsers] = useState<UserHospital[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [userSearchQuery, setUserSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
+  const [totalPages, setTotalPages] = useState(1);
+
   const [paginatedTargetUsers, setPaginatedTargetUsers] = useState<UserHospital[]>([]);
   const [targetPage, setTargetPage] = useState(1);
   const [targetTotalPages, setTargetTotalPages] = useState(1);
@@ -37,14 +39,12 @@ export function useDayPage() {
   const fetchData = async () => {
     try {
       setRefreshing(true);
-      const [data, time, user] = await Promise.all([
+      const [data, time] = await Promise.all([
         getNotifyDay(),
         getNotifyTime(),
-        getUserHospital(),
       ]);
       setDays(data);
       setTimes(time);
-      setUsers(user);
       setIsAuthorized(true);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -52,6 +52,16 @@ export function useDayPage() {
     } finally {
       setLoading(false);
       setRefreshing(false);
+    }
+  };
+
+  const fetchPaginatedUsers = async () => {
+    try {
+      const response = await getUserHospitalByPageTable(currentPage - 1, usersPerPage);
+      setPaginatedUsers(response.content);
+      setTotalPages(response.totalPages);
+    } catch (error) {
+      console.error("Error fetching paginated users:", error);
     }
   };
 
@@ -72,6 +82,10 @@ export function useDayPage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchPaginatedUsers();
+  }, [currentPage, userSearchQuery]);
 
   useEffect(() => {
     fetchPaginatedTargetUsers();
@@ -115,12 +129,10 @@ export function useDayPage() {
       fetchPaginatedTargetUsers();
     } catch (error: unknown) {
       const status = (error as { response?: { status?: number } })?.response?.status;
-  
       if (status === 409) {
         showAlert("ผู้ใช้นี้ถูกเพิ่มไปแล้ว", "warning");
       } else {
         showAlert("เกิดข้อผิดพลาดในการเพิ่มผู้ใช้", "danger");
-        console.error("Error adding user:", error);
       }
     }
   };
@@ -142,22 +154,10 @@ export function useDayPage() {
     }
   };
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.firstName.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
-      user.lastName.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(userSearchQuery.toLowerCase())
-  );
-
-  const paginatedUsers = filteredUsers.slice(
-    (currentPage - 1) * usersPerPage,
-    currentPage * usersPerPage
-  );
-
   return {
     days,
     times,
-    users,
+    users: paginatedUsers,
     loading,
     refreshing,
     isAuthorized,
@@ -175,6 +175,7 @@ export function useDayPage() {
     selectedCurrentPage: targetPage,
     setSelectedCurrentPage: setTargetPage,
     totalSelectedPages: targetTotalPages,
+    totalPages,
     targetSearch,
     setTargetSearch,
   };

@@ -22,6 +22,7 @@ export default function DayPage() {
     userSearchQuery,
     currentPage,
     selectedCurrentPage,
+    totalPages,
     paginatedSelectedUsers,
     setUserSearchQuery,
     setCurrentPage,
@@ -110,16 +111,13 @@ export default function DayPage() {
             onRemoveUser={handleRemoveUser}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            totalPages={Math.ceil(users.length / 5)}
+            totalPages={totalPages} // ✅ แก้ตรงนี้
             selectedCurrentPage={selectedCurrentPage}
             setSelectedCurrentPage={setSelectedCurrentPage}
             totalSelectedPages={totalSelectedPages}
             paginatedSelectedUsers={paginatedSelectedUsers}
             paginatedUsers={paginatedUsers}
           />
-
-
-
         </div>
       </div>
 
