@@ -16,7 +16,9 @@ import com.example.workflow.exception.notifyTime.NotifyTimeAlreadyExistsExceptio
 import com.example.workflow.exception.notifyTime.NotifyTimeNotFoundException;
 import com.example.workflow.exception.userHospital.UserHospitalAlreadyExistsException;
 import com.example.workflow.exception.userHospital.UserHospitalNotFoundException;
-
+import com.example.workflow.exception.forgotPassword.FPPasswordNotMatch;
+import com.example.workflow.exception.forgotPassword.FPPasswordTooShort;
+import com.example.workflow.exception.forgotPassword.FPUserHospitalNotFound;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -96,8 +98,8 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
-    @ExceptionHandler(FPUserNotFound.class)
-    public ResponseEntity<Map<String, Object>> handleUserNotFound(FPUserNotFound ex) {
+    @ExceptionHandler(FPUserHospitalNotFound.class)
+    public ResponseEntity<Map<String, Object>> handleUserNotFound(FPUserHospitalNotFound ex) {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 }

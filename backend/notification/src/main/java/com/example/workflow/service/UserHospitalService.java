@@ -9,11 +9,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.workflow.exception.forgotPassword.FPPasswordNotMatch;
+import com.example.workflow.exception.forgotPassword.FPPasswordTooShort;
+import com.example.workflow.exception.forgotPassword.FPUserHospitalNotFound;
 import com.example.workflow.exception.userHospital.UserHospitalAlreadyExistsException;
 import com.example.workflow.exception.userHospital.UserHospitalNotFoundException;
 import com.example.workflow.model.UserHospital;
 import com.example.workflow.repository.UserHospitalRepository;
 import com.example.workflow.dto.ForgotPasswordDto;
+
 
 @Service
 public class UserHospitalService {
@@ -82,15 +86,15 @@ public class UserHospitalService {
         userHospitalRepository.deleteById(userHospitalId);
     }
 
-    public userHospital validateAndProcessForgotPassword(ForgotPasswordDto forgotPasswordDto) {
+    public UserHospital validateAndProcessForgotPassword(ForgotPasswordDto forgotPasswordDto) {
         // Check if passwords match
         if (!forgotPasswordDto.getNewPassword().equals(forgotPasswordDto.getConfirmPassword())) {
-            throw new FPPasswordNotMatchException();
+            throw new FPPasswordNotMatch();
         }
 
         // Check if password meets minimum length requirement
         if (forgotPasswordDto.getNewPassword().length() < 8) {
-            throw new FPPasswordTooShortException();
+            throw new FPPasswordTooShort();
         }
 
         UserHospital userHospital = userHospitalRepository.findByFirstNameAndLastNameAndEmail(
@@ -100,7 +104,7 @@ public class UserHospitalService {
         );
 
         if (userHospital == null) {
-            throw new FPUserHospitalNotFoundException();
+            throw new FPUserHospitalNotFound();
         }
 
         // Encrypt the new password before saving

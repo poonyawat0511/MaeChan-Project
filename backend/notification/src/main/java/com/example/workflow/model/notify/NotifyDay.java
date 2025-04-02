@@ -1,4 +1,4 @@
-package com.example.workflow.model;
+package com.example.workflow.model.notify;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

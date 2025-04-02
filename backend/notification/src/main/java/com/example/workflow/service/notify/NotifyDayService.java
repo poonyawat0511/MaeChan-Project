@@ -1,7 +1,7 @@
-package com.example.workflow.service;
+package com.example.workflow.service.notify;
 
-import com.example.workflow.model.NotifyDay;
-import com.example.workflow.repository.NotifyDayRepository;
+import com.example.workflow.model.notify.NotifyDay;
+import com.example.workflow.repository.notify.NotifyDayRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

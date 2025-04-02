@@ -1,7 +1,7 @@
-package com.example.workflow.controller;
+package com.example.workflow.controller.notify;
 
-import com.example.workflow.model.NotifyDay;
-import com.example.workflow.service.NotifyDayService;
+import com.example.workflow.model.notify.NotifyDay;
+import com.example.workflow.service.notify.NotifyDayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

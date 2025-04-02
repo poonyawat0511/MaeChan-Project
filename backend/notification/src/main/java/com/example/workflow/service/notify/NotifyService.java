@@ -1,4 +1,4 @@
-package com.example.workflow.service;
+package com.example.workflow.service.notify;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -9,12 +9,14 @@ import java.util.List;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.example.workflow.repository.NotifyDayRepository;
-import com.example.workflow.repository.NotifyTargetUserRepository;
-import com.example.workflow.repository.NotifyTimeRepository;
-import com.example.workflow.model.NotifyDay;
-import com.example.workflow.model.NotifyTargetUser;
-import com.example.workflow.model.NotifyTime;
+import com.example.workflow.repository.notify.NotifyDayRepository;
+import com.example.workflow.repository.notify.NotifyTargetUserRepository;
+import com.example.workflow.repository.notify.NotifyTimeRepository;
+import com.example.workflow.service.LineMessageService;
+import com.example.workflow.service.UserHospitalService;
+import com.example.workflow.model.notify.NotifyDay;
+import com.example.workflow.model.notify.NotifyTargetUser;
+import com.example.workflow.model.notify.NotifyTime;
 import com.example.workflow.model.Role;
 
 @Service

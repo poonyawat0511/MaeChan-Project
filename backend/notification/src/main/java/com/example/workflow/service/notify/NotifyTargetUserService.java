@@ -1,4 +1,4 @@
-package com.example.workflow.service;
+package com.example.workflow.service.notify;
 
 import java.util.List;
 
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import com.example.workflow.exception.notifyTargetUser.NotifyTargetUserAlreadyExistsException;
 import com.example.workflow.exception.notifyTargetUser.NotifyTargetUserNotFoundException;
 import com.example.workflow.exception.userHospital.UserHospitalNotFoundException;
-import com.example.workflow.model.NotifyTargetUser;
+import com.example.workflow.model.notify.NotifyTargetUser;
 import com.example.workflow.model.UserHospital;
-import com.example.workflow.repository.NotifyTargetUserRepository;
+import com.example.workflow.repository.notify.NotifyTargetUserRepository;
 import com.example.workflow.repository.UserHospitalRepository;
 
 @Service

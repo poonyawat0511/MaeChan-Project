@@ -4,8 +4,8 @@ import java.time.LocalTime;
 
 import org.springframework.stereotype.Component;
 
-import com.example.workflow.model.NotifyTime;
-import com.example.workflow.repository.NotifyTimeRepository;
+import com.example.workflow.model.notify.NotifyTime;
+import com.example.workflow.repository.notify.NotifyTimeRepository;
 
 import jakarta.annotation.PostConstruct;
 

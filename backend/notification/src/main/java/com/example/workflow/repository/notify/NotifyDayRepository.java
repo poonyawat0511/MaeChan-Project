@@ -1,6 +1,6 @@
-package com.example.workflow.repository;
+package com.example.workflow.repository.notify;
 
-import com.example.workflow.model.NotifyDay;
+import com.example.workflow.model.notify.NotifyDay;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

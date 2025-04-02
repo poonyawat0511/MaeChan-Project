@@ -1,4 +1,6 @@
-package com.example.workflow.model;
+package com.example.workflow.model.notify;
+
+import com.example.workflow.model.UserHospital;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
@@ -15,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 
 @Getter
 @Setter

@@ -1,4 +1,4 @@
-package com.example.workflow.controller;
+package com.example.workflow.controller.notify;
 
 import java.util.List;
 
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.workflow.model.NotifyTime;
-import com.example.workflow.service.NotifyTimeService;
+import com.example.workflow.model.notify.NotifyTime;
+import com.example.workflow.service.notify.NotifyTimeService;
 
 import jakarta.validation.Valid;
 

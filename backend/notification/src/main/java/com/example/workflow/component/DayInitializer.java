@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.example.workflow.repository.NotifyDayRepository;
-import com.example.workflow.model.NotifyDay;
+import com.example.workflow.repository.notify.NotifyDayRepository;
+import com.example.workflow.model.notify.NotifyDay;
 
 import jakarta.annotation.PostConstruct;
 
