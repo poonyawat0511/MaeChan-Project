@@ -85,4 +85,19 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(FPPasswordNotMatch.class)
+    public ResponseEntity<Map<String, Object>> handlePasswordNotMatch(FPPasswordNotMatch ex) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(FPPasswordTooShort.class)
+    public ResponseEntity<Map<String, Object>> handlePasswordTooShort(FPPasswordTooShort ex) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
+    @ExceptionHandler(FPUserNotFound.class)
+    public ResponseEntity<Map<String, Object>> handleUserNotFound(FPUserNotFound ex) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
 }

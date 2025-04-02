@@ -82,15 +82,15 @@ public class UserHospitalService {
         userHospitalRepository.deleteById(userHospitalId);
     }
 
-    public String validateAndProcessForgotPassword(ForgotPasswordDto forgotPasswordDto) {
+    public userHospital validateAndProcessForgotPassword(ForgotPasswordDto forgotPasswordDto) {
         // Check if passwords match
         if (!forgotPasswordDto.getNewPassword().equals(forgotPasswordDto.getConfirmPassword())) {
-            return "PASSWORDS_DO_NOT_MATCH";
+            throw new FPPasswordNotMatchException();
         }
 
         // Check if password meets minimum length requirement
         if (forgotPasswordDto.getNewPassword().length() < 8) {
-            return "PASSWORD_TOO_SHORT";
+            throw new FPPasswordTooShortException();
         }
 
         UserHospital userHospital = userHospitalRepository.findByFirstNameAndLastNameAndEmail(
@@ -100,13 +100,12 @@ public class UserHospitalService {
         );
 
         if (userHospital == null) {
-            return "USER_NOT_FOUND";
+            throw new FPUserHospitalNotFoundException();
         }
 
         // Encrypt the new password before saving
         String hashedPassword = passwordEncoder.encode(forgotPasswordDto.getNewPassword());
         userHospital.setPassword(hashedPassword);
-        userHospitalRepository.save(userHospital);
-        return "SUCCESS";
+        return userHospitalRepository.save(userHospital);
     }
 }
