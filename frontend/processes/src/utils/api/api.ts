@@ -29,6 +29,7 @@ export const springRequestByTaskApi = (processInstanceId: string) =>
 export const requestApi = "/stock-requests";
 export const requestPaginatedApi = "/stock-requests/paginated";
 export const userHospitalApi = "/user-hospital";
+export const userHospitalPaginatedApi = "/user-hospital/paginated"
 export const dayApi = "/notify-days";
 export const timeApi = "/notify-time"
 export const targetApi = "/notify-target-user"

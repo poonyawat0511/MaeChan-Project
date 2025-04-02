@@ -67,7 +67,7 @@ export default function AllStockRequest() {
   }
 
   return (
-    <div className="w-full p-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex">
+    <div className="w-full p-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex overflow-x-auto w-full">
       <StockRequestCard
         total={totalPages * itemsPerPage}
         filtered={requests.length}

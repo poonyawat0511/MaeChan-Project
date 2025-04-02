@@ -8,6 +8,7 @@ export interface UserHospital {
   email: string;
   password: string;
   signaturePath: string;
+  signature: string;
   officerId: Officer;
   lineId: string;
   Active: boolean;

@@ -32,50 +32,48 @@ public class UserHospitalController {
 
     @PostMapping
     public ResponseEntity<UserHospital> createUserHospital(@RequestBody UserHospital userHospital) {
-        UserHospital createStockUser = userHospitalService.createUserHospital(userHospital);
-        return new ResponseEntity<>(createStockUser, HttpStatus.CREATED);
+        UserHospital created = userHospitalService.createUserHospital(userHospital);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping("/paginated")
-    public ResponseEntity<Page<UserHospitalDto>> getUserhospitalList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "12") int size) {
+    public ResponseEntity<Page<UserHospitalDto>> getUserhospitalList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "7") int size,
+            @RequestParam(required = false) String search) {
+
         Pageable pageable = PageRequest.of(page, size);
-        Page<UserHospital> userHospitalsPage = userHospitalService.findAllUserHospitals(pageable);
+        Page<UserHospital> userHospitalsPage = userHospitalService.findAllUserHospitals(search, pageable);
         Page<UserHospitalDto> dtoPage = userHospitalsPage.map(UserHospitalMapper::mapToUserHospitalDto);
 
-        return new ResponseEntity<>(dtoPage, HttpStatus.OK);
+        return ResponseEntity.ok(dtoPage);
     }
 
     @GetMapping
     public ResponseEntity<List<UserHospital>> getUserHospitalList() {
-        List<UserHospital> userHospital = userHospitalService.findAllUserHospital();
-        return new ResponseEntity<>(userHospital, HttpStatus.OK);
+        return ResponseEntity.ok(userHospitalService.findAllUserHospital());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserHospital> getUserHospitalById(@PathVariable Long id) {
         UserHospital userHospital = userHospitalService.findUserHospitalById(id);
-        if (userHospital != null) {
-            return new ResponseEntity<>(userHospital, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok(userHospital);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<UserHospital> updateUserHospitalById(@PathVariable Long id, @RequestBody UserHospital userHospital) {
+    public ResponseEntity<UserHospital> updateUserHospitalById(
+            @PathVariable Long id,
+            @RequestBody UserHospital userHospital) {
+
         userHospital.setId(id);
-        UserHospital updatedUserHospital = userHospitalService.updateUserHospital(userHospital);
-        if (updatedUserHospital != null) {
-            return new ResponseEntity<>(updatedUserHospital, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        UserHospital updated = userHospitalService.updateUserHospital(userHospital);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletedUserHospitalById(@PathVariable Long id) {
-        String result = userHospitalService.deleteUserHospitalById(id);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        userHospitalService.deleteUserHospitalById(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

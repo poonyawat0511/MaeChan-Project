@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.example.workflow.exception.notifyTime.NotifyTimeAlreadyExistsException;
+import com.example.workflow.exception.notifyTime.NotifyTimeNotFoundException;
 import com.example.workflow.model.NotifyTime;
 import com.example.workflow.repository.NotifyTimeRepository;
 
@@ -15,43 +15,43 @@ import com.example.workflow.repository.NotifyTimeRepository;
 public class NotifyTimeService {
 
     @Autowired
-    private NotifyTimeRepository messageTimeRepository;
+    private NotifyTimeRepository notifyTimeRepository;
 
-    public List<NotifyTime> getAllMessageTimes() {
-        return messageTimeRepository.findAll();
-    }
-
-    public ResponseEntity<NotifyTime> getMessageTimeById(Long id) {
-        Optional<NotifyTime> messageTime = messageTimeRepository.findById(id);
-        return messageTime.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    public ResponseEntity<?> createMessageTime(NotifyTime messageTime) {
-        Optional<NotifyTime> existing = messageTimeRepository.findByTime(messageTime.getTime());
+    public NotifyTime createTime(NotifyTime notifyTime) {
+        Optional<NotifyTime> existing = notifyTimeRepository.findByTime(notifyTime.getTime());
         if (existing.isPresent()) {
-            return ResponseEntity
-                    .status(HttpStatus.CONFLICT)
-                    .body("Time already exists: " + messageTime.getTime());
+            throw new NotifyTimeAlreadyExistsException(notifyTime.getTime());
         }
-        NotifyTime saved = messageTimeRepository.save(messageTime);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
-    }
-    
-
-    public ResponseEntity<NotifyTime> updateMessageTime(Long id, NotifyTime messageTime) {
-        if (!messageTimeRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        messageTime.setId(id);
-        NotifyTime updatedMessageTime = messageTimeRepository.save(messageTime);
-        return ResponseEntity.ok(updatedMessageTime);
+        return notifyTimeRepository.save(notifyTime);
     }
 
-    public ResponseEntity<Void> deleteMessageTime(Long id) {
-        if (!messageTimeRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+    public List<NotifyTime> getAllTimes() {
+        return notifyTimeRepository.findAll();
+    }
+
+    public NotifyTime getTimeById(Long id) {
+        return notifyTimeRepository.findById(id)
+                .orElseThrow(() -> new NotifyTimeNotFoundException(id));
+    }
+
+    public NotifyTime updateTime(Long id, NotifyTime notifyTime) {
+        if (!notifyTimeRepository.existsById(id)) {
+            throw new NotifyTimeNotFoundException(id);
         }
-        messageTimeRepository.deleteById(id);
-        return ResponseEntity.noContent().build();
+
+        Optional<NotifyTime> duplicate = notifyTimeRepository.findByTime(notifyTime.getTime());
+        if (duplicate.isPresent() && !duplicate.get().getId().equals(id)) {
+            throw new NotifyTimeAlreadyExistsException(notifyTime.getTime());
+        }
+
+        notifyTime.setId(id);
+        return notifyTimeRepository.save(notifyTime);
+    }
+
+    public void deleteTime(Long id) {
+        if (!notifyTimeRepository.existsById(id)) {
+            throw new NotifyTimeNotFoundException(id);
+        }
+        notifyTimeRepository.deleteById(id);
     }
 }

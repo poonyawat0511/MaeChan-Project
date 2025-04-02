@@ -105,22 +105,21 @@ export default function UserHospitalTable({
                         </span>
                       );
                     }
-                    if (columnKey === "signaturePath") {
-                      return user.signaturePath ? (
+                    if (columnKey === "signaturePath" || columnKey === "signature") {
+                      const imageUrl = user.signaturePath ?? user.signature;
+                      return imageUrl ? (
                         <div className="relative group">
                           <Image
-                            src={user.signaturePath}
+                            src={imageUrl}
                             alt="Signature"
                             className="w-16 h-16 object-contain border rounded-md shadow-sm group-hover:opacity-90 transition-all"
                           />
                           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-md flex items-center justify-center transition-all"></div>
                         </div>
                       ) : (
-                        <span className="text-gray-400 italic text-sm">
-                          ไม่มีลายเซ็น
-                        </span>
+                        <span className="text-gray-400 italic text-sm">ไม่มีลายเซ็น</span>
                       );
-                    }
+                    }                    
                     if (columnKey === "actions") {
                       return (
                         <Tooltip content="ลบผู้ใช้">

@@ -11,17 +11,16 @@ import UserFooterCard from "./_components/cards/UserFooterCard";
 import UserDeleteModal from "./_components/modals/UserDeleteModal";
 import { useUserPage } from "./hooks/useUserPage";
 
-
 export default function UserPage() {
   const {
+    users,
     loading,
     searchQuery,
     currentPage,
-    isModalOpen,
-    filteredUsers,
-    paginatedUsers,
     totalPages,
+    totalItems,
     itemsPerPage,
+    isModalOpen,
     setSearchQuery,
     setCurrentPage,
     setIsModalOpen,
@@ -39,16 +38,16 @@ export default function UserPage() {
         <UserHeaderCard
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          totalUsers={filteredUsers.length}
+          totalUsers={totalItems}
         />
 
         <CardBody className="p-0 overflow-auto flex-grow">
-          {filteredUsers.length === 0 ? (
+          {users.length === 0 ? (
             <EmptyState
               message="ไม่พบผู้ใช้"
               subMessage={
                 searchQuery
-                  ? `ไม่พบผลลัพธ์ที่ตรงกับ "${searchQuery}"ลองใช้คำค้นหาอื่น`
+                  ? `ไม่พบผลลัพธ์ที่ตรงกับ "${searchQuery}" ลองใช้คำค้นหาอื่น`
                   : "ไม่มีผู้ใช้ที่พร้อมใช้งาน เพิ่มผู้ใช้ใหม่เพื่อเริ่มต้น"
               }
               showClearButton={!!searchQuery}
@@ -56,7 +55,7 @@ export default function UserPage() {
             />
           ) : (
             <UserHospitalTable
-              UserHospitals={paginatedUsers}
+              UserHospitals={users}
               currentPage={currentPage}
               onDelete={handleConfirmDelete}
             />
@@ -66,7 +65,7 @@ export default function UserPage() {
         <UserFooterCard
           currentPage={currentPage}
           totalPages={totalPages}
-          totalItems={filteredUsers.length}
+          totalItems={totalItems}
           itemsPerPage={itemsPerPage}
           onPageChange={setCurrentPage}
         />
@@ -78,7 +77,6 @@ export default function UserPage() {
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleDelete}
       />
-
     </div>
   );
 }

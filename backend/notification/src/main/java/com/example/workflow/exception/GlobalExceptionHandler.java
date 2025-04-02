@@ -10,6 +10,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.example.workflow.exception.notifyTargetUser.NotifyTargetUserAlreadyExistsException;
+import com.example.workflow.exception.notifyTargetUser.NotifyTargetUserNotFoundException;
+import com.example.workflow.exception.notifyTime.NotifyTimeAlreadyExistsException;
+import com.example.workflow.exception.notifyTime.NotifyTimeNotFoundException;
 import com.example.workflow.exception.userHospital.UserHospitalAlreadyExistsException;
 import com.example.workflow.exception.userHospital.UserHospitalNotFoundException;
 
@@ -23,6 +27,26 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserHospitalAlreadyExistsException.class)
     public ResponseEntity<Map<String, Object>> handleUserAlreadyExists(UserHospitalAlreadyExistsException ex) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(NotifyTimeNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNotifyTimeNotFound(NotifyTimeNotFoundException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(NotifyTargetUserNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleNotifyTimeNotFound(NotifyTargetUserNotFoundException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(NotifyTimeAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleNotifyTimeAlreadyExists(NotifyTimeAlreadyExistsException ex) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(NotifyTargetUserAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleNotifyTargetUserAlreadyExists(NotifyTargetUserAlreadyExistsException ex) {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
     }
 
@@ -46,19 +70,19 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
-    Map<String, String> validationErrors = new HashMap<>();
-    ex.getBindingResult().getFieldErrors().forEach(error ->
-        validationErrors.put(error.getField(), error.getDefaultMessage())
-    );
+    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, String> validationErrors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error
+                -> validationErrors.put(error.getField(), error.getDefaultMessage())
+        );
 
-    Map<String, Object> body = new HashMap<>();
-    body.put("timestamp", LocalDateTime.now());
-    body.put("status", HttpStatus.BAD_REQUEST.value());
-    body.put("error", "Validation Error");
-    body.put("message", "Validation failed");
-    body.put("errors", validationErrors);
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", "Validation Error");
+        body.put("message", "Validation failed");
+        body.put("errors", validationErrors);
 
-    return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-}
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
 }

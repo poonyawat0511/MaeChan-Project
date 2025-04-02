@@ -1,37 +1,49 @@
 import { useEffect, useState } from "react";
-import { getUserHospital } from "@/utils/services/getApi";
 import { axiosInstance, userHospitalApi } from "@/utils/api/api";
 import { UserHospital } from "@/utils/types/user-hospital";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
+import { Page } from "@/utils/types/page";
+import { useDebounce } from "./useDebounce";
 
 export function useUserPage() {
   const [users, setUsers] = useState<UserHospital[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [error, setError] = useState<string | null>(null);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const [totalItems, setTotalItems] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-  const itemsPerPage = 10;
-  const { showAlert } = useAlert();
+  const itemsPerPage = 7;
+  const debouncedSearch = useDebounce(searchQuery, 500);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  const { showAlert } = useAlert();
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const userData = await getUserHospital();
-      setUsers(userData);
-      setError(null);
-    } catch {
-      console.log("Session expired. Redirecting to sign-in...", error);
-      setError("Failed to load users");
+      const response = await axiosInstance.get<Page<UserHospital>>(
+        `${userHospitalApi}/paginated?page=${currentPage - 1}&size=${itemsPerPage}&search=${debouncedSearch}`
+      );
+      setUsers(response.data.content);
+      setTotalPages(response.data.totalPages);
+      setTotalItems(response.data.totalElements);
+    } catch (error) {
+      showAlert("โหลดข้อมูลผู้ใช้ล้มเหลว", "danger");
+      console.error("Error fetching paginated users:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, [currentPage, debouncedSearch]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+  
 
   const handleConfirmDelete = (userId: number) => {
     setSelectedUserId(userId);
@@ -42,12 +54,10 @@ export function useUserPage() {
     if (!selectedUserId) return;
     try {
       await axiosInstance.delete(`${userHospitalApi}/${selectedUserId}`);
-      setUsers((prevUsers) =>
-        prevUsers.filter((user) => user.id !== selectedUserId)
-      );
-      showAlert(`Deleted user successfully!`, `success`);
+      showAlert("ลบผู้ใช้สำเร็จ!", "success");
+      fetchUsers();
     } catch (error) {
-      showAlert(`Delete user failed!`, `danger`);
+      showAlert("ลบผู้ใช้ไม่สำเร็จ!", "danger");
       console.error("Error deleting user:", error);
     } finally {
       setIsModalOpen(false);
@@ -55,30 +65,16 @@ export function useUserPage() {
     }
   };
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-  const paginatedUsers = filteredUsers.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
   return {
     users,
     loading,
     searchQuery,
     currentPage,
+    totalPages,
+    totalItems,
+    itemsPerPage,
     isModalOpen,
     selectedUserId,
-    filteredUsers,
-    paginatedUsers,
-    totalPages,
-    itemsPerPage,
     setSearchQuery,
     setCurrentPage,
     setIsModalOpen,
