@@ -1,5 +1,11 @@
 package com.example.workflow.model;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,21 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "stock_budget")
 public class StockBudget {
@@ -38,7 +30,6 @@ public class StockBudget {
     @Column(name = "budget_status")
     private Character budgetStatus;
 
-    // Add relation
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_budget_type_id", referencedColumnName = "stock_budget_type_id")
     @NotFound(action = NotFoundAction.IGNORE)
@@ -48,8 +39,60 @@ public class StockBudget {
     @Column(name = "acc_po_budget_sub_type_id")
     private Long accPoBudgetSubTypeId;
 
-    // Add constructor to accept Long argument
+
+    public StockBudget() {
+    }
+
+    public StockBudget(Long budgetId, String budgetName, Character budgetStatus,
+                       StockBudgetType stockBudgetTypeId, Long accPoBudgetSubTypeId) {
+        this.budgetId = budgetId;
+        this.budgetName = budgetName;
+        this.budgetStatus = budgetStatus;
+        this.stockBudgetTypeId = stockBudgetTypeId;
+        this.accPoBudgetSubTypeId = accPoBudgetSubTypeId;
+    }
+
     public StockBudget(Long budgetId) {
         this.budgetId = budgetId;
+    }
+
+    public Long getBudgetId() {
+        return budgetId;
+    }
+
+    public void setBudgetId(Long budgetId) {
+        this.budgetId = budgetId;
+    }
+
+    public String getBudgetName() {
+        return budgetName;
+    }
+
+    public void setBudgetName(String budgetName) {
+        this.budgetName = budgetName;
+    }
+
+    public Character getBudgetStatus() {
+        return budgetStatus;
+    }
+
+    public void setBudgetStatus(Character budgetStatus) {
+        this.budgetStatus = budgetStatus;
+    }
+
+    public StockBudgetType getStockBudgetTypeId() {
+        return stockBudgetTypeId;
+    }
+
+    public void setStockBudgetTypeId(StockBudgetType stockBudgetTypeId) {
+        this.stockBudgetTypeId = stockBudgetTypeId;
+    }
+
+    public Long getAccPoBudgetSubTypeId() {
+        return accPoBudgetSubTypeId;
+    }
+
+    public void setAccPoBudgetSubTypeId(Long accPoBudgetSubTypeId) {
+        this.accPoBudgetSubTypeId = accPoBudgetSubTypeId;
     }
 }
