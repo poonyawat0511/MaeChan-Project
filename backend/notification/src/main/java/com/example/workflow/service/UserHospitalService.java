@@ -13,6 +13,7 @@ import com.example.workflow.exception.userHospital.UserHospitalAlreadyExistsExce
 import com.example.workflow.exception.userHospital.UserHospitalNotFoundException;
 import com.example.workflow.model.UserHospital;
 import com.example.workflow.repository.UserHospitalRepository;
+import com.example.workflow.dto.ForgotPasswordDto;
 
 @Service
 public class UserHospitalService {
@@ -79,5 +80,33 @@ public class UserHospitalService {
             throw new UserHospitalNotFoundException(userHospitalId);
         }
         userHospitalRepository.deleteById(userHospitalId);
+    }
+
+    public String validateAndProcessForgotPassword(ForgotPasswordDto forgotPasswordDto) {
+        // Check if passwords match
+        if (!forgotPasswordDto.getNewPassword().equals(forgotPasswordDto.getConfirmPassword())) {
+            return "PASSWORDS_DO_NOT_MATCH";
+        }
+
+        // Check if password meets minimum length requirement
+        if (forgotPasswordDto.getNewPassword().length() < 8) {
+            return "PASSWORD_TOO_SHORT";
+        }
+
+        UserHospital userHospital = userHospitalRepository.findByFirstNameAndLastNameAndEmail(
+            forgotPasswordDto.getFirstName(),
+            forgotPasswordDto.getLastName(),
+            forgotPasswordDto.getEmail()
+        );
+
+        if (userHospital == null) {
+            return "USER_NOT_FOUND";
+        }
+
+        // Encrypt the new password before saving
+        String hashedPassword = passwordEncoder.encode(forgotPasswordDto.getNewPassword());
+        userHospital.setPassword(hashedPassword);
+        userHospitalRepository.save(userHospital);
+        return "SUCCESS";
     }
 }

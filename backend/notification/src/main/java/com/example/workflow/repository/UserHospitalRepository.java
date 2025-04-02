@@ -20,4 +20,6 @@ public interface UserHospitalRepository extends JpaRepository<UserHospital, Long
     Page<UserHospital> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
     String firstName, String lastName, String email, Pageable pageable);
 
+    UserHospital findByFirstNameAndLastNameAndEmail(String firstName, String lastName, String email);
+
 }

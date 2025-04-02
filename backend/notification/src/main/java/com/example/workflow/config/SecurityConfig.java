@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .requestMatchers("/admin/**").hasAuthority(Role.ADMIN.name())
                 .requestMatchers("/user/**").hasAuthority(Role.USER.name())
                 .requestMatchers("/engine-rest/**").permitAll()
+                .requestMatchers("/forgot-password/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
