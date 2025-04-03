@@ -2,21 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.dark {
+  --background: #ffffff !important;
+  --foreground: #171717 !important;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   color: var(--foreground);
-  background: var(--background);
+  background-color: var(--background);
   font-family: 'Noto Sans Thai', sans-serif;
 }
 
