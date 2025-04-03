@@ -122,7 +122,7 @@ export default function SignUpPage() {
     <div className={styles.container}>
       <div className={styles.card}>
         <Form className={styles.form} onSubmit={handleSubmit}>
-          <h2 className="text-2xl font-bold text-center w-full mt-5">
+          <h2 className="text-2xl font-bold text-center w-full mt-5 text-white">
             ลงทะเบียนบัญชีผู้ใช้
           </h2>
           {error && <p className="text-red-500 text-sm mb-1">{error}</p>}
@@ -206,7 +206,7 @@ export default function SignUpPage() {
           </Button>
           <p className="font-bold">
             <Link href="/signin">
-              <span className="text-black text-xs">ลงชื่อเข้าใช้</span>
+              <span className="text-white text-xs">ลงชื่อเข้าใช้</span>
             </Link>
           </p>
         </Form>
