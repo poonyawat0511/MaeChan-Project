@@ -42,10 +42,11 @@ public class StockRequestController {
     @GetMapping("/paginated")
     public ResponseEntity<Page<StockRequestDto>> getStockRequestList(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "12") int size) {
+            @RequestParam(defaultValue = "12") int size,
+            @RequestParam(required = false) String search) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<StockRequest> stockRequestPage = stockRequestService.findAllStockRequests(pageable);
+        Page<StockRequest> stockRequestPage = stockRequestService.findAllStockRequests(search,pageable);
         Page<StockRequestDto> dtoPage = stockRequestPage.map(StockRequestMapper::mapToStockRequestDto);
 
         return new ResponseEntity<>(dtoPage, HttpStatus.OK);
