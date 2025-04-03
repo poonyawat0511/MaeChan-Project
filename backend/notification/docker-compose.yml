@@ -1,6 +1,8 @@
+name: maechan-project-backend-21
+
 services:
   backend:
-    image: osathi/mfu-tidloop-backend:latest
+    image: osathi/mfu-tidloop-backend-21:latest
     ports:
       - "8081:8081"
     environment:

@@ -5,7 +5,7 @@ for /f "tokens=2 delims=:" %%A in ('ipconfig ^| findstr /i "IPv4 Address"') do f
 set IPADDRESS=%IPADDRESS:~1%
 
 :: Config
-set POSTGRES_DB_NAME=InventoryManagement
+set POSTGRES_DB_NAME=Inventory
 set POSTGRES_PORT=5432
 set POSTGRES_USER=postgres
 set POSTGRES_PASSWORD=user1234

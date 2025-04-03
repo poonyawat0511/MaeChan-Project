@@ -1,5 +1,10 @@
 # Use an official OpenJDK runtime as a parent image
-FROM openjdk:17-jdk-slim
+FROM openjdk:21-jdk-slim
+# openjdk:21-jdk-slim (Open-source and widely used)
+# eclipse-temurin:21-jdk 
+
+# Install Maven
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container
 WORKDIR /app
@@ -7,11 +12,8 @@ WORKDIR /app
 # Copy the project files to the container
 COPY . .
 
-# Ensure the Maven Wrapper is executable
-RUN chmod +x ./mvnw
-
 # Expose port 8081 to the outside world
 EXPOSE 8081
 
 # Run the Spring Boot application
-CMD ["./mvnw", "spring-boot:run"]
+CMD ["mvn", "spring-boot:run"]
