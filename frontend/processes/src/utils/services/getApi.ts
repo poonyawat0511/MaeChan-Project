@@ -10,6 +10,7 @@ import {
   stockPoApi,
   stockRequestListApi,
   targetApi,
+  targetPaginatedApi,
   timeApi,
   userHospitalApi,
   userHospitalPaginatedApi,
@@ -201,6 +202,18 @@ export const getNotifyTarget = async (): Promise<Target[]> => {
     return response.data;
   } catch (error) {
     console.error("Error fetching Target :", error);
+    throw error;
+  }
+};
+
+export const getNotifyTargetByPageTable = async (page = 0, size = 8): Promise<Page<Target>> => {
+  try {
+    const response = await axiosInstance.get<Page<Target>>(
+      `${targetPaginatedApi}?page=${page}&size=${size}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching target user :", error);
     throw error;
   }
 };

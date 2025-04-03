@@ -16,12 +16,12 @@ import {
   UserMinusIcon,
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
-import { usePagination } from "@heroui/react";
 import Pagination from "../paginations/Pagination";
 
 interface Props {
   users: UserHospital[];
-  selectedUsers: UserHospital[];
+  paginatedUsers: UserHospital[]
+  paginatedSelectedUsers: UserHospital[];
   userSearchQuery: string;
   onSearchChange: (q: string) => void;
   onAddUser: (user: UserHospital) => void;
@@ -32,12 +32,11 @@ interface Props {
   selectedCurrentPage: number;
   setSelectedCurrentPage: (p: number) => void;
   totalSelectedPages: number;
-  paginatedUsers: UserHospital[];
-  paginatedSelectedUsers: UserHospital[];
 }
 
 export default function TargetUsersCard({
-  selectedUsers,
+  paginatedUsers,
+  paginatedSelectedUsers,
   userSearchQuery,
   onSearchChange,
   onAddUser,
@@ -48,25 +47,13 @@ export default function TargetUsersCard({
   selectedCurrentPage,
   setSelectedCurrentPage,
   totalSelectedPages,
-  paginatedUsers,
-  paginatedSelectedUsers,
 }: Props) {
-  const {
-  } = usePagination({
-    total: totalPages,
-    showControls: true,
-    siblings: 1,
-    boundaries: 1,
-    page: currentPage,
-    onChange: (page) => setCurrentPage(page),
-  });
-
   return (
     <Card className="h-full flex flex-col">
       <CardHeader className="px-3 py-2 flex-shrink-0">
         <div className="flex justify-between items-center">
           <h4 className="text-base font-semibold">ผู้ใช้สำหรับการแจ้งเตือน</h4>
-          <Badge color="secondary" variant="flat">{selectedUsers.length} คน</Badge>
+          <Badge color="secondary" variant="flat">{paginatedSelectedUsers.length} คน</Badge>
         </div>
       </CardHeader>
       <Divider />
@@ -93,7 +80,6 @@ export default function TargetUsersCard({
           )}
         </div>
 
-        {/* Pagination */}
         {totalSelectedPages > 1 && (
           <div className="flex justify-center mt-2">
             <Pagination
@@ -102,7 +88,6 @@ export default function TargetUsersCard({
               onPageChange={setSelectedCurrentPage}
               variant="compact"
             />
-
           </div>
         )}
 
@@ -138,9 +123,9 @@ export default function TargetUsersCard({
                   color="primary"
                   variant="light"
                   onPress={() => onAddUser(user)}
-                  disabled={selectedUsers.some((u) => u.id === user.id)}
+                  disabled={paginatedSelectedUsers.some((u) => u.id === user.id)}
                 >
-                  {selectedUsers.some((u) => u.id === user.id) ? (
+                  {paginatedSelectedUsers.some((u) => u.id === user.id) ? (
                     <UserMinusIcon className="h-3 w-3" />
                   ) : (
                     <UserPlusIcon className="h-3 w-3" />
