@@ -4,7 +4,7 @@
 export IPADDRESS=$(ipconfig getifaddr en0)
 
 # config
-export POSTGRES_DB_NAME=Inventory
+export POSTGRES_DB_NAME=InventoryManagement
 export POSTGRES_PORT=5432
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=user1234
