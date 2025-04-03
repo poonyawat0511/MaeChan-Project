@@ -13,7 +13,6 @@ export default function TotalBudgetCard({ value }: Props) {
       title="งบประมาณรวมของปี"
       value={`฿ ${value.toLocaleString()}`}
       icon={Box}
-      trend={5.2}
       color="bg-blue-500"
     />
   );

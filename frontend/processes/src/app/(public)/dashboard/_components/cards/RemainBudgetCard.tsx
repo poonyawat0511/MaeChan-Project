@@ -13,7 +13,6 @@ export default function RemainBudgetCard({ value }: Props) {
       title="งบที่คงเหลือ"
       value={`฿ ${value.toLocaleString()}`}
       icon={ShoppingCart}
-      trend={-3.4}
       color="bg-orange-500"
     />
   );

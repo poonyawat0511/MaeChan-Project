@@ -32,7 +32,7 @@ export default function StockRequestTable({
     { key: "requestDate", label: "วันที่ออกใบซื้อ" },
     { key: "requestReceiveDate", label: "วันที่ต้องการ" },
     { key: "stockApproveDate", label: "วันที่อนุมัติ" },
-    { key: "stockUserApprove", label: "ผู้อนุมัติ" },
+    { key: "stockUserApprove", label: "ผู้ตรวจสอบ" },
     { key: "requestWarehouseId", label: "คลังที่ขอซื้อ" },
     { key: "requestItemCount", label: "จำนวนรายการ" },
     { key: "requestTotalPrice", label: "มูลค่า" },

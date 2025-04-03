@@ -4,7 +4,7 @@ import { Page } from "@/utils/types/page";
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockRequestList } from "@/utils/types/stock-request-list";
 
-export const useAllStockRequests = () => {
+export const useAllStockRequests = (searchQuery: string) => {
   const [requests, setRequests] = useState<StockRequest[]>([]);
   const [requestList, setRequestList] = useState<StockRequestList[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,7 +17,7 @@ export const useAllStockRequests = () => {
   const fetchRequests = useCallback(async (page = currentPage - 1) => {
     try {
       setRefreshing(true);
-      const data: Page<StockRequest> = await getStockRequestsByPageTable(page, itemsPerPage);
+      const data: Page<StockRequest> = await getStockRequestsByPageTable(page, itemsPerPage, searchQuery);
       const list = await getStockRequestList();
       setRequests(data.content);
       setRequestList(list);
@@ -30,7 +30,7 @@ export const useAllStockRequests = () => {
       setRefreshing(false);
       setLoading(false);
     }
-  }, [currentPage]);
+  }, [currentPage, searchQuery]);
 
   useEffect(() => {
     fetchRequests();

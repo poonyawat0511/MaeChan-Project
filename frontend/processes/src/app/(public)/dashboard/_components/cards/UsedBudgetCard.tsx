@@ -13,7 +13,6 @@ export default function UsedBudgetCard({ value }: Props) {
       title="งบที่ใช้"
       value={`฿ ${value.toLocaleString()}`}
       icon={Layers}
-      trend={2.1}
       color="bg-green-500"
     />
   );

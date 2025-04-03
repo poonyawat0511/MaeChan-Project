@@ -23,8 +23,11 @@ public class StockRequestService {
         return stockRequestRepository.save(stockRequest);
     }
 
-    public Page<StockRequest> findAllStockRequests(Pageable pageable) {
-        return stockRequestRepository.findAll(pageable);
+    public Page<StockRequest> findAllStockRequests(String search ,Pageable pageable) {
+        if (search == null || search.isBlank()){
+            return stockRequestRepository.findAll(pageable);
+        }
+        return stockRequestRepository.searchByRequestIdOrRequestNo(search, pageable);
     }
 
     public List<StockRequest> findAllStockRequest() {
