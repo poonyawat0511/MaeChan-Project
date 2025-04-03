@@ -17,4 +17,4 @@ docker-compose up -d
 # --build
 
 # Make sure to give execute permissions to the script:
-# chmod +x start-mfu-tidloop.sh
+# chmod +x linux-start-mfu-tidloop.sh
