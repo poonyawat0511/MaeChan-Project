@@ -22,8 +22,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${Noto_Sans_ThaiSans.variable} antialiased`}>
+    <html lang="en" className="light">
+      <body
+        className={`${Noto_Sans_ThaiSans.variable} antialiased bg-white text-black`}
+      >
         <Providers>
           <RootLayoutClient>
             <GlobalAlertProvider>{children}</GlobalAlertProvider>
