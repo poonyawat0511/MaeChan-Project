@@ -13,8 +13,10 @@ export POSTGRES_DB_TOPIC_PREFIX=dbserver1
 
 echo "mfu-tidloop Using Host IPADDRESS: $IPADDRESS"
 # Now run docker-compose with the exported IPADDRESS variable
-docker-compose up -d
-# --build
+
+# pull and start the containers
+docker-compose pull && docker-compose up -d
+
 
 # Make sure to give execute permissions to the script:
 # chmod +x linux-start-mfu-tidloop.sh

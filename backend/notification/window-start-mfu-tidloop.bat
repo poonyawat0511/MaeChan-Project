@@ -15,7 +15,7 @@ set POSTGRES_DB_TOPIC_PREFIX=dbserver1
 echo mfu-tidloop Using Host IPADDRESS: %IPADDRESS%
 
 :: Now run docker-compose with the exported IPADDRESS variable
-docker-compose up -d
+docker-compose pull && docker-compose up -d
 :: --build
 
 :: Note: To run this script, double-click it or execute it in the Command Prompt.
