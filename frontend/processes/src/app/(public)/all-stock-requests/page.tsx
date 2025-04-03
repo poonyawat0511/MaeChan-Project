@@ -14,11 +14,13 @@ import { useAllStockRequests } from "./hooks/useAllStockRequests";
 import generatePDF from "@/utils/services/generatePDF";
 import LoadingScreen from "@/components/loading/loading";
 import { StockRequest } from "@/utils/types/stock-request";
+import { useDebounce } from "./hooks/useDebounce";
 
 export default function AllStockRequest() {
   const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [openPdfModal, setOpenPdfModal] = useState<boolean>(false);
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const itemsPerPage = 12;
 
   const {
@@ -30,7 +32,7 @@ export default function AllStockRequest() {
     setCurrentPage,
     totalPages,
     requestList,
-  } = useAllStockRequests();
+  } = useAllStockRequests(debouncedSearchQuery);
 
   const handleTaskClick = async (request: StockRequest) => {
     try {
@@ -56,12 +58,6 @@ export default function AllStockRequest() {
     fetchRequests();
   };
 
-  const filteredRequests = requests.filter((request) =>
-    request.requestId?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
-    request.departmentId?.departmentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    request.budgetId?.budgetName?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   if (loading) {
     return <LoadingScreen message="Loading requests..." />;
   }
@@ -81,7 +77,7 @@ export default function AllStockRequest() {
           </div>
         }
         table={
-          filteredRequests.length === 0 ? (
+          requests.length === 0 ? (
             <EmptyStateMessage
               onClearFilters={() => {
                 setSearchQuery("");
@@ -91,7 +87,7 @@ export default function AllStockRequest() {
             />
           ) : (
             <StockRequestTable
-              stockRequests={filteredRequests}
+              stockRequests={requests}
               onRequestClick={handleTaskClick}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}

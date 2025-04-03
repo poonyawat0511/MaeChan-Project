@@ -41,10 +41,14 @@ import { StockBudgetListTr } from "../types/stock-budget-list-tr";
 // Function to get stock requests
 import { Page } from "@/utils/types/page"; // ✅ สร้าง type เพิ่ม
 
-export const getStockRequestsByPageTable = async (page = 0, size = 12): Promise<Page<StockRequest>> => {
+export const getStockRequestsByPageTable = async (
+  page = 0,
+  size = 12,
+  search = ""
+): Promise<Page<StockRequest>> => {
   try {
     const response = await axiosInstance.get<Page<StockRequest>>(
-      `${requestPaginatedApi}?page=${page}&size=${size}`
+      `${requestPaginatedApi}?page=${page}&size=${size}&search=${encodeURIComponent(search)}`
     );
     return response.data;
   } catch (error) {
@@ -52,6 +56,7 @@ export const getStockRequestsByPageTable = async (page = 0, size = 12): Promise<
     throw error;
   }
 };
+
 
 export const getStockRequests = async (): Promise<StockRequest[]> => {
   try {
