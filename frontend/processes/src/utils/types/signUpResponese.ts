@@ -6,7 +6,7 @@ export interface signUpResponse {
   email: string;
   password: string;
   signature: string;
-  stockUserId: number;
+  officerId: number;
   lineId: string;
   role: Role;
 }
