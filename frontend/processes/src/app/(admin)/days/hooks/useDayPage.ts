@@ -16,6 +16,7 @@ import { Times } from "@/utils/types/time";
 import { UserHospital } from "@/utils/types/user-hospital";
 import { Target } from "@/utils/types/target";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
+import { useDebounce } from "./useDebounce";
 
 export function useDayPage() {
   const [days, setDays] = useState<Days[]>([]);
@@ -33,6 +34,7 @@ export function useDayPage() {
   const [targetPage, setTargetPage] = useState(1);
   const [targetTotalPages, setTargetTotalPages] = useState(1);
   const [targetSearch, setTargetSearch] = useState("");
+  const [debouncedSearch] = useDebounce(userSearchQuery, 500);
 
   const { showAlert } = useAlert();
 
@@ -57,13 +59,14 @@ export function useDayPage() {
 
   const fetchPaginatedUsers = async () => {
     try {
-      const response = await getUserHospitalByPageTable(currentPage - 1, usersPerPage);
+      const response = await getUserHospitalByPageTable(currentPage - 1, usersPerPage, debouncedSearch);
       setPaginatedUsers(response.content);
       setTotalPages(response.totalPages);
     } catch (error) {
       console.error("Error fetching paginated users:", error);
     }
   };
+  
 
   const fetchPaginatedTargetUsers = async () => {
     try {
@@ -85,7 +88,7 @@ export function useDayPage() {
 
   useEffect(() => {
     fetchPaginatedUsers();
-  }, [currentPage, userSearchQuery]);
+  }, [currentPage, debouncedSearch]);  
 
   useEffect(() => {
     fetchPaginatedTargetUsers();
@@ -93,7 +96,7 @@ export function useDayPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [userSearchQuery]);
+  }, [userSearchQuery]);  
 
   const handleToggleActive = async (updatedDay: Days) => {
     try {

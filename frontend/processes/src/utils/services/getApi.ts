@@ -164,10 +164,14 @@ export const getUserHospital = async (): Promise<UserHospital[]> => {
   }
 };
 
-export const getUserHospitalByPageTable = async (page = 0, size = 12): Promise<Page<UserHospital>> => {
+export const getUserHospitalByPageTable = async (
+  page = 0,
+  size = 12,
+  search = ""
+): Promise<Page<UserHospital>> => {
   try {
     const response = await axiosInstance.get<Page<UserHospital>>(
-      `${userHospitalPaginatedApi}?page=${page}&size=${size}`
+      `${userHospitalPaginatedApi}?page=${page}&size=${size}&search=${search}`
     );
     return response.data;
   } catch (error) {
@@ -175,6 +179,7 @@ export const getUserHospitalByPageTable = async (page = 0, size = 12): Promise<P
     throw error;
   }
 };
+
 
 export const getNotifyDay = async (): Promise<Days[]> => {
   try {
