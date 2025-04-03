@@ -13,7 +13,6 @@ export default function MonthlyPurchaseCard({ value }: Props) {
       title="มูลค่าการซื้อเดือนนี้"
       value={`฿ ${value.toLocaleString()}`}
       icon={TrendingUp}
-      trend={8.7}
       color="bg-purple-500"
     />
   );
