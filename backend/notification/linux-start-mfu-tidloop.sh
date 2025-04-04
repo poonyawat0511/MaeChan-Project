@@ -15,7 +15,7 @@ echo "mfu-tidloop Using Host IPADDRESS: $IPADDRESS"
 # Now run docker-compose with the exported IPADDRESS variable
 
 # pull and start the containers
-docker-compose pull && docker-compose up -d
+docker-compose up -d
 
 
 # Make sure to give execute permissions to the script:
