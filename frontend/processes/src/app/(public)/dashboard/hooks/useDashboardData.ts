@@ -20,35 +20,43 @@ export const useDashboardData = (
 ) => {
   const budgetYearThai = (filterYear + 543).toString();
 
+  const filteredStockRequests = useMemo(() =>
+    StockRequest.filter(
+      (req) => new Date(req.requestDate).getFullYear() === filterYear
+    ), [StockRequest, filterYear]
+  );
+
+  const filteredPo = useMemo(() =>
+    po.filter(
+      (poItem) => new Date(poItem.stockPoDate).getFullYear() === filterYear
+    ), [po, filterYear]
+  );
+
   const monthlyPurchases = useMemo(() => {
-    return po
+    return filteredPo
       .filter(
         (po) =>
-          new Date(po.stockPoDate).getFullYear() === filterYear &&
           new Date(po.stockPoDate).toLocaleString("th-TH", { month: "short" }) === filterMonth
       )
       .reduce((sum, po) => sum + (po.poAmount || 0), 0);
-  }, [po, filterYear, filterMonth]);
+  }, [filteredPo, filterMonth]);
 
   const formattedInventoryData = useMemo(() => {
-    return po
-      .filter((po) => new Date(po.stockPoDate).getFullYear() === filterYear)
-      .reduce((acc, po) => {
-        if (!po.stockPoDate || !po.poAmount) return acc;
-
-        const month = new Date(po.stockPoDate).toLocaleString("th-TH", { month: "short" });
-        const existingEntry = acc.find((entry) => entry.month === month);
-        if (existingEntry) {
-          existingEntry.value += po.poAmount;
-        } else {
-          acc.push({ month, value: po.poAmount });
-        }
-        return acc;
-      }, [] as { month: string; value: number }[]);
-  }, [po, filterYear]);
+    return filteredPo.reduce((acc, po) => {
+      if (!po.stockPoDate || !po.poAmount) return acc;
+      const month = new Date(po.stockPoDate).toLocaleString("th-TH", { month: "short" });
+      const existingEntry = acc.find((entry) => entry.month === month);
+      if (existingEntry) {
+        existingEntry.value += po.poAmount;
+      } else {
+        acc.push({ month, value: po.poAmount });
+      }
+      return acc;
+    }, [] as { month: string; value: number }[]);
+  }, [filteredPo]);
 
   const formattedWarehouseData = useMemo(() => {
-    return po
+    return filteredPo
       .filter(
         (po) =>
           new Date(po.stockPoDate).toLocaleString("th-TH", { month: "short" }) === filterMonth
@@ -64,7 +72,7 @@ export const useDashboardData = (
         }
         return acc;
       }, [] as { name: string; value: number }[]);
-  }, [po, filterMonth]);
+  }, [filteredPo, filterMonth]);
 
   const totalBudgetListValue = useMemo(() => {
     return stockBudgetList
@@ -88,23 +96,18 @@ export const useDashboardData = (
     const departments = selectedDepartments.length > 0 ? selectedDepartments : allDepartmentNames;
     return departments
       .map((deptName) => {
-        const prTotal = StockRequest.filter(
-          (req) =>
-            req.departmentId?.departmentName === deptName &&
-            new Date(req.requestDate).getFullYear() === filterYear
-        ).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
+        const prTotal = filteredStockRequests
+          .filter((req) => req.departmentId?.departmentName === deptName)
+          .reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
 
-        const poTotal = po
+        const poTotal = filteredPo
           .filter((poItem) => {
-            const relatedRequest = StockRequest.find(
+            const relatedRequest = filteredStockRequests.find(
               (req) =>
                 req.requestId === poItem.refRequestId?.requestId &&
                 req.departmentId?.departmentName === deptName
             );
-            return (
-              relatedRequest &&
-              new Date(poItem.stockPoDate).getFullYear() === filterYear
-            );
+            return Boolean(relatedRequest);
           })
           .reduce((sum, poItem) => sum + (poItem.poDeliverAmount || 0), 0);
 
@@ -122,60 +125,62 @@ export const useDashboardData = (
       .filter((entry) => entry.pr > 0 || entry.po > 0)
       .sort((a, b) => b.po - a.po)
       .slice(0, selectedDepartments.length === 0 ? 8 : undefined);
-  }, [selectedDepartments, allDepartmentNames, StockRequest, po, filterYear, totalBudgetListValue]);
+  }, [filteredStockRequests, filteredPo, selectedDepartments, allDepartmentNames, totalBudgetListValue]);
 
   const prPoData: PRPOData[] = useMemo(() => {
     return Array.from({ length: 12 }, (_, i) => {
       const month = new Date(2025, i).toLocaleString("th-TH", { month: "short" });
 
-      const prTotal = StockRequest.filter(
-        (req) =>
-          new Date(req.requestDate).getMonth() === i &&
-          new Date(req.requestDate).getFullYear() === filterYear
-      ).reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
+      const prTotal = filteredStockRequests
+        .filter((req) => new Date(req.requestDate).getMonth() === i)
+        .reduce((sum, req) => sum + (req.requestTotalPrice || 0), 0);
 
-      const poTotal = po
-        .filter(
-          (po) =>
-            new Date(po.stockPoDate).getMonth() === i &&
-            new Date(po.stockPoDate).getFullYear() === filterYear
-        )
+      const poTotal = filteredPo
+        .filter((po) => new Date(po.stockPoDate).getMonth() === i)
         .reduce((sum, po) => sum + (po.poDeliverAmount || 0), 0);
 
       return { month, pr: prTotal, po: poTotal };
     });
-  }, [StockRequest, po, filterYear]);
+  }, [filteredStockRequests, filteredPo]);
 
-  const totalStockPo = po.length;
-  const totalStockRequests = StockRequest.length;
+  const totalStockRequests = filteredStockRequests.length;
+  const totalStockPo = filteredPo.length;
 
-  const totalStockPoValue = po.reduce(
-    (sum, poItem) => sum + (poItem.stockBudgetUse || 0),
-    0
-  );
-  const totalStockRequestValue = StockRequest.reduce(
+  const totalStockRequestValue = filteredStockRequests.reduce(
     (sum, req) => sum + (req.requestTotalPrice || 0),
     0
   );
-
-  const avgStockPoValue = totalStockPoValue / 12;
-  const avgStockRequestValue = totalStockRequestValue / 12;
-
-  const highestStockPo = po.reduce(
-    (max, poItem) => (poItem.stockBudgetUse && poItem.stockBudgetUse > max ? poItem.stockBudgetUse : max),
+  const totalStockPoValue = filteredPo.reduce(
+    (sum, poItem) => sum + (poItem.stockBudgetUse || 0),
     0
   );
 
-  const highestStockRequest = StockRequest.reduce(
-    (max, req) => (req.requestTotalPrice && req.requestTotalPrice > max ? req.requestTotalPrice : max),
+  const avgStockRequestValue = totalStockRequestValue / 12;
+  const avgStockPoValue = totalStockPoValue / 12;
+
+  const highestStockRequest = filteredStockRequests.reduce(
+    (max, req) =>
+      req.requestTotalPrice && req.requestTotalPrice > max
+        ? req.requestTotalPrice
+        : max,
+    0
+  );
+
+  const highestStockPo = filteredPo.reduce(
+    (max, poItem) =>
+      poItem.stockBudgetUse && poItem.stockBudgetUse > max
+        ? poItem.stockBudgetUse
+        : max,
     0
   );
 
   const poPrRatio = totalStockPo > 0 ? (totalStockRequests / totalStockPo) * 100 : 0;
   const budgetSaved = totalStockRequestValue - totalStockPoValue;
 
-  const totalProcessingTime = po.reduce((sum, poItem) => {
-    const request = StockRequest.find((req) => req.requestId === poItem.refRequestId?.requestId);
+  const totalProcessingTime = filteredPo.reduce((sum, poItem) => {
+    const request = filteredStockRequests.find(
+      (req) => req.requestId === poItem.refRequestId?.requestId
+    );
     if (!request) return sum;
     const prDate = new Date(request.requestDate);
     const poDate = new Date(poItem.stockPoDate);
@@ -184,9 +189,9 @@ export const useDashboardData = (
 
   const avgProcessingTime = totalStockPo > 0 ? (totalProcessingTime / totalStockPo).toFixed(1) : "0";
 
-  const pendingPr = StockRequest.filter(
+  const pendingPr = filteredStockRequests.filter(
     (req) =>
-      !po.some((poItem) => poItem.refRequestId?.requestId === req?.requestId)
+      !filteredPo.some((poItem) => poItem.refRequestId?.requestId === req?.requestId)
   ).length;
 
   return {

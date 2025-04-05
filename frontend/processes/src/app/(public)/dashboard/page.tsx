@@ -36,6 +36,7 @@ import StockBudgetListTable from "./_components/tables/StockBudgetListTable";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDashboardPage } from "./hooks/useDashboardPage";
 import { useDashboardData } from "./hooks/useDashboardData";
+import StockBudgetTypeTable from "./_components/tables/StockBudgetTypeTable";
 
 const colors = {
   chart: [
@@ -84,6 +85,7 @@ export default function Dashboard() {
     requests,
     po,
     departments,
+    budgetType,
     budgetList,
     budgets,
   } = useDashboardPage();
@@ -149,7 +151,7 @@ export default function Dashboard() {
   if (loading) return <LoadingScreen message="Loading requests..." />;
 
   const Page1 = () => (
-    <div className="space-y-6">
+    <div className="space-y-6 min-h-screen">
       <div className="flex flex-wrap gap-3">
         <YearFilter
           filterYear={filterYear}
@@ -222,6 +224,42 @@ export default function Dashboard() {
           </div>
         </CustomCard>
       </div>
+      
+      <div className="w-full">
+        <CustomCard
+          className="w-full h-full"
+          title={
+            <div className="flex justify-between items-center w-full gap-5">
+              <span className="font-semibold text-gray-800">ประเภทงบประมาณ</span>
+            </div>
+          }
+        >
+          <div className="w-full">
+            <StockBudgetTypeTable stockBudgetTypeList={budgetType} />
+          </div>
+        </CustomCard>
+      </div>
+    </div>
+  );
+
+  const Page2 = () => (
+    <div className="space-y-6">
+      <div className="flex flex-wrap gap-3">
+        <YearFilter
+          filterYear={filterYear}
+          allYears={allYears}
+          setFilterYear={setFilterYear}
+        />
+        <DepartmentFilter
+          selectedDepartments={selectedDepartments}
+          setSelectedDepartments={setSelectedDepartments}
+          stockDepartments={departments}
+        />
+        <ClearFilterButton onClear={clearDepartmentFilter} />
+      </div>
+
+      <PrVsPoComparisonChart prPoData={prPoData} colors={colors.chart} />
+      <PrVsPoByDepartmentChart data={filteredDepartmentData} colors={colors.chart} />
 
       <div className="w-full">
         <CustomCard
@@ -293,27 +331,6 @@ export default function Dashboard() {
           </div>
         </CustomCard>
       </div>
-    </div>
-  );
-
-  const Page2 = () => (
-    <div className="space-y-6">
-      <div className="flex flex-wrap gap-3">
-        <YearFilter
-          filterYear={filterYear}
-          allYears={allYears}
-          setFilterYear={setFilterYear}
-        />
-        <DepartmentFilter
-          selectedDepartments={selectedDepartments}
-          setSelectedDepartments={setSelectedDepartments}
-          stockDepartments={departments}
-        />
-        <ClearFilterButton onClear={clearDepartmentFilter} />
-      </div>
-
-      <PrVsPoComparisonChart prPoData={prPoData} colors={colors.chart} />
-      <PrVsPoByDepartmentChart data={filteredDepartmentData} colors={colors.chart} />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <PRSummaryCard

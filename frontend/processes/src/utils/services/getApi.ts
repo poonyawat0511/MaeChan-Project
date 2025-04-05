@@ -278,7 +278,7 @@ export const getStockBugets = async (): Promise<StockBudget[]> => {
   }
 }
 
-export const getStockBugetType = async (): Promise<StockBudgetType[]> => {
+export const getStockBudgetType = async (): Promise<StockBudgetType[]> => {
   try {
     const response = await axiosInstance.get<StockBudgetType[]>(budgetTypeApi);
     return response.data;
@@ -288,7 +288,7 @@ export const getStockBugetType = async (): Promise<StockBudgetType[]> => {
   }
 }
 
-export const getStockBugetList = async (): Promise<StockBudgetList[]> => {
+export const getStockBudgetList = async (): Promise<StockBudgetList[]> => {
   try {
     const response = await axiosInstance.get<StockBudgetList[]>(bugetListApi);
     return response.data;
@@ -298,7 +298,7 @@ export const getStockBugetList = async (): Promise<StockBudgetList[]> => {
   }
 }
 
-export const getStockBugetListTr = async (): Promise<StockBudgetListTr[]> => {
+export const getStockBudgetListTr = async (): Promise<StockBudgetListTr[]> => {
   try {
     const response = await axiosInstance.get<StockBudgetListTr[]>(bugetListTrApi);
     return response.data;
