@@ -31,25 +31,19 @@ import TotalBudgetCard from "./_components/cards/TotalBudgetCard";
 import UsedBudgetCard from "./_components/cards/UsedBudgetCard";
 import RemainBudgetCard from "./_components/cards/RemainBudgetCard";
 import MonthlyPurchaseCard from "./_components/cards/MonthlyPurchaseCard";
-import StockBudgetTable from "@/app/(public)/dashboard/_components/tables/StockBudgetTable";
+import StockBudgetTable from "./_components/tables/StockBudgetTable";
 import StockBudgetListTable from "./_components/tables/StockBudgetListTable";
-import { motion, AnimatePresence } from "framer-motion";
-import { useDashboardPage } from "./hooks/useDashboardPage";
-import { useDashboardData } from "./hooks/useDashboardData";
 import StockBudgetTypeTable from "./_components/tables/StockBudgetTypeTable";
+import { motion, AnimatePresence } from "framer-motion";
+import { getDashboardSummary } from "./hooks/getDashboardSummary";
+import { useDashboardPage } from "./hooks/useDashboardPage"; // ใช้เพื่อโหลด budget/budgetType
+import { DashboardSummaryDTO } from "@/utils/types/dashboardSummaryDTO";
+import { axiosInstance } from "@/utils/api/api";
 
 const colors = {
   chart: [
-    "#3b82f6",
-    "#0ea5e9",
-    "#10b981",
-    "#f59e0b",
-    "#ef4444",
-    "#8b5cf6",
-    "#ec4899",
-    "#6366f1",
-    "#a855f7",
-    "#14b8a6",
+    "#3b82f6", "#0ea5e9", "#10b981", "#f59e0b", "#ef4444",
+    "#8b5cf6", "#ec4899", "#6366f1", "#a855f7", "#14b8a6"
   ],
 };
 
@@ -70,11 +64,12 @@ const months = [
 
 export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(0);
-  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
   const [filterYear, setFilterYear] = useState<number>(new Date().getFullYear());
   const [filterMonth, setFilterMonth] = useState<string>(
     new Date().toLocaleString("th-TH", { month: "short" })
   );
+  const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
+  const [summary, setSummary] = useState<DashboardSummaryDTO | null>(null);
   const [showBudgetList, setShowBudgetList] = useState(false);
   const [stockBudgetPage, setStockBudgetPage] = useState(1);
   const [stockBudgetListPage, setStockBudgetListPage] = useState(1);
@@ -82,61 +77,27 @@ export default function Dashboard() {
 
   const {
     loading,
-    requests,
-    po,
     departments,
-    budgetType,
     budgetList,
+    budgetType,
     budgets,
   } = useDashboardPage();
 
-  const {
-    monthlyPurchases,
-    totalBudgetListValue,
-    totalBudgetUsed,
-    totalBudgetRemain,
-    formattedInventoryData,
-    formattedWarehouseData,
-    filteredDepartmentData,
-    prPoData,
-    totalStockPo,
-    totalStockPoValue,
-    avgStockPoValue,
-    highestStockPo,
-    totalStockRequests,
-    totalStockRequestValue,
-    avgStockRequestValue,
-    highestStockRequest,
-    poPrRatio,
-    budgetSaved,
-    avgProcessingTime,
-    pendingPr,
-  } = useDashboardData(
-    requests,
-    po,
-    budgetList,
-    filterYear,
-    filterMonth,
-    selectedDepartments,
-    departments.map((d) => d.departmentName)
-  );
+  useEffect(() => {
+    getDashboardSummary(filterYear, filterMonth, selectedDepartments)
+      .then(setSummary)
+      .catch(console.error);
+  }, [filterYear, filterMonth, selectedDepartments]);
 
-  const allYears = Array.from(
-    new Set([
-      ...po.map((poItem) => new Date(poItem.stockPoDate).getFullYear()),
-      ...requests.map((req) => new Date(req.requestDate).getFullYear()),
-    ])
-  ).sort((a, b) => b - a);
+  const clearDepartmentFilter = () => setSelectedDepartments([]);
+
+  const [allYears, setAllYears] = useState<number[]>([]);
 
   useEffect(() => {
-    if (!allYears.includes(filterYear) && allYears.length > 0) {
-      setFilterYear(allYears[allYears.length - 1]);
-    }
-  }, [allYears, filterYear]);
-
-  const clearDepartmentFilter = () => {
-    setSelectedDepartments([]);
-  };
+    axiosInstance.get<number[]>("/dashboard-summary/years")
+      .then((res) => setAllYears(res.data))
+      .catch(console.error);
+  }, []);
 
   const paginatedStockBudget = budgets.slice(
     (stockBudgetPage - 1) * itemsPerPage,
@@ -148,35 +109,27 @@ export default function Dashboard() {
     stockBudgetListPage * itemsPerPage
   );
 
-  if (loading) return <LoadingScreen message="Loading requests..." />;
+  if (!summary || loading) return <LoadingScreen message="Loading dashboard..." />;
 
   const Page1 = () => (
     <div className="space-y-6 min-h-screen">
       <div className="flex flex-wrap gap-3">
-        <YearFilter
-          filterYear={filterYear}
-          allYears={allYears}
-          setFilterYear={setFilterYear}
-        />
-        <MonthFilter
-          filterMonth={filterMonth}
-          setFilterMonth={setFilterMonth}
-          months={months}
-        />
+        <YearFilter filterYear={filterYear} allYears={allYears} setFilterYear={setFilterYear} />
+        <MonthFilter filterMonth={filterMonth} setFilterMonth={setFilterMonth} months={months} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <TotalBudgetCard value={totalBudgetListValue} />
-        <UsedBudgetCard value={totalBudgetUsed} />
-        <RemainBudgetCard value={totalBudgetRemain} />
-        <MonthlyPurchaseCard value={monthlyPurchases} />
+        <TotalBudgetCard value={summary.totalBudgetListValue} />
+        <UsedBudgetCard value={summary.totalBudgetUsed} />
+        <RemainBudgetCard value={summary.totalBudgetRemain} />
+        <MonthlyPurchaseCard value={summary.monthlyPurchases} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CustomCard title="มูลค่าการจัดซื้อรายเดือน">
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={formattedInventoryData}>
+              <LineChart data={summary.formattedInventoryData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
@@ -201,7 +154,7 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={formattedWarehouseData}
+                  data={summary.formattedWarehouseData}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -211,12 +164,14 @@ export default function Dashboard() {
                   outerRadius={100}
                   dataKey="value"
                 >
-                  {formattedWarehouseData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={colors.chart[index % colors.chart.length]}
-                    />
-                  ))}
+                  {summary.formattedWarehouseData.map(
+                    (entry: { name: string; value: number }, index: number) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={colors.chart[index % colors.chart.length]}
+                      />
+                    )
+                  )}
                 </Pie>
                 <Tooltip formatter={(value) => `${value}%`} />
               </PieChart>
@@ -224,32 +179,17 @@ export default function Dashboard() {
           </div>
         </CustomCard>
       </div>
-      
-      <div className="w-full">
-        <CustomCard
-          className="w-full h-full"
-          title={
-            <div className="flex justify-between items-center w-full gap-5">
-              <span className="font-semibold text-gray-800">ประเภทงบประมาณ</span>
-            </div>
-          }
-        >
-          <div className="w-full">
-            <StockBudgetTypeTable stockBudgetTypeList={budgetType} />
-          </div>
-        </CustomCard>
-      </div>
+
+      <CustomCard title="ประเภทงบประมาณ">
+        <StockBudgetTypeTable stockBudgetTypeList={budgetType} />
+      </CustomCard>
     </div>
   );
 
   const Page2 = () => (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-3">
-        <YearFilter
-          filterYear={filterYear}
-          allYears={allYears}
-          setFilterYear={setFilterYear}
-        />
+        <YearFilter filterYear={filterYear} allYears={allYears} setFilterYear={setFilterYear} />
         <DepartmentFilter
           selectedDepartments={selectedDepartments}
           setSelectedDepartments={setSelectedDepartments}
@@ -258,98 +198,88 @@ export default function Dashboard() {
         <ClearFilterButton onClear={clearDepartmentFilter} />
       </div>
 
-      <PrVsPoComparisonChart prPoData={prPoData} colors={colors.chart} />
-      <PrVsPoByDepartmentChart data={filteredDepartmentData} colors={colors.chart} />
+      <PrVsPoComparisonChart prPoData={summary.prPoData} colors={colors.chart} />
+      <PrVsPoByDepartmentChart data={summary.filteredDepartmentData} colors={colors.chart} />
 
-      <div className="w-full">
-        <CustomCard
-          className="min-h-[600px]"
-          title={
-            <div className="flex justify-between items-center w-full gap-5">
-              <span className="font-semibold text-gray-800">
-                {showBudgetList ? "รายการงบประมาณ" : "รายชื่องบประมาณ"}
-              </span>
-              <Button
-                onPress={() => setShowBudgetList((prev) => !prev)}
-                className="flex items-center gap-2 text-sm px-3 py-1 border border-gray-300 rounded-md bg-white hover:bg-gray-100"
-              >
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 0.6 }}
-                  key={showBudgetList ? "table" : "list"}
-                >
-                  <RotateCcw size={16} />
-                </motion.div>
-                {showBudgetList ? "แสดงตารางรวม" : "แสดงรายการย่อย"}
-              </Button>
-            </div>
-          }
-        >
-          <div className="relative min-h-[50rem]">
-            <AnimatePresence mode="wait">
-              {showBudgetList ? (
-                <motion.div
-                  key="list"
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="w-full"
-                >
-                  <StockBudgetListTable stockBudgetList={paginatedStockBudgetList} />
-                  <div className="flex justify-center mt-4">
-                    <Pagination
-                      total={Math.ceil(budgetList.length / itemsPerPage)}
-                      page={stockBudgetListPage}
-                      onChange={setStockBudgetListPage}
-                      showControls
-                    />
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="table"
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 50 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="w-full"
-                >
-                  <StockBudgetTable stockBudget={paginatedStockBudget} />
-                  <div className="flex justify-center mt-4">
-                    <Pagination
-                      total={Math.ceil(budgets.length / itemsPerPage)}
-                      page={stockBudgetPage}
-                      onChange={setStockBudgetPage}
-                      showControls
-                    />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
+      <CustomCard
+        title={
+          <div className="flex justify-between items-center w-full gap-5">
+            <span className="font-semibold text-gray-800">
+              {showBudgetList ? "รายการงบประมาณ" : "รายชื่องบประมาณ"}
+            </span>
+            <Button
+              onPress={() => setShowBudgetList(prev => !prev)}
+              className="flex items-center gap-2 text-sm px-3 py-1 border border-gray-300 rounded-md bg-white hover:bg-gray-100"
+            >
+              <motion.div animate={{ rotate: 360 }} transition={{ duration: 0.6 }}>
+                <RotateCcw size={16} />
+              </motion.div>
+              {showBudgetList ? "แสดงตารางรวม" : "แสดงรายการย่อย"}
+            </Button>
           </div>
-        </CustomCard>
-      </div>
+        }
+      >
+        <div className="relative min-h-[50rem]">
+          <AnimatePresence mode="wait">
+            {showBudgetList ? (
+              <motion.div
+                key="list"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+              >
+                <StockBudgetListTable stockBudgetList={paginatedStockBudgetList} />
+                <div className="flex justify-center mt-4">
+                  <Pagination
+                    total={Math.ceil(budgetList.length / itemsPerPage)}
+                    page={stockBudgetListPage}
+                    onChange={setStockBudgetListPage}
+                    showControls
+                  />
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="table"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 50 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+              >
+                <StockBudgetTable stockBudget={paginatedStockBudget} />
+                <div className="flex justify-center mt-4">
+                  <Pagination
+                    total={Math.ceil(budgets.length / itemsPerPage)}
+                    page={stockBudgetPage}
+                    onChange={setStockBudgetPage}
+                    showControls
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </CustomCard>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <PRSummaryCard
-          total={totalStockRequests}
-          totalValue={totalStockRequestValue}
-          avgValue={avgStockRequestValue}
-          highestValue={highestStockRequest}
+          total={summary.totalStockRequests}
+          totalValue={summary.totalStockRequestValue}
+          avgValue={summary.avgStockRequestValue}
+          highestValue={summary.highestStockRequest}
         />
         <POSummaryCard
-          total={totalStockPo}
-          totalValue={totalStockPoValue}
-          avgValue={avgStockPoValue}
-          highestValue={highestStockPo}
+          total={summary.totalStockPo}
+          totalValue={summary.totalStockPoValue}
+          avgValue={summary.avgStockPoValue}
+          highestValue={summary.highestStockPo}
         />
         <EfficiencySummaryCard
-          poPrRatio={poPrRatio}
-          budgetSaved={budgetSaved}
-          avgProcessingTime={avgProcessingTime}
-          pendingPr={pendingPr}
+          poPrRatio={summary.poPrRatio}
+          budgetSaved={summary.budgetSaved}
+          avgProcessingTime={summary.avgProcessingTime}
+          pendingPr={summary.pendingPr}
         />
       </div>
     </div>
@@ -361,32 +291,19 @@ export default function Dashboard() {
         <div className="flex justify-between mb-6">
           <h1 className="text-2xl font-semibold text-gray-800">ภาพรวมข้อมูล</h1>
           <div className="flex space-x-2">
-            <Button
-              onPress={() => setCurrentPage(0)}
-              className={`px-4 py-2 rounded-md text-sm ${currentPage === 0 ? "bg-blue-500 text-white" : "bg-white text-gray-600 border"}`}
-            >
+            <Button onPress={() => setCurrentPage(0)} className={`px-4 py-2 rounded-md text-sm ${currentPage === 0 ? "bg-blue-500 text-white" : "bg-white text-gray-600 border"}`}>
               ภาพรวม
             </Button>
-            <Button
-              onPress={() => setCurrentPage(1)}
-              className={`px-4 py-2 rounded-md text-sm ${currentPage === 1 ? "bg-blue-500 text-white" : "bg-white text-gray-600 border"}`}
-            >
+            <Button onPress={() => setCurrentPage(1)} className={`px-4 py-2 rounded-md text-sm ${currentPage === 1 ? "bg-blue-500 text-white" : "bg-white text-gray-600 border"}`}>
               เปรียบเทียบ PR/PO
             </Button>
           </div>
         </div>
 
         <div className="relative overflow-hidden">
-          <div
-            className="flex transition-transform duration-300"
-            style={{ transform: `translateX(-${currentPage * 100}%)` }}
-          >
-            <div className="min-w-full">
-              <Page1 />
-            </div>
-            <div className="min-w-full">
-              <Page2 />
-            </div>
+          <div className="flex transition-transform duration-300" style={{ transform: `translateX(-${currentPage * 100}%)` }}>
+            <div className="min-w-full"><Page1 /></div>
+            <div className="min-w-full"><Page2 /></div>
           </div>
         </div>
 
