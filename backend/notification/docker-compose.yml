@@ -2,7 +2,7 @@ name: maechan-project-backend-21
 
 services:
   backend:
-    image: osathi/mfu-tidloop-backend-21:latest
+    image: osathi/tidloop-window-backend-21:latest
     ports:
       - "8081:8081"
     environment:
@@ -12,7 +12,7 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD}
 
   frontend:
-    image: osathi/mfu-tidloop-frontend:latest
+    image: osathi/tidloop-window-frontend:latest
     ports:
       - "3000:3000"
 
@@ -70,7 +70,7 @@ services:
           \"database.user\": \"${POSTGRES_USER}\",
           \"database.password\": \"${POSTGRES_PASSWORD}\",
           \"database.dbname\": \"${POSTGRES_DB_NAME}\",
-          \"database.server.name\": \"${POSTGRES_DB_SEVER_NAME}\",
+          \"database.server.name\": \"${POSTGRES_DB_SERVER_NAME}\",
           \"plugin.name\": \"pgoutput\",
           \"slot.name\": \"inventory_slot\",
           \"topic.prefix\": \"${POSTGRES_DB_TOPIC_PREFIX}\",

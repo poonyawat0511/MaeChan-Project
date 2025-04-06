@@ -8,7 +8,7 @@ export POSTGRES_DB_NAME=InventoryManagement
 export POSTGRES_PORT=5432
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=user1234
-export POSTGRES_DB_SEVER_NAME=dbserver1
+export POSTGRES_DB_SERVER_NAME=dbserver1
 export POSTGRES_DB_TOPIC_PREFIX=dbserver1
 
 echo "mfu-tidloop Using Host IPADDRESS: $IPADDRESS"

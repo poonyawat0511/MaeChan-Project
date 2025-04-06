@@ -9,7 +9,7 @@ set POSTGRES_DB_NAME=InventoryManagement
 set POSTGRES_PORT=5432
 set POSTGRES_USER=postgres
 set POSTGRES_PASSWORD=user1234
-set POSTGRES_DB_SEVER_NAME=dbserver1
+set POSTGRES_DB_SERVER_NAME=dbserver1
 set POSTGRES_DB_TOPIC_PREFIX=dbserver1
 
 echo mfu-tidloop Using Host IPADDRESS: %IPADDRESS%
