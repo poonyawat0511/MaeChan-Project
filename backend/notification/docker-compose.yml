@@ -6,7 +6,7 @@ services:
     ports:
       - "8081:8081"
     environment:
-      IPADDRESS: ${IPADDRESS}
+      IPADDRESS: host.docker.internal:9092
       DB_URL: jdbc:postgresql://host.docker.internal:${POSTGRES_PORT}/${POSTGRES_DB_NAME}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
@@ -30,7 +30,7 @@ services:
     links:
       - zookeeper
     environment:
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://${IPADDRESS}:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
       ZOOKEEPER_CONNECT: zookeeper:2181
     depends_on:
@@ -46,8 +46,8 @@ services:
       CONFIG_STORAGE_TOPIC: "my_connect_configs"
       OFFSET_STORAGE_TOPIC: "my_connect_offsets"
       STATUS_STORAGE_TOPIC: "my_connect_statuses"
-      KAFKA_BOOTSTRAP_SERVERS: host.docker.internal:9092
-      POSTGRES_HOST: ${IPADDRESS}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      POSTGRES_HOST: host.docker.internal
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
