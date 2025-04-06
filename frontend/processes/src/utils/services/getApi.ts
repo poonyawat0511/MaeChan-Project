@@ -278,6 +278,21 @@ export const getStockBugets = async (): Promise<StockBudget[]> => {
   }
 }
 
+export const getStockBugetsByPageTable = async (
+  page = 0,
+  size = 12,
+): Promise<Page<StockBudget>> => {
+  try {
+    const response = await axiosInstance.get<Page<StockBudget>>(
+      `${budgetApi}/paginated?page=${page}&size=${size}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching stock budgets:", error);
+    throw error;
+  }
+};
+
 export const getStockBudgetType = async (): Promise<StockBudgetType[]> => {
   try {
     const response = await axiosInstance.get<StockBudgetType[]>(budgetTypeApi);

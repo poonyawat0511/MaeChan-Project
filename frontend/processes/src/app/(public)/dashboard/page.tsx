@@ -36,7 +36,7 @@ import StockBudgetListTable from "./_components/tables/StockBudgetListTable";
 import StockBudgetTypeTable from "./_components/tables/StockBudgetTypeTable";
 import { motion, AnimatePresence } from "framer-motion";
 import { getDashboardSummary } from "./hooks/getDashboardSummary";
-import { useDashboardPage } from "./hooks/useDashboardPage"; // ใช้เพื่อโหลด budget/budgetType
+import { useDashboardPage } from "./hooks/useDashboardPage";
 import { DashboardSummaryDTO } from "@/utils/types/dashboardSummaryDTO";
 import { axiosInstance } from "@/utils/api/api";
 
@@ -71,7 +71,6 @@ export default function Dashboard() {
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
   const [summary, setSummary] = useState<DashboardSummaryDTO | null>(null);
   const [showBudgetList, setShowBudgetList] = useState(false);
-  const [stockBudgetPage, setStockBudgetPage] = useState(1);
   const [stockBudgetListPage, setStockBudgetListPage] = useState(1);
   const itemsPerPage = 15;
 
@@ -81,6 +80,9 @@ export default function Dashboard() {
     budgetList,
     budgetType,
     budgets,
+    budgetPage,
+    budgetPageIndex,
+    setBudgetPageIndex,
   } = useDashboardPage();
 
   useEffect(() => {
@@ -99,10 +101,6 @@ export default function Dashboard() {
       .catch(console.error);
   }, []);
 
-  const paginatedStockBudget = budgets.slice(
-    (stockBudgetPage - 1) * itemsPerPage,
-    stockBudgetPage * itemsPerPage
-  );
 
   const paginatedStockBudgetList = budgetList.slice(
     (stockBudgetListPage - 1) * itemsPerPage,
@@ -247,15 +245,18 @@ export default function Dashboard() {
                 exit={{ opacity: 0, x: 50 }}
                 transition={{ duration: 0.4, ease: "easeInOut" }}
               >
-                <StockBudgetTable stockBudget={paginatedStockBudget} />
+                <StockBudgetTable stockBudget={budgets} />
                 <div className="flex justify-center mt-4">
                   <Pagination
-                    total={Math.ceil(budgets.length / itemsPerPage)}
-                    page={stockBudgetPage}
-                    onChange={setStockBudgetPage}
+                    total={budgetPage?.totalPages ?? 1}
+                    page={budgetPageIndex + 1}
+                    onChange={(page) => {
+                      if (page - 1 !== budgetPageIndex) setBudgetPageIndex(page - 1);
+                    }}
                     showControls
                   />
                 </div>
+
               </motion.div>
             )}
           </AnimatePresence>
