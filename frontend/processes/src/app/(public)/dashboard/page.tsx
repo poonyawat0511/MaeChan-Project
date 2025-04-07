@@ -35,10 +35,10 @@ import StockBudgetTable from "./_components/tables/StockBudgetTable";
 import StockBudgetListTable from "./_components/tables/StockBudgetListTable";
 import StockBudgetTypeTable from "./_components/tables/StockBudgetTypeTable";
 import { motion, AnimatePresence } from "framer-motion";
-import { getDashboardSummary } from "./hooks/getDashboardSummary";
+import { getDashboardSummary } from "@/utils/services/getApi";
 import { useDashboardPage } from "./hooks/useDashboardPage";
 import { DashboardSummaryDTO } from "@/utils/types/dashboardSummaryDTO";
-import { axiosInstance } from "@/utils/api/api";
+import { axiosInstance, yearApi } from "@/utils/api/api";
 
 const colors = {
   chart: [
@@ -71,18 +71,19 @@ export default function Dashboard() {
   const [selectedDepartments, setSelectedDepartments] = useState<string[]>([]);
   const [summary, setSummary] = useState<DashboardSummaryDTO | null>(null);
   const [showBudgetList, setShowBudgetList] = useState(false);
-  const [stockBudgetListPage, setStockBudgetListPage] = useState(1);
-  const itemsPerPage = 15;
 
   const {
     loading,
     departments,
-    budgetList,
     budgetType,
+    budgetList,
     budgets,
     budgetPage,
+    budgetListPage,
     budgetPageIndex,
+    budgetListPageIndex,
     setBudgetPageIndex,
+    setBudgetListPageIndex,
   } = useDashboardPage();
 
   useEffect(() => {
@@ -96,16 +97,11 @@ export default function Dashboard() {
   const [allYears, setAllYears] = useState<number[]>([]);
 
   useEffect(() => {
-    axiosInstance.get<number[]>("/dashboard-summary/years")
+    axiosInstance.get<number[]>(yearApi)
       .then((res) => setAllYears(res.data))
       .catch(console.error);
   }, []);
 
-
-  const paginatedStockBudgetList = budgetList.slice(
-    (stockBudgetListPage - 1) * itemsPerPage,
-    stockBudgetListPage * itemsPerPage
-  );
 
   if (!summary || loading) return <LoadingScreen message="Loading dashboard..." />;
 
@@ -227,12 +223,14 @@ export default function Dashboard() {
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.4, ease: "easeInOut" }}
               >
-                <StockBudgetListTable stockBudgetList={paginatedStockBudgetList} />
+                <StockBudgetListTable stockBudgetList={budgetList} />
                 <div className="flex justify-center mt-4">
                   <Pagination
-                    total={Math.ceil(budgetList.length / itemsPerPage)}
-                    page={stockBudgetListPage}
-                    onChange={setStockBudgetListPage}
+                    total={budgetListPage?.totalPages ?? 1}
+                    page={budgetListPageIndex + 1}
+                    onChange={(page) => {
+                      if (page - 1 !== budgetListPageIndex) setBudgetListPageIndex(page - 1);
+                    }}
                     showControls
                   />
                 </div>

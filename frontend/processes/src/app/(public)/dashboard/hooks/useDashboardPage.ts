@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getStockRequests, getStockPo, getStockDepartments, getStockBudgetList, getStockBudgetType, getStockBugetsByPageTable } from "@/utils/services/getApi";
+import { getStockRequests, getStockPo, getStockDepartments, getStockBudgetType, getStockBugetsByPageTable, getStockBugetsListByPageTable } from "@/utils/services/getApi";
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockPo } from "@/utils/types/stock-po";
 import { StockDepartment } from "@/utils/types/stock-department";
@@ -18,24 +18,23 @@ export const useDashboardPage = () => {
     const [budgetType, setBudgetType] = useState<StockBudgetType[]>([]);
     const [budgets, setBudgets] = useState<StockBudget[]>([]);
     const [budgetPage, setBudgetPage] = useState<Page<StockBudget> | null>(null);
-
+    const [budgetListPage, setBudgetListPage] = useState<Page<StockBudgetList> | null>(null);
     const [budgetPageIndex, setBudgetPageIndex] = useState(0);
+    const [budgetListPageIndex, setBudgetListPageIndex] = useState(0);
     const pageSize = 15;
 
 
     const fetchData = async () => {
         try {
-            const [reqData, poData, deptData, listData, budgetTypeData] = await Promise.all([
+            const [reqData, poData, deptData, budgetTypeData] = await Promise.all([
                 getStockRequests(),
                 getStockPo(),
                 getStockDepartments(),
-                getStockBudgetList(),
                 getStockBudgetType(),
             ]);
             setRequests(reqData);
             setPo(poData);
             setDepartments(deptData);
-            setBudgetList(listData);
             setBudgetType(budgetTypeData);
             setError(null);
         } catch {
@@ -56,9 +55,20 @@ export const useDashboardPage = () => {
         }
     };
 
+    const fetchPaginatedBudgetList = async () => {
+        try {
+            const pageDate = await getStockBugetsListByPageTable(budgetListPageIndex, pageSize);
+            setBudgetList(pageDate.content);
+            setBudgetListPage(pageDate);
+        } catch (err) {
+            console.error("Error fetching paginated stock budgetlist", err);
+        }
+    }
+
     useEffect(() => {
         fetchPaginatedBudgets();
-    }, [budgetPageIndex]);
+        fetchPaginatedBudgetList();
+    }, [budgetPageIndex, budgetListPageIndex]);
 
     useEffect(() => {
         fetchData();
@@ -74,8 +84,11 @@ export const useDashboardPage = () => {
         budgets,
         budgetType,
         budgetPage,
+        budgetListPage,
         budgetPageIndex,
+        budgetListPageIndex,
         setBudgetPageIndex,
+        setBudgetListPageIndex,
         fetchPaginatedBudgets,
         setRequests,
         setPo,

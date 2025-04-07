@@ -1,9 +1,12 @@
 import {
   axiosInstance,
   budgetApi,
+  budgetListPageApi,
+  budgetPaginatedApi,
   budgetTypeApi,
   bugetListApi,
   bugetListTrApi,
+  dashboardSummaryApi,
   dayApi,
   departmentApi,
   requestPaginatedApi,
@@ -40,6 +43,7 @@ import { StockBudgetListTr } from "../types/stock-budget-list-tr";
 
 // Function to get stock requests
 import { Page } from "@/utils/types/page"; // ✅ สร้าง type เพิ่ม
+import { DashboardSummaryDTO } from "../types/dashboardSummaryDTO";
 
 export const getStockRequestsByPageTable = async (
   page = 0,
@@ -284,7 +288,7 @@ export const getStockBugetsByPageTable = async (
 ): Promise<Page<StockBudget>> => {
   try {
     const response = await axiosInstance.get<Page<StockBudget>>(
-      `${budgetApi}/paginated?page=${page}&size=${size}`
+      `${budgetPaginatedApi}?page=${page}&size=${size}`
     );
     return response.data;
   } catch (error) {
@@ -313,6 +317,21 @@ export const getStockBudgetList = async (): Promise<StockBudgetList[]> => {
   }
 }
 
+export const getStockBugetsListByPageTable = async (
+  page = 0,
+  size = 12,
+): Promise<Page<StockBudgetList>> => {
+  try {
+    const response = await axiosInstance.get<Page<StockBudgetList>>(
+      `${budgetListPageApi}?page=${page}&size=${size}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Stock Budgets List:", error);
+    throw error;
+  }
+};
+
 export const getStockBudgetListTr = async (): Promise<StockBudgetListTr[]> => {
   try {
     const response = await axiosInstance.get<StockBudgetListTr[]>(bugetListTrApi);
@@ -322,3 +341,21 @@ export const getStockBudgetListTr = async (): Promise<StockBudgetListTr[]> => {
     throw error;
   }
 }
+
+export const getDashboardSummary = async (
+    year: number,
+    month: string,
+    departments: string[]
+  ): Promise<DashboardSummaryDTO> => {
+    const params = {
+      year: year.toString(),
+      month,
+      ...(departments.length > 0 && { departments: departments.join(",") }),
+    };
+  
+    const response = await axiosInstance.get<DashboardSummaryDTO>(dashboardSummaryApi, {
+      params,
+    });
+  
+    return response.data;
+  };
