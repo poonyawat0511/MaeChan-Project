@@ -46,13 +46,13 @@ export default function PrVsPoComparisonChart({
             <Bar
               dataKey="pr"
               name="ใบขอซื้อ (PR)"
-              fill={colors[0]}
+              fill={colors[5]}
               barSize={40}
             />
             <Bar
               dataKey="po"
               name="ใบสั่งซื้อ (PO)"
-              fill={colors[1]}
+              fill={colors[6]}
               barSize={40}
             />
           </BarChart>
