@@ -18,7 +18,7 @@ interface DepartmentData {
   department: string;
   pr: number;
   po: number;
-  poPercent: number; // ✅ ต้องมีใน data
+  poPercent: number;
 }
 
 
@@ -63,18 +63,27 @@ export default function PrVsPoByDepartmentChart({
   data,
   colors,
 }: PrVsPoByDepartmentChartProps) {
+  const topN = 10;
+  const sortedData = [...data].sort((a, b) => b.po - a.po);
+  const visibleData = sortedData.slice(0, topN);
+
   return (
     <CustomCard title="เปรียบเทียบมูลค่า PR และ PO ตามหน่วยงาน">
       <div className="h-[500px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} layout="vertical">
+          <BarChart data={visibleData} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis type="number" stroke="#64748b" />
+            <XAxis
+              type="number"
+              stroke="#64748b"
+              scale="log"
+              domain={['auto', 'auto']}
+            />
             <YAxis
               dataKey="department"
               type="category"
               stroke="#64748b"
-              width={120}
+              width={180}
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend />
