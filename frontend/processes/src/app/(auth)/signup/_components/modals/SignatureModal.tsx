@@ -2,7 +2,8 @@
 import { useRef } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import BlurModal from "@/components/modals/BlurModal";
-import { Button } from "@heroui/button";
+import { ArrowDownCircleIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/solid";
+import { motion } from "framer-motion";
 
 interface SignatureModalProps {
   isOpen: boolean;
@@ -47,9 +48,33 @@ export default function SignatureModal({ isOpen, onClose, onSave, title }: Signa
           canvasProps={{ width: 800, height: 400, className: "border border-gray-300 rounded-md" }}
           ref={sigCanvas}
         />
-        <div className="flex gap-2">
-          <Button onPress={handleClear} className="bg-yellow-400 px-3 py-1 rounded text-white">ล้าง</Button>
-          <Button onPress={handleSave} className="bg-blue-500 px-3 py-1 rounded text-white">บันทึก</Button>
+        <div className="flex justify-between gap-4">
+          <motion.button
+            onClick={handleClear}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="px-3 py-1 rounded-xl text-blue-500 text-xs border border-blue-500"
+          >
+            <div className="flex items-center gap-1">
+              <ArrowUturnLeftIcon className="h-4 w-4" />
+              ล้าง
+            </div>
+          </motion.button>
+
+          <motion.button
+            onClick={handleSave}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="px-3 py-1 rounded-xl text-white text-xs bg-blue-600 hover:bg-blue-700"
+          >
+            <div className="flex items-center gap-1">
+              <ArrowDownCircleIcon className="h-4 w-4" />
+              บันทึก
+            </div>
+          </motion.button>
+
         </div>
       </div>
     </BlurModal>

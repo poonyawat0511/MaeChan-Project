@@ -7,7 +7,7 @@ import { Form, Link, Select, SelectItem } from "@heroui/react";
 import liff from "@line/liff";
 import { signUpResponse } from "@/utils/types/signUpResponese";
 import { Role } from "@/utils/types/role";
-import SignatureModal from "./SignatureModal";
+import SignatureModal from "./_components/modals/SignatureModal";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { motion } from "framer-motion";
 
