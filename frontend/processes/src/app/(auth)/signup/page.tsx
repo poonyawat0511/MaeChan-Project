@@ -3,10 +3,13 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./styles.module.css";
 import { Input } from "@heroui/input";
-import { Button, Form, Link, Select, SelectItem } from "@heroui/react";
+import { Form, Link, Select, SelectItem } from "@heroui/react";
 import liff from "@line/liff";
 import { signUpResponse } from "@/utils/types/signUpResponese";
 import { Role } from "@/utils/types/role";
+import SignatureModal from "./SignatureModal";
+import { PencilIcon } from "@heroicons/react/24/solid";
+import { motion } from "framer-motion";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<Partial<signUpResponse>>({
@@ -20,6 +23,8 @@ export default function SignUpPage() {
   });
 
   const [signatureFile, setSignatureFile] = useState<File | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<{
     [key: string]: boolean;
@@ -66,6 +71,10 @@ export default function SignUpPage() {
       }));
     }
   };
+
+  const handleOpenModal = () => {
+    setIsOpen(true);
+  }
 
   const validateForm = () => {
     const errors: { [key: string]: boolean } = {};
@@ -160,14 +169,35 @@ export default function SignUpPage() {
             onChange={handleChange}
             className={validationErrors.password ? "border-red-500" : ""}
           />
-          <Input
-            type="file"
-            name="signature"
-            label={`เลือกลายเซ็น ${validationErrors.signature ? "*" : ""}`}
-            accept="image/*"
-            onChange={handleFileChange}
-            className={validationErrors.signature ? "border-red-500" : ""}
-          />
+          <div className="flex justify-between items-center w-full gap-5">
+            <Input
+              type="file"
+              name="signature"
+              label={`เลือกลายเซ็น ${validationErrors.signature ? "*" : ""}`}
+              accept="image/*"
+              onChange={handleFileChange}
+              className={validationErrors.signature ? "border-red-500" : ""}
+            />
+            <div className="relative group">
+              <motion.button
+                onClick={handleOpenModal}
+                className="p-2 bg-gray-100 hover:bg-gray-400 text-black rounded-xl transition-colors shadow-md"
+                aria-label="สร้างลายเซ็น"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <PencilIcon className="h-5 w-5" />
+              </motion.button>
+
+              {/* Tooltip */}
+              <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 whitespace-nowrap">
+                สร้างลายเซ็น
+              </span>
+            </div>
+
+
+          </div>
           <Input
             type="text"
             name="officerId"
@@ -185,7 +215,7 @@ export default function SignUpPage() {
           <Select
             name="role"
             label="ตำแหน่ง"
-            value={formData.role ?? ""} 
+            value={formData.role ?? ""}
             onChange={(e) =>
               setFormData({ ...formData, role: e.target.value as Role })
             }
@@ -198,19 +228,33 @@ export default function SignUpPage() {
             </SelectItem>
           </Select>
 
-          <Button
+          <motion.button
             type="submit"
-            className="bg-blue-500 text-white py-1 px-3 rounded-xl w-full"
+            className="bg-blue-500 text-white py-2 px-4 rounded-xl w-full flex justify-center items-center gap-2"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 300 }}
           >
             ลงทะเบียน
-          </Button>
+          </motion.button>
           <p className="font-bold">
             <Link href="/signin">
-              <span className="text-white text-xs">ลงชื่อเข้าใช้</span>
+              <span className="text-white underline hover:text-blue-200 transition text-xs">ลงชื่อเข้าใช้</span>
             </Link>
           </p>
         </Form>
       </div>
+
+      {isOpen && (
+        <SignatureModal
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          onSave={(file) => {
+            setSignatureFile(file);
+            setIsOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }
