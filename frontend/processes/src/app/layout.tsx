@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="light">
       <body
-        className={`${Noto_Sans_ThaiSans.variable} antialiased bg-white text-black`}
+         className={`${Noto_Sans_ThaiSans.variable} antialiased bg-white text-black cursor-syringe`}
       >
         <Providers>
           <RootLayoutClient>

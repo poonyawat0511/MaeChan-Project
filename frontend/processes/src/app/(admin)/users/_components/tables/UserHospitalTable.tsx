@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -15,6 +15,7 @@ import {
 import { TrashIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import { Role } from "@/utils/types/role";
 import { UserHospital } from "@/utils/types/user-hospital";
+import SignaturePreviewModal from "../modals/SignaturePreviewModal";
 
 interface UserHospitalTableProps {
   UserHospitals: UserHospital[];
@@ -37,6 +38,7 @@ export default function UserHospitalTable({
     { key: "signaturePath", label: "ลายเซ็น" },
     { key: "actions", label: "ลบ" },
   ];
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   return (
     <div className="bg-white p-6 w-full h-full flex flex-col">
@@ -91,15 +93,14 @@ export default function UserHospitalTable({
                     if (columnKey === "role") {
                       return (
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            user.role.includes("ADMIN" as Role)
-                              ? "bg-purple-100 text-purple-800"
-                              : user.role.includes("DIRECTOR" as Role)
+                          className={`px-2 py-1 rounded-full text-xs font-medium ${user.role.includes("ADMIN" as Role)
+                            ? "bg-purple-100 text-purple-800"
+                            : user.role.includes("DIRECTOR" as Role)
                               ? "bg-green-100 text-green-800"
                               : user.role.includes("APPROVER" as Role)
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
                         >
                           {user.role}
                         </span>
@@ -112,14 +113,16 @@ export default function UserHospitalTable({
                           <Image
                             src={imageUrl}
                             alt="Signature"
-                            className="w-16 h-16 object-contain border rounded-md shadow-sm group-hover:opacity-90 transition-all"
+                            onClick={() => setPreviewUrl(imageUrl)}
+                            className="w-16 h-16 object-contain border rounded-md shadow-sm cursor-pointer group-hover:opacity-90 transition-all"
                           />
-                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-md flex items-center justify-center transition-all"></div>
+
+                          <div className="inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 rounded-md flex items-center justify-center transition-all"></div>
                         </div>
                       ) : (
                         <span className="text-gray-400 italic text-sm">ไม่มีลายเซ็น</span>
                       );
-                    }                    
+                    }
                     if (columnKey === "actions") {
                       return (
                         <Tooltip content="ลบผู้ใช้">
@@ -155,6 +158,13 @@ export default function UserHospitalTable({
         <ExclamationCircleIcon className="h-4 w-4 text-gray-400" />
         <span>Showing {UserHospitals.length} users</span>
       </div>
+      {previewUrl && (
+        <SignaturePreviewModal
+          isOpen={!!previewUrl}
+          onClose={() => setPreviewUrl(null)}
+          imageUrl={previewUrl}
+        />
+      )}
     </div>
   );
 }

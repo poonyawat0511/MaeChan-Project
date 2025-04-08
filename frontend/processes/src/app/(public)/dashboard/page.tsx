@@ -177,23 +177,6 @@ export default function Dashboard() {
       <CustomCard title="ประเภทงบประมาณ">
         <StockBudgetTypeTable stockBudgetTypeList={budgetType} />
       </CustomCard>
-    </div>
-  );
-
-  const Page2 = () => (
-    <div className="space-y-6">
-      <div className="flex flex-wrap gap-3">
-        <YearFilter filterYear={filterYear} allYears={allYears} setFilterYear={setFilterYear} />
-        <DepartmentFilter
-          selectedDepartments={selectedDepartments}
-          setSelectedDepartments={setSelectedDepartments}
-          stockDepartments={departments}
-        />
-        <ClearFilterButton onClear={clearDepartmentFilter} />
-      </div>
-
-      <PrVsPoComparisonChart prPoData={summary.prPoData} colors={colors.chart} />
-      <PrVsPoByDepartmentChart data={summary.filteredDepartmentData} colors={colors.chart} />
 
       <CustomCard
         title={
@@ -232,6 +215,7 @@ export default function Dashboard() {
                       if (page - 1 !== budgetListPageIndex) setBudgetListPageIndex(page - 1);
                     }}
                     showControls
+                    color="secondary"
                   />
                 </div>
               </motion.div>
@@ -252,6 +236,7 @@ export default function Dashboard() {
                       if (page - 1 !== budgetPageIndex) setBudgetPageIndex(page - 1);
                     }}
                     showControls
+                    color="secondary"
                   />
                 </div>
 
@@ -260,7 +245,28 @@ export default function Dashboard() {
           </AnimatePresence>
         </div>
       </CustomCard>
+    </div>
+  );
 
+  const Page2 = () => (
+    <div className="space-y-6">
+      <div className="flex flex-wrap gap-3">
+        <YearFilter filterYear={filterYear} allYears={allYears} setFilterYear={setFilterYear} />
+        <DepartmentFilter
+          selectedDepartments={selectedDepartments}
+          setSelectedDepartments={setSelectedDepartments}
+          stockDepartments={departments}
+        />
+        <ClearFilterButton onClear={clearDepartmentFilter} />
+      </div>
+
+      <PrVsPoComparisonChart prPoData={summary.prPoData} colors={colors.chart} />
+      <PrVsPoByDepartmentChart
+        data={[...summary.filteredDepartmentData]
+          .sort((a, b) => b.po - a.po)
+          .slice(0, 10)}
+        colors={colors.chart}
+      />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <PRSummaryCard
           total={summary.totalStockRequests}
@@ -290,10 +296,10 @@ export default function Dashboard() {
         <div className="flex justify-between mb-6">
           <h1 className="text-2xl font-semibold text-gray-800">ภาพรวมข้อมูล</h1>
           <div className="flex space-x-2">
-            <Button onPress={() => setCurrentPage(0)} className={`px-4 py-2 rounded-md text-sm ${currentPage === 0 ? "bg-blue-500 text-white" : "bg-white text-gray-600 border"}`}>
+            <Button onPress={() => setCurrentPage(0)} className={`px-4 py-2 rounded-md text-sm ${currentPage === 0 ? "bg-secondary-500 text-white" : "bg-white text-gray-600 border"}`}>
               ภาพรวม
             </Button>
-            <Button onPress={() => setCurrentPage(1)} className={`px-4 py-2 rounded-md text-sm ${currentPage === 1 ? "bg-blue-500 text-white" : "bg-white text-gray-600 border"}`}>
+            <Button onPress={() => setCurrentPage(1)} className={`px-4 py-2 rounded-md text-sm ${currentPage === 1 ? "bg-secondary-500 text-white" : "bg-white text-gray-600 border"}`}>
               เปรียบเทียบ PR/PO
             </Button>
           </div>
@@ -309,14 +315,14 @@ export default function Dashboard() {
         <div className="flex justify-center mt-6 space-x-2">
           <button
             onClick={() => currentPage > 0 && setCurrentPage(currentPage - 1)}
-            className={`p-2 rounded-full ${currentPage > 0 ? "text-blue-600 hover:bg-blue-50" : "text-gray-300"}`}
+            className={`p-2 rounded-full ${currentPage > 0 ? "text-secondary-600 hover:bg-secondary-50" : "text-gray-300"}`}
             disabled={currentPage === 0}
           >
             <ArrowLeft size={20} />
           </button>
           <button
             onClick={() => currentPage < 1 && setCurrentPage(currentPage + 1)}
-            className={`p-2 rounded-full ${currentPage < 1 ? "text-blue-600 hover:bg-blue-50" : "text-gray-300"}`}
+            className={`p-2 rounded-full ${currentPage < 1 ? "text-secondary-600 hover:bg-secondary-50" : "text-gray-300"}`}
             disabled={currentPage === 1}
           >
             <ArrowRight size={20} />

@@ -87,8 +87,8 @@ export default function PrVsPoByDepartmentChart({
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend />
-            <Bar dataKey="pr" name="ใบขอซื้อ (PR)" fill={colors[0]} />
-            <Bar dataKey="po" name="ใบสั่งซื้อ (PO)" fill={colors[1]} />
+            <Bar dataKey="pr" name="ใบขอซื้อ (PR)" fill={colors[5]} />
+            <Bar dataKey="po" name="ใบสั่งซื้อ (PO)" fill={colors[6]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
