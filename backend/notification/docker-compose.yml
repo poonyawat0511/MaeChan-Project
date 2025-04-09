@@ -7,7 +7,7 @@ services:
       - "8081:8081"
     environment:
       IPADDRESS: ${IPADDRESS}
-      DB_URL: jdbc:postgresql://host.docker.internal:${POSTGRES_PORT}/${POSTGRES_DB_NAME}
+      DB_URL: jdbc:postgresql://${POSTGRES_IP}:${POSTGRES_PORT}/${POSTGRES_DB_NAME}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
 
@@ -47,7 +47,7 @@ services:
       OFFSET_STORAGE_TOPIC: "my_connect_offsets"
       STATUS_STORAGE_TOPIC: "my_connect_statuses"
       KAFKA_BOOTSTRAP_SERVERS: host.docker.internal:9092
-      POSTGRES_HOST: ${IPADDRESS}
+      POSTGRES_HOST: ${POSTGRES_IP}
       POSTGRES_PORT: ${POSTGRES_PORT}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -65,12 +65,12 @@ services:
         \"config\": {
           \"connector.class\": \"io.debezium.connector.postgresql.PostgresConnector\",
           \"tasks.max\": \"1\",
-          \"database.hostname\": \"host.docker.internal\",
+          \"database.hostname\": \"${POSTGRES_IP}\",
           \"database.port\": \"${POSTGRES_PORT}\",
           \"database.user\": \"${POSTGRES_USER}\",
           \"database.password\": \"${POSTGRES_PASSWORD}\",
           \"database.dbname\": \"${POSTGRES_DB_NAME}\",
-          \"database.server.name\": \"${POSTGRES_DB_SEVER_NAME}\",
+          \"database.server.name\": \"${POSTGRES_DB_SERVER_NAME}\",
           \"plugin.name\": \"pgoutput\",
           \"slot.name\": \"inventory_slot\",
           \"topic.prefix\": \"${POSTGRES_DB_TOPIC_PREFIX}\",
