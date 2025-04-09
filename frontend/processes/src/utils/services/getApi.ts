@@ -1,9 +1,12 @@
 import {
   axiosInstance,
   budgetApi,
+  budgetListPageApi,
+  budgetPaginatedApi,
   budgetTypeApi,
   bugetListApi,
   bugetListTrApi,
+  dashboardSummaryApi,
   dayApi,
   departmentApi,
   requestPaginatedApi,
@@ -40,6 +43,7 @@ import { StockBudgetListTr } from "../types/stock-budget-list-tr";
 
 // Function to get stock requests
 import { Page } from "@/utils/types/page"; // ✅ สร้าง type เพิ่ม
+import { DashboardSummaryDTO } from "../types/dashboardSummaryDTO";
 
 export const getStockRequestsByPageTable = async (
   page = 0,
@@ -278,7 +282,22 @@ export const getStockBugets = async (): Promise<StockBudget[]> => {
   }
 }
 
-export const getStockBugetType = async (): Promise<StockBudgetType[]> => {
+export const getStockBugetsByPageTable = async (
+  page = 0,
+  size = 12,
+): Promise<Page<StockBudget>> => {
+  try {
+    const response = await axiosInstance.get<Page<StockBudget>>(
+      `${budgetPaginatedApi}?page=${page}&size=${size}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching stock budgets:", error);
+    throw error;
+  }
+};
+
+export const getStockBudgetType = async (): Promise<StockBudgetType[]> => {
   try {
     const response = await axiosInstance.get<StockBudgetType[]>(budgetTypeApi);
     return response.data;
@@ -288,7 +307,7 @@ export const getStockBugetType = async (): Promise<StockBudgetType[]> => {
   }
 }
 
-export const getStockBugetList = async (): Promise<StockBudgetList[]> => {
+export const getStockBudgetList = async (): Promise<StockBudgetList[]> => {
   try {
     const response = await axiosInstance.get<StockBudgetList[]>(bugetListApi);
     return response.data;
@@ -298,7 +317,22 @@ export const getStockBugetList = async (): Promise<StockBudgetList[]> => {
   }
 }
 
-export const getStockBugetListTr = async (): Promise<StockBudgetListTr[]> => {
+export const getStockBugetsListByPageTable = async (
+  page = 0,
+  size = 12,
+): Promise<Page<StockBudgetList>> => {
+  try {
+    const response = await axiosInstance.get<Page<StockBudgetList>>(
+      `${budgetListPageApi}?page=${page}&size=${size}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Stock Budgets List:", error);
+    throw error;
+  }
+};
+
+export const getStockBudgetListTr = async (): Promise<StockBudgetListTr[]> => {
   try {
     const response = await axiosInstance.get<StockBudgetListTr[]>(bugetListTrApi);
     return response.data;
@@ -307,3 +341,21 @@ export const getStockBugetListTr = async (): Promise<StockBudgetListTr[]> => {
     throw error;
   }
 }
+
+export const getDashboardSummary = async (
+    year: number,
+    month: string,
+    departments: string[]
+  ): Promise<DashboardSummaryDTO> => {
+    const params = {
+      year: year.toString(),
+      month,
+      ...(departments.length > 0 && { departments: departments.join(",") }),
+    };
+  
+    const response = await axiosInstance.get<DashboardSummaryDTO>(dashboardSummaryApi, {
+      params,
+    });
+  
+    return response.data;
+  };

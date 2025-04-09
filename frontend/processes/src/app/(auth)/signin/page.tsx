@@ -12,8 +12,8 @@ import {
   KeyIcon,
 } from "@heroicons/react/24/outline";
 import React from "react";
-import { Button } from "@heroui/button";
 import { Form, Input, Link } from "@heroui/react";
+import { motion } from "framer-motion";
 
 const SignInPage = () => {
   const [isResetMode, setIsResetMode] = useState(false);
@@ -190,7 +190,7 @@ const SignInPage = () => {
               <>
                 <div className="flex flex-col gap-6 w-full">
                   <Input
-                    label="อีเมล"
+                    label={<span className="text-white">อีเมล</span>}
                     labelPlacement="outside"
                     placeholder="you@example.com"
                     startContent={<EnvelopeIcon className="icon text-white" />}
@@ -199,10 +199,11 @@ const SignInPage = () => {
                     className="text-white"
                   />
 
+
                   <Input
                     type={isVisible ? "text" : "password"}
                     labelPlacement="outside"
-                    label="รหัสผ่าน"
+                    label={<span className="text-white">รหัสผ่าน</span>}
                     placeholder="********"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -222,7 +223,6 @@ const SignInPage = () => {
                       </button>
                     }
                     required
-                    className="text-white"
                   />
                 </div>
 
@@ -230,34 +230,40 @@ const SignInPage = () => {
             )}
           </div>
 
-          <Button type="submit" className="bg-[#003465] text-white w-full mt-4">
+          <motion.button
+            type="submit"
+            className="bg-[#003465] text-white w-full mt-4 py-2 rounded-xl shadow-md"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.96 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
             {isResetMode ? "รีเซ็ตรหัสผ่าน" : "ลงชื่อเข้าใช้"}
-          </Button>
+          </motion.button>
 
           <div className="flex justify-between items-center mt-4 w-full text-xs">
-  {!isResetMode ? (
-    <>
-      <Link href="/signup">
-        <span className="text-white underline hover:text-blue-200 transition">ลงทะเบียนบัญชีผู้ใช้</span>
-      </Link>
-      <button
-        type="button"
-        onClick={() => setIsResetMode(true)}
-        className="underline text-white hover:text-blue-200 transition"
-      >
-        ลืมรหัสผ่าน?
-      </button>
-    </>
-  ) : (
-    <button
-      type="button"
-      onClick={() => setIsResetMode(false)}
-      className="underline text-white hover:text-blue-200 transition w-full text-center"
-    >
-      กลับไปหน้าเข้าสู่ระบบ
-    </button>
-  )}
-</div>
+            {!isResetMode ? (
+              <>
+                <Link href="/signup">
+                  <span className="text-white underline hover:text-blue-200 transition text-xs">ลงทะเบียนบัญชีผู้ใช้</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setIsResetMode(true)}
+                  className="underline text-white hover:text-blue-200 transition"
+                >
+                  ลืมรหัสผ่าน?
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsResetMode(false)}
+                className="underline text-white hover:text-blue-200 transition w-full text-center"
+              >
+                กลับไปหน้าเข้าสู่ระบบ
+              </button>
+            )}
+          </div>
 
         </Form>
       </div>
