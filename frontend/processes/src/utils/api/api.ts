@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: "https://markers-prospective-feedback-firewire.trycloudflare.com",
+  baseURL: "https://api.osathi.site",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

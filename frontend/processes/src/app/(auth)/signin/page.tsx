@@ -43,7 +43,7 @@ const SignInPage = () => {
     setError("");
 
     try {
-      const response = await fetch("https://markers-prospective-feedback-firewire.trycloudflare.com/auth/signin", {
+      const response = await fetch("https://api.osathi.site/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -68,7 +68,7 @@ const SignInPage = () => {
     }
 
     try {
-      const response = await fetch("https://markers-prospective-feedback-firewire.trycloudflare.com/forgot-password", {
+      const response = await fetch("https://api.osathi.site/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

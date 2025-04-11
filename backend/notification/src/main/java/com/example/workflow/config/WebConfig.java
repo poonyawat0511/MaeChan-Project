@@ -15,8 +15,8 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOriginPatterns("https://standings-large-sm-milk.trycloudflare.com") //front end
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedOriginPatterns("https://page.osathi.site") //front end
+                        .allowedMethods("*")
                         .allowedHeaders("*")
                         .allowCredentials(true); // If you use cookies or authorization headers
             }

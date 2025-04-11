@@ -85,7 +85,7 @@ public class NotifyService {
         //count remaining approver / director task
         int taskCountApprover = 0;
         int taskCountDirector = 0;
-        String apiUrl = "https://markers-prospective-feedback-firewire.trycloudflare.com/engine-rest/task" ;
+        String apiUrl = "https://api.osathi.site/engine-rest/task" ;
         try {
                 java.net.URL url = new java.net.URL(apiUrl);
                 java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();

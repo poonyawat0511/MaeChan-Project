@@ -17,7 +17,7 @@
         <camunda:connector>
           <camunda:inputOutput>
             <camunda:inputParameter name="method">POST</camunda:inputParameter>
-            <camunda:inputParameter name="url">https://markers-prospective-feedback-firewire.trycloudflare.com/workflow/start</camunda:inputParameter>
+            <camunda:inputParameter name="url">https://api.osathi.site/workflow/start</camunda:inputParameter>
             <camunda:inputParameter name="payload">{
           "RequestId": "${requestId}"
         }</camunda:inputParameter>
