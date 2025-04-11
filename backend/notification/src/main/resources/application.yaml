@@ -13,8 +13,8 @@ camunda:
 spring:
   kafka:
     consumer:
-      group-id: console-consumer-5182
-      bootstrap-servers: ${IPADDRESS}
+      group-id: console-consumer-35724
+      bootstrap-servers: 127.0.0.1:9092
 
 line:
   bot:

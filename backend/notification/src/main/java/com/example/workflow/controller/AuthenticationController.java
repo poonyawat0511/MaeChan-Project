@@ -88,26 +88,18 @@ public class AuthenticationController {
 
     @PostMapping("/signin")
     public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SigninRequest signinRequest, HttpServletResponse response) {
-        // Authenticate and generate tokens
         JwtAuthenticationResponse jwtResponse = authenticationService.signin(signinRequest);
 
         // Set JWT token in a cookie
         Cookie jwtCookie = new Cookie("jwt", jwtResponse.getToken());
         jwtCookie.setHttpOnly(true); // Prevent client-side script access
-        jwtCookie.setSecure(false); // Use with HTTPS
+        jwtCookie.setSecure(true); // Use with HTTPS
         jwtCookie.setPath("/"); // Accessible across the entire application
         jwtCookie.setMaxAge(24 * 60 * 60); // 24 hours in seconds
         response.addCookie(jwtCookie);
+        response.addHeader("Set-Cookie", String.format("jwt=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d", 
+            jwtResponse.getToken(), 24 * 60 * 60)); // 24 hours in seconds
 
-        // Set refresh token in a cookie (optional)
-        Cookie refreshCookie = new Cookie("refreshToken", jwtResponse.getRefreshToken());
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(true);
-        refreshCookie.setPath("/");
-        refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days in seconds
-        response.addCookie(refreshCookie);
-
-        // Return the response (optional)
         return ResponseEntity.ok(jwtResponse);
     }
 

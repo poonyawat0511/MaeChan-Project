@@ -43,11 +43,11 @@ const SignInPage = () => {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:8081/auth/signin", {
+      const response = await fetch("https://markers-prospective-feedback-firewire.trycloudflare.com/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-        credentials: "include",
+        credentials: "include", // Ensure cookies are sent with the request
       });
 
       if (!response.ok) throw new Error("Invalid email or password.");
@@ -68,7 +68,7 @@ const SignInPage = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8081/forgot-password", {
+      const response = await fetch("https://markers-prospective-feedback-firewire.trycloudflare.com/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
