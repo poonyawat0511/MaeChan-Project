@@ -113,6 +113,7 @@ export default function TaskPage() {
           />
 
         </div>
+        {totalTasks > 0 && (
         <div className="flex items-center mt-2">
           <Pagination
             total={Math.ceil(totalTasks / size)}
@@ -122,6 +123,7 @@ export default function TaskPage() {
             color="secondary"
           />
         </div>
+        )}
       </div>
 
 
