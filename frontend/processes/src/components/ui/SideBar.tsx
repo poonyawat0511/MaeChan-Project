@@ -11,6 +11,7 @@ import {
 import { axiosInstance, signOutApi } from "@/utils/api/api";
 import { userMenuItems, adminMenuItems, recentItems } from "./menu";
 import { motion } from "framer-motion";
+import ConfirmSignOut from "./_components/modals/ConfirmSignOut";
 
 // ✅ Interface for user data
 interface UserHospital {
@@ -21,6 +22,7 @@ const SideBar = () => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [user, setUser] = useState<UserHospital | null>(null);
   const pathname = usePathname();
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
   // ✅ Fetch user info from backend
   useEffect(() => {
@@ -50,6 +52,14 @@ const SideBar = () => {
   }, [isCollapsed]);
 
   const menuItems = user?.role === "ADMIN" ? adminMenuItems : userMenuItems;
+
+  const handelOpenModal = () => {
+    setIsOpenModal(true);
+  }
+
+  const handleConfirmSignOut = () => {
+    handleSignout();
+  }
 
   const handleSignout = async () => {
     try {
@@ -191,7 +201,7 @@ const SideBar = () => {
         whileHover={{ scale: 1.05 }}
       >
         <motion.button
-          onClick={handleSignout}
+          onClick={handelOpenModal}
           className={`w-full flex items-center text-red-600 gap-2 px-3 py-2 rounded-lg transition-all group ${
             isCollapsed ? "justify-center" : "justify-start"
           } hover:bg-red-100`}
@@ -212,6 +222,10 @@ const SideBar = () => {
           </motion.span>
         </motion.button>
       </motion.div>
+      <ConfirmSignOut
+        isOpen={isOpenModal}
+        onClose={() => setIsOpenModal(false)}
+        onConfirm={handleConfirmSignOut} />
     </motion.aside>
   );
 };
