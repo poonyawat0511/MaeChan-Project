@@ -12,6 +12,7 @@ import {
   requestPaginatedApi,
   stockPoApi,
   stockRequestListApi,
+  stockRequestListBatchApi,
   targetApi,
   targetPaginatedApi,
   timeApi,
@@ -343,19 +344,27 @@ export const getStockBudgetListTr = async (): Promise<StockBudgetListTr[]> => {
 }
 
 export const getDashboardSummary = async (
-    year: number,
-    month: string,
-    departments: string[]
-  ): Promise<DashboardSummaryDTO> => {
-    const params = {
-      year: year.toString(),
-      month,
-      ...(departments.length > 0 && { departments: departments.join(",") }),
-    };
-  
-    const response = await axiosInstance.get<DashboardSummaryDTO>(dashboardSummaryApi, {
-      params,
-    });
-  
-    return response.data;
+  year: number,
+  month: string,
+  departments: string[]
+): Promise<DashboardSummaryDTO> => {
+  const params = {
+    year: year.toString(),
+    month,
+    ...(departments.length > 0 && { departments: departments.join(",") }),
   };
+
+  const response = await axiosInstance.get<DashboardSummaryDTO>(dashboardSummaryApi, {
+    params,
+  });
+
+  return response.data;
+};
+
+export async function getStockRequestBatchList(requestIds: number[]): Promise<StockRequestList[]> {
+  const res = await axiosInstance.post<StockRequestList[]>(
+    stockRequestListBatchApi,
+    requestIds
+  );
+  return res.data;
+}

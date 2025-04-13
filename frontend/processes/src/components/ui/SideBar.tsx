@@ -11,8 +11,8 @@ import {
 import { axiosInstance, signOutApi } from "@/utils/api/api";
 import { userMenuItems, adminMenuItems, recentItems } from "./menu";
 import { motion } from "framer-motion";
+import ConfirmSignOut from "./_components/modals/ConfirmSignOut";
 
-// ✅ Interface for user data
 interface UserHospital {
   role: string;
 }
@@ -21,20 +21,20 @@ const SideBar = () => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [user, setUser] = useState<UserHospital | null>(null);
   const pathname = usePathname();
+  const [isOpenModal, setIsOpenModal] = useState(false);
 
-  // ✅ Fetch user info from backend
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const response = await axiosInstance.get<UserHospital>("/auth/me", {
-          withCredentials: true, // ✅ Ensure cookies are sent
+          withCredentials: true,
         });
         setUser(response.data);
       } catch (error) {
         console.error("Error fetching user info:", error);
       }
     };
-    
+
     fetchUser();
   }, []);
 
@@ -51,10 +51,18 @@ const SideBar = () => {
 
   const menuItems = user?.role === "ADMIN" ? adminMenuItems : userMenuItems;
 
+  const handelOpenModal = () => {
+    setIsOpenModal(true);
+  }
+
+  const handleConfirmSignOut = () => {
+    handleSignout();
+  }
+
   const handleSignout = async () => {
     try {
       await axiosInstance.post(signOutApi, {}, { withCredentials: true });
-      window.location.href = "/signin"; // ✅ Redirect after logout
+      window.location.href = "/signin";
     } catch (error) {
       console.error("Sign out failed:", error);
     }
@@ -121,11 +129,10 @@ const SideBar = () => {
           >
             <Link
               href={item.link}
-              className={`flex items-center w-full px-3 py-2 rounded-lg transition-all group ${
-                pathname === item.link
-                  ? "bg-red-50 text-red-500"
-                  : "hover:bg-gray-50 text-gray-700"
-              }`}
+              className={`flex items-center w-full px-3 py-2 rounded-lg transition-all group ${pathname === item.link
+                ? "bg-red-50 text-red-500"
+                : "hover:bg-gray-50 text-gray-700"
+                }`}
             >
               <item.icon className="h-6 w-6 shrink-0 transition-transform duration-300 group-hover:rotate-6" />
 
@@ -162,11 +169,10 @@ const SideBar = () => {
           >
             <Link
               href={item.link}
-              className={`flex items-center w-full px-3 py-2 rounded-lg transition-all group ${
-                pathname === item.link
-                  ? "bg-red-50 text-red-500"
-                  : "hover:bg-gray-50 text-gray-700"
-              }`}
+              className={`flex items-center w-full px-3 py-2 rounded-lg transition-all group ${pathname === item.link
+                ? "bg-red-50 text-red-500"
+                : "hover:bg-gray-50 text-gray-700"
+                }`}
             >
               <item.icon className="h-6 w-6 shrink-0 transition-transform duration-300 hover:rotate-6" />
               <motion.span
@@ -191,10 +197,9 @@ const SideBar = () => {
         whileHover={{ scale: 1.05 }}
       >
         <motion.button
-          onClick={handleSignout}
-          className={`w-full flex items-center text-red-600 gap-2 px-3 py-2 rounded-lg transition-all group ${
-            isCollapsed ? "justify-center" : "justify-start"
-          } hover:bg-red-100`}
+          onClick={handelOpenModal}
+          className={`w-full flex items-center text-red-600 gap-2 px-3 py-2 rounded-lg transition-all group ${isCollapsed ? "justify-center" : "justify-start"
+            } hover:bg-red-100`}
           whileTap={{ scale: 0.95 }}
         >
           <PowerIcon className="h-6 w-6 shrink-0 transition-all duration-300 group-hover:rotate-12" />
@@ -212,6 +217,11 @@ const SideBar = () => {
           </motion.span>
         </motion.button>
       </motion.div>
+
+      <ConfirmSignOut
+        isOpen={isOpenModal}
+        onClose={() => setIsOpenModal(false)}
+        onConfirm={handleConfirmSignOut} />
     </motion.aside>
   );
 };

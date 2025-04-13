@@ -23,12 +23,21 @@ public class StockRequestListController {
     @Autowired
     private StockRequestListMapper stockRequestListMapper;
 
+    @PostMapping("/batch")
+    public ResponseEntity<List<StockRequestListDto>> getStockRequestListByRequestIds(@RequestBody List<Long> requestIds) {
+        List<StockRequestList> stockRequestLists = stockRequestListService.findByRequestIds(requestIds);
+        List<StockRequestListDto> dtos = stockRequestLists.stream()
+                .map(stockRequestListMapper::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
     @GetMapping
     public ResponseEntity<List<StockRequestListDto>> getAllStockRequestLists() {
         List<StockRequestList> stockRequestLists = stockRequestListService.findAll();
         List<StockRequestListDto> stockRequestListDtos = stockRequestLists.stream()
-            .map(stockRequestListMapper::toDto)
-            .collect(Collectors.toList());
+                .map(stockRequestListMapper::toDto)
+                .collect(Collectors.toList());
         return new ResponseEntity<>(stockRequestListDtos, HttpStatus.OK);
     }
 
@@ -36,7 +45,7 @@ public class StockRequestListController {
     public ResponseEntity<StockRequestListDto> getStockRequestListById(@PathVariable Long id) {
         Optional<StockRequestList> stockRequestList = stockRequestListService.findById(id);
         return stockRequestList.map(value -> ResponseEntity.ok(stockRequestListMapper.toDto(value)))
-            .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { getStockRequestList, getStockRequestsByPageTable } from "@/utils/services/getApi";
+import { getStockRequestBatchList, getStockRequestsByPageTable } from "@/utils/services/getApi";
 import { Page } from "@/utils/types/page";
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockRequestList } from "@/utils/types/stock-request-list";
@@ -17,8 +17,13 @@ export const useAllStockRequests = (searchQuery: string) => {
   const fetchRequests = useCallback(async (page = currentPage - 1) => {
     try {
       setRefreshing(true);
+  
       const data: Page<StockRequest> = await getStockRequestsByPageTable(page, itemsPerPage, searchQuery);
-      const list = await getStockRequestList();
+  
+      // ✅ Extract requestIds
+      const requestIds = data.content.map((req) => req.requestId);
+      const list = await getStockRequestBatchList(requestIds); // 🔁 ใช้ batch API
+  
       setRequests(data.content);
       setRequestList(list);
       setTotalPages(data.totalPages);

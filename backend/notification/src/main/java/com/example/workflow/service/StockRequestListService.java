@@ -1,12 +1,13 @@
 package com.example.workflow.service;
 
-import com.example.workflow.model.StockRequestList;
-import com.example.workflow.repository.StockRequestListRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.example.workflow.model.StockRequestList;
+import com.example.workflow.repository.StockRequestListRepository;
 
 @Service
 public class StockRequestListService {
@@ -17,6 +18,10 @@ public class StockRequestListService {
     public List<StockRequestList> findAll() {
         return stockRequestListRepository.findAll();
     }
+    
+    public List<StockRequestList> findByRequestIds(List<Long> requestIds) {
+        return stockRequestListRepository.findByRequestId_RequestIdIn(requestIds);
+    }    
 
     public Optional<StockRequestList> findById(Long id) {
         return stockRequestListRepository.findById(id);
