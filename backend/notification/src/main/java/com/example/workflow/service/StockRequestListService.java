@@ -18,6 +18,10 @@ public class StockRequestListService {
         return stockRequestListRepository.findAll();
     }
 
+    public List<StockRequestList> findByRequestIds(List<Long> requestIds) {
+        return stockRequestListRepository.findByRequestId_RequestIdIn(requestIds);
+    }  
+
     public Optional<StockRequestList> findById(Long id) {
         return stockRequestListRepository.findById(id);
     }

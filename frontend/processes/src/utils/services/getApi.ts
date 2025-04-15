@@ -12,6 +12,7 @@ import {
   requestPaginatedApi,
   stockPoApi,
   stockRequestListApi,
+  stockRequestListBatchApi,
   targetApi,
   targetPaginatedApi,
   timeApi,
@@ -359,3 +360,11 @@ export const getDashboardSummary = async (
   
     return response.data;
   };
+
+  export async function getStockRequestBatchList(requestIds: number[]): Promise<StockRequestList[]> {
+    const res = await axiosInstance.post<StockRequestList[]>(
+      stockRequestListBatchApi,
+      requestIds
+    );
+    return res.data;
+  }

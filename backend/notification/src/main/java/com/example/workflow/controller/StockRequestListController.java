@@ -23,6 +23,15 @@ public class StockRequestListController {
     @Autowired
     private StockRequestListMapper stockRequestListMapper;
 
+    @PostMapping("/batch")
+    public ResponseEntity<List<StockRequestListDto>> getStockRequestListByRequestIds(@RequestBody List<Long> requestIds) {
+        List<StockRequestList> stockRequestLists = stockRequestListService.findByRequestIds(requestIds);
+        List<StockRequestListDto> dtos = stockRequestLists.stream()
+                .map(stockRequestListMapper::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
     @GetMapping
     public ResponseEntity<List<StockRequestListDto>> getAllStockRequestLists() {
         List<StockRequestList> stockRequestLists = stockRequestListService.findAll();

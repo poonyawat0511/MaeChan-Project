@@ -4,7 +4,7 @@ import { Task } from "@/utils/types/task";
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockRequestList } from "@/utils/types/stock-request-list";
 import generatePDF from "@/utils/services/generatePDF";
-import { getPaginatedCamundaTasks, getStockRequestList } from "@/utils/services/getApi";
+import { getPaginatedCamundaTasks, getStockRequestBatchList, getStockRequestList } from "@/utils/services/getApi";
 import { axiosInstance, camundaTaskSubmit, springRequestByTaskApi } from "@/utils/api/api";
 import { getAuthenticatedUser } from "@/utils/auth/auth";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
@@ -32,14 +32,28 @@ export const useTaskPage = () => {
         const user = await getAuthenticatedUser();
         if (user) setUserRole(user.role || "USER");
 
-        const { tasks: pagedTasks, total } = await getPaginatedCamundaTasks(page, size,);
-        const stockRequestList = await getStockRequestList();
+        const { tasks: pagedTasks, total } = await getPaginatedCamundaTasks(page, size);
+
+        const stockRequests: (StockRequest | null)[] = await Promise.all(
+          pagedTasks.map((task) =>
+            axiosInstance
+              .get<{ stockRequest: StockRequest }>(springRequestByTaskApi(task.processInstanceId))
+              .then((res) => res.data?.stockRequest)
+              .catch(() => null)
+          )
+        );
+
+        const requestIds = stockRequests
+          .filter((r): r is StockRequest => r !== null)
+          .map((r) => r.requestId);
+
+        const stockRequestList = await getStockRequestBatchList(requestIds);
 
         setTasks(pagedTasks);
         setTotalTasks(total);
         setRequestList(stockRequestList);
       } catch {
-        setError("Error fetching data.");
+        setError("Error fetching task or stock requests.");
       } finally {
         setLoading(false);
       }
