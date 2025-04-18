@@ -21,7 +21,6 @@ interface DepartmentData {
   poPercent: number;
 }
 
-
 interface PrVsPoByDepartmentChartProps {
   data: DepartmentData[];
   colors: string[];
@@ -58,27 +57,28 @@ const CustomTooltip: React.FC<TooltipProps<ValueType, NameType>> = ({
   return null;
 };
 
-
 export default function PrVsPoByDepartmentChart({
   data,
   colors,
 }: PrVsPoByDepartmentChartProps) {
   const topN = 10;
-  const sortedData = [...data].sort((a, b) => b.po - a.po);
-  const visibleData = sortedData.slice(0, topN);
+
+  const cleanedData = [...data]
+    .map((d) => ({
+      ...d,
+      pr: d.pr <= 0 ? 1 : d.pr,
+      po: d.po <= 0 ? 1 : d.po,
+    }))
+    .sort((a, b) => b.po - a.po)
+    .slice(0, topN);
 
   return (
     <CustomCard title="เปรียบเทียบมูลค่า PR และ PO ตามหน่วยงาน">
       <div className="h-[500px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={visibleData} layout="vertical">
+          <BarChart data={cleanedData} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis
-              type="number"
-              stroke="#64748b"
-              scale="log"
-              domain={['auto', 'auto']}
-            />
+            <XAxis type="number" stroke="#64748b" />
             <YAxis
               dataKey="department"
               type="category"
