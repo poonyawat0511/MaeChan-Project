@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { getStockRequests, getStockPo, getStockDepartments, getStockBudgetType, getStockBugetsByPageTable, getStockBugetsListByPageTable } from "@/utils/services/getApi";
-import { StockRequest } from "@/utils/types/stock-request";
-import { StockPo } from "@/utils/types/stock-po";
+import {
+    getStockDepartments,
+    getStockBudgetType,
+    getStockBugetsByPageTable,
+    getStockBugetsListByPageTable,
+} from "@/utils/services/getApi";
 import { StockDepartment } from "@/utils/types/stock-department";
 import { StockBudgetList } from "@/utils/types/stock-buget-list";
 import { StockBudget } from "@/utils/types/stock-budget";
@@ -11,8 +14,6 @@ import { Page } from "@/utils/types/page";
 export const useDashboardPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [requests, setRequests] = useState<StockRequest[]>([]);
-    const [po, setPo] = useState<StockPo[]>([]);
     const [departments, setDepartments] = useState<StockDepartment[]>([]);
     const [budgetList, setBudgetList] = useState<StockBudgetList[]>([]);
     const [budgetType, setBudgetType] = useState<StockBudgetType[]>([]);
@@ -23,27 +24,21 @@ export const useDashboardPage = () => {
     const [budgetListPageIndex, setBudgetListPageIndex] = useState(0);
     const pageSize = 15;
 
-
     const fetchData = async () => {
         try {
-            const [reqData, poData, deptData, budgetTypeData] = await Promise.all([
-                getStockRequests(),
-                getStockPo(),
+            const [deptData, budgetTypeData] = await Promise.all([
                 getStockDepartments(),
                 getStockBudgetType(),
             ]);
-            setRequests(reqData);
-            setPo(poData);
             setDepartments(deptData);
             setBudgetType(budgetTypeData);
             setError(null);
         } catch {
-            setError("Failed to load requests");
+            setError("Failed to load dashboard metadata");
         } finally {
             setLoading(false);
         }
     };
-
 
     const fetchPaginatedBudgets = async () => {
         try {
@@ -63,7 +58,7 @@ export const useDashboardPage = () => {
         } catch (err) {
             console.error("Error fetching paginated stock budgetlist", err);
         }
-    }
+    };
 
     useEffect(() => {
         fetchPaginatedBudgets();
@@ -77,8 +72,6 @@ export const useDashboardPage = () => {
     return {
         loading,
         error,
-        requests,
-        po,
         departments,
         budgetList,
         budgets,
@@ -90,8 +83,6 @@ export const useDashboardPage = () => {
         setBudgetPageIndex,
         setBudgetListPageIndex,
         fetchPaginatedBudgets,
-        setRequests,
-        setPo,
         setDepartments,
         setBudgetList,
         setBudgets,

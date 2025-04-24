@@ -1,5 +1,7 @@
 package com.example.workflow.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +19,9 @@ public interface StockRequestRepository extends JpaRepository<StockRequest, Long
             + "OR LOWER(s.requestNo) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<StockRequest> searchByRequestIdOrRequestNo(@Param("search") String search, Pageable pageable);
 
+    @Query("SELECT r FROM StockRequest r WHERE YEAR(r.requestDate) = :year")
+    List<StockRequest> findByYear(@Param("year") int year);
+
+    @Query("SELECT DISTINCT YEAR(r.requestDate) FROM StockRequest r WHERE r.requestDate IS NOT NULL")
+    List<Integer> findDistinctYears();
 }
