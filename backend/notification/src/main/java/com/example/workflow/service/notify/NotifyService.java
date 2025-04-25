@@ -144,6 +144,12 @@ public class NotifyService {
                 return;
             }
 
+            //skip if no task
+            if (numTask == 0) {
+                System.out.println("UserHospital : " + user.getTargetUser().getFirstName() + " have no task to do");
+                continue;
+            }
+
            
             //backend log
             System.out.println(
