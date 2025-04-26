@@ -166,16 +166,16 @@ public class NotifyService {
             //ส่งข้อความ + Link web app
             // T id line "U9248dc5b4d58a88e3810dd31a8ecfd3d"
             lineMessageService.pushMessage(user.getTargetUser().getLineId(), 
-            "Hello : " 
+            "สวัสดีคุณ : " 
             + user.getTargetUser().getFirstName() 
             + " " 
             + user.getTargetUser().getLastName()
-            + " your role is " 
+            + " คุณคือ " 
             + enumRole 
-            + " you have " 
+            + " คุณมีงานเอกสารที่ต้องตรวจสอบ " 
             + numTask 
-            + " task to do"
-            + " follow this links to web app https://www.google.com/ ");
+            + " งาน"
+            + " กดลิงค์เพื่อเข้าสู่ระบบ http://192.168.2.12:3000/signin ");
         }
 
                      
