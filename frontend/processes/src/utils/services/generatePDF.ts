@@ -110,7 +110,7 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
   // Table Rows (Stock Request List Data)
   const itemRows = filteredStockRequestList.map((item, index) => [
     index + 1,
-    item.tradeName || "-",
+    item.tradeName || item.itemId.itemName || "-",
     formatNumber(item.requestQty),
     formatNumber(item.stockItemUnitStandardPrice) || "-",
     formatNumber(item.totalPrice),
@@ -244,7 +244,7 @@ const finalY = doc.lastAutoTable?.finalY ?? margin + 120;
 
   //line 12
   thaitext(doc, "ลงชื่อ ___________________________________", pageWidth / 2 - 30, finalY2 + 90);
-  thaitext(doc, "(นายฐิติวัฒน์ ปาระมี)", pageWidth / 2 - 30, finalY2 + 100);
+  thaitext(doc, "(นายรัฐกานต์ ปาระมี)", pageWidth / 2 - 30, finalY2 + 100);
   thaitext(doc, "ผู้อำนวยการโรงพยาบาลแม่จัน", pageWidth / 2 - 30, finalY2 + 110);
 
   try {

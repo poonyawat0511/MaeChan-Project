@@ -88,47 +88,72 @@ public class AuthenticationController {
 
     @PostMapping("/signin")
     public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SigninRequest signinRequest, HttpServletResponse response) {
+        // Authenticate and generate tokens
         JwtAuthenticationResponse jwtResponse = authenticationService.signin(signinRequest);
-    
-        String jwtCookie = String.format(
-            "jwt=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d; Domain=.osathi.site",
-            jwtResponse.getToken(), 24 * 60 * 60
-        );
-        response.addHeader("Set-Cookie", jwtCookie);
-    
-        String refreshCookie = String.format(
-            "refreshToken=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d; Domain=.osathi.site",
-            jwtResponse.getRefreshToken(), 7 * 24 * 60 * 60
-        );
-        response.addHeader("Set-Cookie", refreshCookie);
-    
+
+        // Set JWT token in a cookie
+        Cookie jwtCookie = new Cookie("jwt", jwtResponse.getToken());
+        jwtCookie.setHttpOnly(true); // Prevent client-side script access
+        jwtCookie.setSecure(false); // Use with HTTPS
+        jwtCookie.setPath("/"); // Accessible across the entire application
+        jwtCookie.setMaxAge(24 * 60 * 60); // 24 hours in seconds
+        response.addCookie(jwtCookie);
+
+        // Set refresh token in a cookie (optional)
+        Cookie refreshCookie = new Cookie("refreshToken", jwtResponse.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(false);
+        refreshCookie.setPath("/");
+        refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days in seconds
+        response.addCookie(refreshCookie);
+
+        // Return the response (optional)
         return ResponseEntity.ok(jwtResponse);
     }
-    
 
     @PostMapping("/refresh")
     public ResponseEntity<JwtAuthenticationResponse> refresh(@RequestBody RefreshTokenRequest refreshTokenRequest, HttpServletResponse response) {
+        // Refresh the tokens
         JwtAuthenticationResponse jwtResponse = authenticationService.refreshToken(refreshTokenRequest);
-    
-        response.addHeader("Set-Cookie", String.format(
-            "jwt=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d; Domain=.osathi.site",
-            jwtResponse.getToken(), 24 * 60 * 60
-        ));
-    
-        response.addHeader("Set-Cookie", String.format(
-            "refreshToken=%s; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=%d; Domain=.osathi.site",
-            jwtResponse.getRefreshToken(), 7 * 24 * 60 * 60
-        ));
-    
+
+        // Set the new JWT token in a cookie
+        Cookie jwtCookie = new Cookie("jwt", jwtResponse.getToken());
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(false);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(24 * 60 * 60); // 24 hours in seconds
+        response.addCookie(jwtCookie);
+
+        // Set the new refresh token in a cookie (optional)
+        Cookie refreshCookie = new Cookie("refreshToken", jwtResponse.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(false);
+        refreshCookie.setPath("/");
+        refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days in seconds
+        response.addCookie(refreshCookie);
+
+        // Return the response (optional)
         return ResponseEntity.ok(jwtResponse);
     }
-    
 
     @PostMapping("/signout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
-        response.addHeader("Set-Cookie", "jwt=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0; Domain=.osathi.site");
-        response.addHeader("Set-Cookie", "refreshToken=; HttpOnly; Secure; SameSite=None; Path=/; Max-Age=0; Domain=.osathi.site");
+        // Clear the JWT cookie
+        Cookie jwtCookie = new Cookie("jwt", null);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(false);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(0); // Delete the cookie
+        response.addCookie(jwtCookie);
+
+        // Clear the refresh token cookie (optional)
+        Cookie refreshCookie = new Cookie("refreshToken", null);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setSecure(false);
+        refreshCookie.setPath("/");
+        refreshCookie.setMaxAge(0); // Delete the cookie
+        response.addCookie(refreshCookie);
+
         return ResponseEntity.ok().build();
     }
-    
 }

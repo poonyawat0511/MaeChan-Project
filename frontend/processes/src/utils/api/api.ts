@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: "https://api.osathi.site",
+  baseURL: "http://192.168.2.12:8081",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",

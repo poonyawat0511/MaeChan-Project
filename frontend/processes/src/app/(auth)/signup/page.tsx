@@ -108,7 +108,7 @@ export default function SignUpPage() {
         data.append("signature", signatureFile);
       }
 
-      const response = await fetch("https://api.osathi.site/auth/signup", {
+      const response = await fetch("http://192.168.2.12:8081/auth/signup", {
         method: "POST",
         body: data,
       });

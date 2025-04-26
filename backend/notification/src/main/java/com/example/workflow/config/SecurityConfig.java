@@ -58,7 +58,7 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8081", "http://192.168.0.109:3000", "http://localhost:3001", "https://page.osathi.site", "https://api.osathi.site"));
+        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8081", "http://192.168.0.109:3000", "http://localhost:3001", "http://192.168.2.12:3000", "http://192.168.2.12:8081"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

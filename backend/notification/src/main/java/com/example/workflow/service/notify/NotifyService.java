@@ -85,7 +85,7 @@ public class NotifyService {
         //count remaining approver / director task
         int taskCountApprover = 0;
         int taskCountDirector = 0;
-        String apiUrl = "https://api.osathi.site/engine-rest/task" ;
+        String apiUrl = "http://192.168.2.12:8081/engine-rest/task" ;
         try {
                 java.net.URL url = new java.net.URL(apiUrl);
                 java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
