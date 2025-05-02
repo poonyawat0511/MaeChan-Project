@@ -40,6 +40,20 @@ export default function UserHospitalTable({
   ];
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+  const translateRoleToThai = (role: Role): string => {
+    switch (role) {
+      case "ADMIN":
+        return "แอดมิน";
+      case "APPROVER":
+        return "ผู้ตรวจสอบ";
+      case "DIRECTOR":
+        return "ผู้อำนวยการ";
+      default:
+        return role;
+    }
+  };
+
+
   return (
     <div className="bg-white p-6 w-full h-full flex flex-col">
       <Table
@@ -102,7 +116,7 @@ export default function UserHospitalTable({
                                 : "bg-gray-100 text-gray-800"
                             }`}
                         >
-                          {user.role}
+                          {translateRoleToThai(user.role)}
                         </span>
                       );
                     }
@@ -156,7 +170,7 @@ export default function UserHospitalTable({
 
       <div className="mt-4 text-sm text-gray-500 flex items-center gap-2">
         <ExclamationCircleIcon className="h-4 w-4 text-gray-400" />
-        <span>Showing {UserHospitals.length} users</span>
+        <span>กำลังแสดง {UserHospitals.length} ผู้ใช้</span>
       </div>
       {previewUrl && (
         <SignaturePreviewModal

@@ -99,8 +99,8 @@ export default function AllStockRequest() {
         pagination={
           <>
             <div className="text-sm text-gray-500 text-center sm:text-left">
-              Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-              {(currentPage - 1) * itemsPerPage + requests.length} of {totalPages * itemsPerPage} entries
+              กำลังแสดง {(currentPage - 1) * itemsPerPage + 1} ถึง{" "}
+              {(currentPage - 1) * itemsPerPage + requests.length} จาก {totalPages * itemsPerPage} ทั้งหมด
             </div>
             {requests.length > 0 && (
               <div className="flex items-center justify-center sm:justify-end gap-2 w-full sm:w-auto">
@@ -111,7 +111,7 @@ export default function AllStockRequest() {
                   onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   className="bg-white"
                 >
-                  Previous
+                  ก่อนหน้า
                 </Button>
 
                 <Pagination
@@ -132,7 +132,7 @@ export default function AllStockRequest() {
                   }
                   className="bg-white"
                 >
-                  Next
+                  ถัดไป
                 </Button>
               </div>
             )}

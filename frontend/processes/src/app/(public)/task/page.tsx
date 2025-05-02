@@ -33,6 +33,7 @@ export default function TaskPage() {
     size,
     setPage,
     totalTasks,
+    springRequests
   } = useTaskPage();
 
   if (loading) {
@@ -99,9 +100,12 @@ export default function TaskPage() {
 
         <div className="flex justify-between gap-6 flex-grow h-full">
           {/* Task List Panel */}
-          <TaskPanelCard tasks={tasks}
+          <TaskPanelCard
+            tasks={tasks}
+            springRequests={springRequests} // ✅ Pass this here
             onTaskClick={handleTaskClick}
           />
+
 
           {/* PDF Preview Panel */}
           <PdfPreviewPanelCard
@@ -114,15 +118,15 @@ export default function TaskPage() {
 
         </div>
         {totalTasks > 0 && (
-        <div className="flex items-center mt-2">
-          <Pagination
-            total={Math.ceil(totalTasks / size)}
-            page={page + 1}
-            onChange={(newPage) => setPage(newPage - 1)}
-            showControls
-            color="secondary"
-          />
-        </div>
+          <div className="flex items-center mt-2">
+            <Pagination
+              total={Math.ceil(totalTasks / size)}
+              page={page + 1}
+              onChange={(newPage) => setPage(newPage - 1)}
+              showControls
+              color="secondary"
+            />
+          </div>
         )}
       </div>
 

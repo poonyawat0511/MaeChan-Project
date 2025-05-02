@@ -22,7 +22,7 @@ export default function UserFooterCard({
   return (
     <CardFooter className="flex justify-between items-center py-3 px-6 border-t border-gray-100">
       <p className="text-sm text-gray-500">
-        Showing {start} - {end} of {totalItems} users
+        กำลังแสดง {start} - {end} จาก {totalItems} ผู้ใช้
       </p>
 
       {totalItems > 0 && (
@@ -34,7 +34,7 @@ export default function UserFooterCard({
             onPress={() => onPageChange(Math.max(currentPage - 1, 1))}
             className="text-gray-700"
           >
-            Previous
+            ก่อนหน้า
           </Button>
           <Pagination
             color="secondary"
@@ -51,7 +51,7 @@ export default function UserFooterCard({
             onPress={() => onPageChange(Math.min(currentPage + 1, totalPages))}
             className="text-gray-700"
           >
-            Next
+            ถัดไป
           </Button>
         </div>
       )}

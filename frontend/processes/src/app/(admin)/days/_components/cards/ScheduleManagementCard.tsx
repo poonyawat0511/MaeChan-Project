@@ -20,7 +20,7 @@ export default function ScheduleManagementCard({ refreshing, onRefresh }: Props)
         </div>
         <div className="flex gap-1 mt-2 sm:mt-0">
           <Button
-            color="default"
+            color="secondary"
             variant="flat"
             startContent={<ArrowPathIcon />}
             isLoading={refreshing}

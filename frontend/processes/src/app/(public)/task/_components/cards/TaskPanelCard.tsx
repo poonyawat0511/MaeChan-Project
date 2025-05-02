@@ -4,17 +4,24 @@ import { Chip } from "@heroui/react";
 import { DocumentIcon } from "@heroicons/react/24/solid";
 import CustomCard from "@/components/cards/CustomCard";
 import { Task } from "@/utils/types/task";
+import { SpringRequest } from "@/utils/types/spring-request";
 import TaskCard from "./Task.Card";
 
 interface TaskPanelCardProps {
   tasks: Task[];
+  springRequests: SpringRequest[];
   onTaskClick: (task: Task) => void;
 }
 
 export default function TaskPanelCard({
   tasks,
+  springRequests,
   onTaskClick,
 }: TaskPanelCardProps) {
+  const springRequestMap = Object.fromEntries(
+    springRequests.map((req) => [req.camundaTaskId, req])
+  );
+
   return (
     <CustomCard
       title={
@@ -34,7 +41,11 @@ export default function TaskPanelCard({
       className="flex-1 max-w-[30%] overflow-auto scrollbar-hidden h-[calc(100vh-220px)]"
     >
       {tasks.length > 0 ? (
-        <TaskCard tasks={tasks} onTaskClick={onTaskClick} />
+        <TaskCard
+          tasks={tasks}
+          springRequestMap={springRequestMap}
+          onTaskClick={onTaskClick}
+        />
       ) : (
         <div className="flex flex-col items-center justify-center h-64 text-gray-400">
           <DocumentIcon className="h-12 w-12 mb-2 opacity-30" />
