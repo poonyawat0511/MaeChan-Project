@@ -26,6 +26,7 @@ export default function UserPage() {
     setIsModalOpen,
     handleConfirmDelete,
     handleDelete,
+    updateUserRole,
   } = useUserPage();
 
   if (loading) {
@@ -58,6 +59,7 @@ export default function UserPage() {
               UserHospitals={users}
               currentPage={currentPage}
               onDelete={handleConfirmDelete}
+              onUpdateRole={updateUserRole}
             />
           )}
         </CardBody>

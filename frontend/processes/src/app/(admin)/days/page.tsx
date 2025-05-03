@@ -59,7 +59,7 @@ export default function DayPage() {
       }
       fetchData();
       setIsTimeModalOpen(false);
-      showAlert("Time Created Successfully", "success");
+      showAlert("เพิ่มเวลาใหม่สำเร็จ", "success");
     } catch (error) {
       showAlert("Time Create Failed", "danger");
       console.error("Error submitting time:", error);

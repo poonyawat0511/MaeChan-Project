@@ -1,5 +1,7 @@
 package com.example.workflow;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -22,17 +24,17 @@ public class Application implements CommandLineRunner{
   }
 
   public void run(String... args) {
-      UserHospital adminAccount = userHospitalRepository.findByRole(Role.ADMIN);
-      if(null == adminAccount){
+    Optional<UserHospital> adminAccount = userHospitalRepository.findFirstByRole(Role.ADMIN);
+    if (adminAccount.isEmpty()) {
         UserHospital userHospital = new UserHospital();
-
         userHospital.setEmail("admin@gmail.com");
         userHospital.setFirstName("admin");
         userHospital.setLastName("admin");
         userHospital.setRole(Role.ADMIN);
         userHospital.setPassword(new BCryptPasswordEncoder().encode("admin"));
         userHospitalRepository.save(userHospital);
-      }
-  }
+    }
+}
+
 
 }

@@ -38,7 +38,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // ✅ ปิด CSRF
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/camunda/**").permitAll()
-                .requestMatchers("/user/**").permitAll()
+                .requestMatchers("/user-hospital/**").hasAnyAuthority(Role.ADMIN.name())
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/admin/**").hasAuthority(Role.ADMIN.name())
                 .requestMatchers("/user/**").hasAuthority(Role.USER.name())
