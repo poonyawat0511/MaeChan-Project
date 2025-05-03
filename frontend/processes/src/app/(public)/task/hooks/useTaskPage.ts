@@ -1,10 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Task } from "@/utils/types/task";
-import { StockRequest } from "@/utils/types/stock-request";
-import { StockRequestList } from "@/utils/types/stock-request-list";
+import { SpringRequest } from "@/utils/types/spring-request";
 import generatePDF from "@/utils/services/generatePDF";
-import { getPaginatedCamundaTasks, getStockRequestBatchList, getStockRequestList } from "@/utils/services/getApi";
+import { getPaginatedCamundaTasks } from "@/utils/services/getApi";
 import { axiosInstance, camundaTaskSubmit, springRequestByTaskApi } from "@/utils/api/api";
 import { getAuthenticatedUser } from "@/utils/auth/auth";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
@@ -14,11 +13,11 @@ export const useTaskPage = () => {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string>("USER");
-  const [requestList, setRequestList] = useState<StockRequestList[]>([]);
+  const [springRequests, setSpringRequests] = useState<SpringRequest[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<() => void>(() => () => { });
+  const [modalAction, setModalAction] = useState<() => void>(() => () => {});
   const [totalTasks, setTotalTasks] = useState(0);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
@@ -34,24 +33,18 @@ export const useTaskPage = () => {
 
         const { tasks: pagedTasks, total } = await getPaginatedCamundaTasks(page, size);
 
-        const stockRequests: (StockRequest | null)[] = await Promise.all(
+        const springData: (SpringRequest | null)[] = await Promise.all(
           pagedTasks.map((task) =>
             axiosInstance
-              .get<{ stockRequest: StockRequest }>(springRequestByTaskApi(task.processInstanceId))
-              .then((res) => res.data?.stockRequest)
+              .get<SpringRequest>(springRequestByTaskApi(task.processInstanceId))
+              .then((res) => res.data)
               .catch(() => null)
           )
         );
 
-        const requestIds = stockRequests
-          .filter((r): r is StockRequest => r !== null)
-          .map((r) => r.requestId);
-
-        const stockRequestList = await getStockRequestBatchList(requestIds);
-
         setTasks(pagedTasks);
         setTotalTasks(total);
-        setRequestList(stockRequestList);
+        setSpringRequests(springData.filter((r): r is SpringRequest => r !== null));
       } catch {
         setError("Error fetching task or stock requests.");
       } finally {
@@ -64,22 +57,14 @@ export const useTaskPage = () => {
 
   const handleTaskClick = async (task: Task) => {
     setSelectedTask(task);
-    try {
-      const res = await axiosInstance.get<{ stockRequest: StockRequest }>(
-        springRequestByTaskApi(task.processInstanceId)
-      );
-      const stockRequest = res.data?.stockRequest;
-      if (!stockRequest) {
-        setSelectedPdfUrl(null);
-        setError("No stock request found for this task.");
-        return;
-      }
-      const pdfUrl = generatePDF(stockRequest, requestList);
-      setSelectedPdfUrl(pdfUrl);
-    } catch {
+    const spring = springRequests.find((s) => s.camundaTaskId === task.processInstanceId);
+    if (!spring?.stockRequest) {
       setSelectedPdfUrl(null);
-      setError("Failed to generate PDF.");
+      setError("No stock request found for this task.");
+      return;
     }
+    const pdfUrl = generatePDF(spring.stockRequest, []);
+    setSelectedPdfUrl(pdfUrl);
   };
 
   const handleClosePreview = () => {
@@ -108,7 +93,7 @@ export const useTaskPage = () => {
         return;
       }
 
-      const response = await axiosInstance.get<{ stockRequest: StockRequest }>(
+      const response = await axiosInstance.get<SpringRequest>(
         springRequestByTaskApi(task.processInstanceId)
       );
       const stockRequest = response.data?.stockRequest;
@@ -120,19 +105,19 @@ export const useTaskPage = () => {
       const requestBody =
         user.role === "DIRECTOR"
           ? {
-            variables: {
-              requestId: { value: stockRequest.requestId.toString(), type: "String" },
-              stockSubjectPerson: { value: user.id.toString(), type: "String" },
-              approve: { value: approve, type: "Boolean" },
-            },
-          }
+              variables: {
+                requestId: { value: stockRequest.requestId.toString(), type: "String" },
+                stockSubjectPerson: { value: user.id.toString(), type: "String" },
+                approve: { value: approve, type: "Boolean" },
+              },
+            }
           : {
-            variables: {
-              requestId: { value: stockRequest.requestId.toString(), type: "String" },
-              stockUserApprove: { value: user.id.toString(), type: "String" },
-              requestComplete: { value: approve, type: "Boolean" },
-            },
-          };
+              variables: {
+                requestId: { value: stockRequest.requestId.toString(), type: "String" },
+                stockUserApprove: { value: user.id.toString(), type: "String" },
+                requestComplete: { value: approve, type: "Boolean" },
+              },
+            };
 
       await axiosInstance.post(`${camundaTaskSubmit}/${task.id}/submit-form`, requestBody);
 
@@ -177,5 +162,6 @@ export const useTaskPage = () => {
     setPage,
     setSize,
     totalTasks,
+    springRequests, // for use in TaskPanelCard
   };
 };

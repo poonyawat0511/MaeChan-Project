@@ -38,7 +38,7 @@ export default function StockRequestCard({
               <p className="text-gray-500 text-sm">จำนวนใบทั้งสิ้น: {total}</p>
               <Divider orientation="vertical" className="h-4 mx-2" />
               <Chip size="sm" color="secondary" variant="flat">
-                {filtered} matching
+                {filtered} รายการที่แสงบนตาราง
               </Chip>
             </div>
           </div>

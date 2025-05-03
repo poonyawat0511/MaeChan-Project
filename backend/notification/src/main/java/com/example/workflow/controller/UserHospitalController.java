@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -74,6 +75,15 @@ public class UserHospitalController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         userHospitalService.deleteUserHospitalById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/role")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<UserHospital> changeUserRole(
+            @PathVariable Long id,
+            @RequestParam String role) {
+        UserHospital updated = userHospitalService.changeUserRole(id, role);
+        return ResponseEntity.ok(updated);
     }
 
 }

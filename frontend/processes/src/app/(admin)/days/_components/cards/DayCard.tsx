@@ -28,6 +28,23 @@ export default function DayCard({ days, onActive }: DayCardProps) {
     onActive({ ...day, active: !day.active });
   };
 
+  const translateDayToThai = (dayName: string): string => {
+    const map: Record<string, string> = {
+      monday: "จันทร์",
+      tuesday: "อังคาร",
+      wednesday: "พุธ",
+      thursday: "พฤหัสบดี",
+      friday: "ศุกร์",
+      saturday: "เสาร์",
+      sunday: "อาทิตย์",
+    };
+    return map[dayName.toLowerCase()] || dayName;
+  };
+
+  const translateStatusToThai = (active: boolean): string =>
+    active ? "เปิดใช้งาน" : "ปิดใช้งาน";
+
+
   return (
     <div className="flex flex-col items-center gap-4">
       {days.map((day) => (
@@ -39,28 +56,27 @@ export default function DayCard({ days, onActive }: DayCardProps) {
             <div className="flex flex-col gap-1">
               <h2>
                 <Chip
-                  className={`${
-                    dayColorMap[day.name?.toLowerCase() ?? "unknown"] ||
+                  className={`${dayColorMap[day.name?.toLowerCase() ?? "unknown"] ||
                     "bg-gray-100 text-gray-700"
-                  }`}
+                    }`}
                 >
-                  {day.name ?? "Unknown"}
+                  {translateDayToThai(day.name ?? "Unknown")}
                 </Chip>
               </h2>
               <h4 className="text-lg font-semibold text-default-800">
-                {day.name}
+                {translateDayToThai(day.name)}
               </h4>
             </div>
           </CardHeader>
           <CardBody className="text-default-600">
             <p className="text-sm text-default-400">
-              Status:{" "}
+              สถานะ:{" "}
               <span
                 className={
                   day.active ? "text-green-600 gap-5" : "text-red-600 gap-5"
                 }
               >
-                {day.active ? "Active" : "Inactive"}
+                {translateStatusToThai(day.active)}
               </span>
             </p>
           </CardBody>

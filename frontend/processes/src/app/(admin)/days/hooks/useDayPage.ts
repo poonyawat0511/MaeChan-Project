@@ -104,7 +104,7 @@ export function useDayPage() {
         name: updatedDay.name,
         active: updatedDay.active,
       });
-      showAlert(`Update Active Status Successfully!`, `success`);
+      showAlert(`เปลี่ยนสถานะการแจ้งเตือนของวันสำเร็จ!`, `success`);
       setDays((prevDays) =>
         prevDays.map((day) =>
           day.id === updatedDay.id ? (response.data as Days) : day
@@ -119,7 +119,7 @@ export function useDayPage() {
     try {
       await axiosInstance.delete(`${timeApi}/${id}`);
       setTimes((prevTimes) => prevTimes.filter((time) => time.id !== id));
-      showAlert("Time Deleted Successfully", "success");
+      showAlert("ลบเวลาออกสำเร็จ", "success");
     } catch (error) {
       console.error("Error deleting time:", error);
     }
@@ -128,7 +128,7 @@ export function useDayPage() {
   const handleAddUser = async (user: UserHospital) => {
     try {
       await axiosInstance.post(targetApi, { targetUser: user.id });
-      showAlert("User Added Successfully", "success");
+      showAlert("เพิ่มผู้ใช้สำเร็จ", "success");
       fetchPaginatedTargetUsers();
     } catch (error: unknown) {
       const status = (error as { response?: { status?: number } })?.response?.status;
@@ -151,7 +151,7 @@ export function useDayPage() {
 
       await axiosInstance.delete(`${targetApi}/${targetRecord.id}`);
       fetchPaginatedTargetUsers();
-      showAlert("User Removed Successfully", "success");
+      showAlert("นำผู้ใช้ออกสำเร็จ", "success");
     } catch (error) {
       console.error("Error removing user:", error);
     }

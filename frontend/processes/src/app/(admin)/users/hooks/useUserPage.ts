@@ -4,6 +4,8 @@ import { UserHospital } from "@/utils/types/user-hospital";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
 import { Page } from "@/utils/types/page";
 import { useDebounce } from "./useDebounce";
+import { Role } from "@/utils/types/role";
+import { patchUserRole } from "@/utils/api/userHospital";
 
 export function useUserPage() {
   const [users, setUsers] = useState<UserHospital[]>([]);
@@ -43,7 +45,7 @@ export function useUserPage() {
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery]);
-  
+
 
   const handleConfirmDelete = (userId: number) => {
     setSelectedUserId(userId);
@@ -56,12 +58,25 @@ export function useUserPage() {
       await axiosInstance.delete(`${userHospitalApi}/${selectedUserId}`);
       showAlert("ลบผู้ใช้สำเร็จ!", "success");
       fetchUsers();
-    } catch (error) {
+    } catch {
       showAlert("ลบผู้ใช้ไม่สำเร็จ!", "danger");
-      console.error("Error deleting user:", error);
     } finally {
       setIsModalOpen(false);
       setSelectedUserId(null);
+    }
+  };
+
+  const updateUserRole = async (userId: number, newRole: Role) => {
+    try {
+      await patchUserRole(userId, newRole);
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.id === userId ? { ...user, role: newRole } : user
+        )
+      );
+      showAlert("เปลี่ยนตำแหน่งสำเร็จ!", "success");
+    } catch {
+      showAlert("เปลี่ยนตำแหน่งล้มเหลว!", "danger");
     }
   };
 
@@ -80,5 +95,6 @@ export function useUserPage() {
     setIsModalOpen,
     handleConfirmDelete,
     handleDelete,
+    updateUserRole,
   };
 }

@@ -43,17 +43,26 @@ import { StockBudgetType } from "../types/stock-budget-type";
 import { StockBudgetListTr } from "../types/stock-budget-list-tr";
 
 // Function to get stock requests
-import { Page } from "@/utils/types/page"; // ✅ สร้าง type เพิ่ม
+import { Page } from "@/utils/types/page";
 import { DashboardSummaryDTO } from "../types/dashboardSummaryDTO";
 
 export const getStockRequestsByPageTable = async (
   page = 0,
   size = 12,
-  search = ""
+  search = "",
+  sortOrder: "asc" | "desc" = "asc"
 ): Promise<Page<StockRequest>> => {
   try {
     const response = await axiosInstance.get<Page<StockRequest>>(
-      `${requestPaginatedApi}?page=${page}&size=${size}&search=${encodeURIComponent(search)}`
+      `${requestPaginatedApi}`,
+      {
+        params: {
+          page,
+          size,
+          search,
+          sort: `createdAt,${sortOrder}`,
+        },
+      }
     );
     return response.data;
   } catch (error) {
@@ -61,7 +70,6 @@ export const getStockRequestsByPageTable = async (
     throw error;
   }
 };
-
 
 export const getStockRequests = async (): Promise<StockRequest[]> => {
   try {
@@ -344,27 +352,27 @@ export const getStockBudgetListTr = async (): Promise<StockBudgetListTr[]> => {
 }
 
 export const getDashboardSummary = async (
-    year: number,
-    month: string,
-    departments: string[]
-  ): Promise<DashboardSummaryDTO> => {
-    const params = {
-      year: year.toString(),
-      month,
-      ...(departments.length > 0 && { departments: departments.join(",") }),
-    };
-  
-    const response = await axiosInstance.get<DashboardSummaryDTO>(dashboardSummaryApi, {
-      params,
-    });
-  
-    return response.data;
+  year: number,
+  month: string,
+  departments: string[]
+): Promise<DashboardSummaryDTO> => {
+  const params = {
+    year: year.toString(),
+    month,
+    ...(departments.length > 0 && { departments: departments.join(",") }),
   };
 
-  export async function getStockRequestBatchList(requestIds: number[]): Promise<StockRequestList[]> {
-    const res = await axiosInstance.post<StockRequestList[]>(
-      stockRequestListBatchApi,
-      requestIds
-    );
-    return res.data;
-  }
+  const response = await axiosInstance.get<DashboardSummaryDTO>(dashboardSummaryApi, {
+    params,
+  });
+
+  return response.data;
+};
+
+export async function getStockRequestBatchList(requestIds: number[]): Promise<StockRequestList[]> {
+  const res = await axiosInstance.post<StockRequestList[]>(
+    stockRequestListBatchApi,
+    requestIds
+  );
+  return res.data;
+}

@@ -15,7 +15,7 @@ export default function ConfirmationModal({
   onClose,
   onConfirm,
   title = "ยืนยันการดำเนินการ",
-  message = "คุณแน่ใจว่าต้องการดำเนินการนี้หรือไม่?",
+  message = "คุณแน่ใจหรือไม่ว่าต้องการดำเนินการนี้? การกระทำนี้ไม่สามารถย้อนกลับได้",
 }: ConfirmationModalProps) {
   return (
     <BlurModal
@@ -25,7 +25,11 @@ export default function ConfirmationModal({
       title={title}
       actionLabel="ยืนยัน"
     >
-      <p>{message}</p>
+      <p className="text-red-600 font-medium text-xl">
+        <span className="text-red-600 mr-1">*</span>
+        {message}
+      </p>
+
     </BlurModal>
   );
 }

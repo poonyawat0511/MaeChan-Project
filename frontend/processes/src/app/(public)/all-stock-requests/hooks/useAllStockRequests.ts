@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { getStockRequestBatchList, getStockRequestList, getStockRequestsByPageTable } from "@/utils/services/getApi";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { getStockRequestBatchList, getStockRequestsByPageTable } from "@/utils/services/getApi";
 import { Page } from "@/utils/types/page";
 import { StockRequest } from "@/utils/types/stock-request";
 import { StockRequestList } from "@/utils/types/stock-request-list";
@@ -14,15 +14,19 @@ export const useAllStockRequests = (searchQuery: string) => {
   const [refreshing, setRefreshing] = useState(false);
   const itemsPerPage = 12;
 
+  const hasInitialized = useRef(false);
+
   const fetchRequests = useCallback(async (page = currentPage - 1) => {
     try {
       setRefreshing(true);
-  
-      const data: Page<StockRequest> = await getStockRequestsByPageTable(page, itemsPerPage, searchQuery);
-  
+
+      const data: Page<StockRequest> = await getStockRequestsByPageTable(
+        page, itemsPerPage, searchQuery, "asc"
+      );      
+
       const requestIds = data.content.map((req) => req.requestId);
       const list = await getStockRequestBatchList(requestIds);
-  
+
       setRequests(data.content);
       setRequestList(list);
       setTotalPages(data.totalPages);
@@ -39,6 +43,13 @@ export const useAllStockRequests = (searchQuery: string) => {
   useEffect(() => {
     fetchRequests();
   }, [fetchRequests]);
+
+  useEffect(() => {
+    if (!hasInitialized.current && totalPages > 0) {
+      hasInitialized.current = true;
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages]);
 
   return {
     requests,
