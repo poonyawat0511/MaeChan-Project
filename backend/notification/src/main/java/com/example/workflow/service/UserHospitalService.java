@@ -85,9 +85,16 @@ public class UserHospitalService {
         UserHospital user = userHospitalRepository.findById(userHospitalId)
                 .orElseThrow(() -> new UserHospitalNotFoundException(userHospitalId));
 
+        String currentEmail = getAuthenticatedEmail();
+
         // 🚫 Prevent deletion of the main admin account
         if ("admin@gmail.com".equalsIgnoreCase(user.getEmail())) {
-            throw new RuntimeException("ไม่สามารถลบบัญชีผู้ดูแลระบบหลักได้");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't Delete Supper Admin");
+        }
+
+        // 🚫 Prevent deletion of self
+        if (currentEmail.equalsIgnoreCase(user.getEmail())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Can't Delete User while Login");
         }
 
         userHospitalRepository.deleteById(userHospitalId);
