@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import EmptyStateMessage from "@/components/emptys/EmptyStateMessage";
 import StockRequestCard from "./_components/cards/StockRequestCard";
 import StockRequestTable from "./_components/tables/StockRequest.table";
@@ -15,6 +15,8 @@ import generatePDF from "@/utils/services/generatePDF";
 import LoadingScreen from "@/components/loading/loading";
 import { StockRequest } from "@/utils/types/stock-request";
 import { useDebounce } from "./hooks/useDebounce";
+import { UserHospital } from "@/utils/types/user-hospital";
+import { axiosInstance } from "@/utils/api/api";
 
 export default function AllStockRequest() {
   const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
@@ -22,6 +24,7 @@ export default function AllStockRequest() {
   const [openPdfModal, setOpenPdfModal] = useState<boolean>(false);
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const itemsPerPage = 12;
+  const [userHospitals, setUserHospitals] = useState<UserHospital[]>([]);
 
   const {
     requests,
@@ -34,13 +37,31 @@ export default function AllStockRequest() {
     requestList,
   } = useAllStockRequests(debouncedSearchQuery);
 
+  useEffect(() => {
+    axiosInstance.get<UserHospital[]>("/user-hospital")
+      .then((res) => setUserHospitals(res.data))
+      .catch(() => setUserHospitals([]));
+  }, []);
+
   const handleTaskClick = async (request: StockRequest) => {
     try {
       const stockRequestList = requestList.filter(
         (item) => item.requestId?.requestId === request.requestId
       );
-
-      const pdfUrl = generatePDF(request, stockRequestList);
+  
+      const director = userHospitals.find(
+        (u) => u.officerId?.officerId === request.stockUser?.officerId
+      );
+      const approver = userHospitals.find(
+        (u) => u.officerId?.officerId === request.stockUserApprove?.officerId
+      );
+  
+      const signatures = {
+        directorSignature: director?.signaturePath || undefined,
+        approverSignature: approver?.signaturePath || undefined,
+      };
+  
+      const pdfUrl = generatePDF(request, stockRequestList, signatures);
       setSelectedPdfUrl(pdfUrl);
       setOpenPdfModal(true);
     } catch (err) {
@@ -48,6 +69,7 @@ export default function AllStockRequest() {
       setSelectedPdfUrl(null);
     }
   };
+  
 
   const handleClosePreview = () => {
     setOpenPdfModal(false);

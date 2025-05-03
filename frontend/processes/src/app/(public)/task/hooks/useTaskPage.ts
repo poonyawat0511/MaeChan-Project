@@ -7,6 +7,7 @@ import { getPaginatedCamundaTasks } from "@/utils/services/getApi";
 import { axiosInstance, camundaTaskSubmit, springRequestByTaskApi } from "@/utils/api/api";
 import { getAuthenticatedUser } from "@/utils/auth/auth";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
+import { UserHospital } from "@/utils/types/user-hospital";
 
 export const useTaskPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -21,10 +22,25 @@ export const useTaskPage = () => {
   const [totalTasks, setTotalTasks] = useState(0);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [userHospitals, setUserHospitals] = useState<UserHospital[]>([]);
+
   const { showAlert } = useAlert();
 
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  // 🔁 Load all user hospitals
+  useEffect(() => {
+    const fetchUserHospitals = async () => {
+      try {
+        const res = await axiosInstance.get<UserHospital[]>("/user-hospital");
+        setUserHospitals(res.data);
+      } catch (err) {
+        console.error("Error fetching user hospitals:", err);
+      }
+    };
+    fetchUserHospitals();
+  }, []);
 
+  // 🔁 Load tasks and stock requests
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -55,6 +71,7 @@ export const useTaskPage = () => {
     fetchData();
   }, [page, size, sortOrder]);
 
+  // ✅ Click a task, generate PDF
   const handleTaskClick = async (task: Task) => {
     setSelectedTask(task);
     const spring = springRequests.find((s) => s.camundaTaskId === task.processInstanceId);
@@ -63,7 +80,20 @@ export const useTaskPage = () => {
       setError("No stock request found for this task.");
       return;
     }
-    const pdfUrl = generatePDF(spring.stockRequest, []);
+
+    const requester = userHospitals.find(
+      (u) => u.officerId?.officerId === spring.stockRequest.stockUser?.officerId
+    );
+    const approver = userHospitals.find(
+      (u) => u.officerId?.officerId === spring.stockRequest.stockUserApprove?.officerId
+    );
+
+    const signatures = {
+      requesterSignature: requester?.signaturePath,
+      approverSignature: approver?.signaturePath,
+    };
+
+    const pdfUrl = generatePDF(spring.stockRequest, [], signatures);
     setSelectedPdfUrl(pdfUrl);
   };
 
@@ -162,6 +192,6 @@ export const useTaskPage = () => {
     setPage,
     setSize,
     totalTasks,
-    springRequests, // for use in TaskPanelCard
+    springRequests,
   };
 };
