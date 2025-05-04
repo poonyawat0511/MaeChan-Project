@@ -48,19 +48,24 @@ export default function AllStockRequest() {
       const stockRequestList = requestList.filter(
         (item) => item.requestId?.requestId === request.requestId
       );
-  
+
       const director = userHospitals.find(
         (u) => u.officerId?.officerId === request.stockUser?.officerId
       );
       const approver = userHospitals.find(
         (u) => u.officerId?.officerId === request.stockUserApprove?.officerId
       );
-  
+
+      const requester = userHospitals.find(
+        (u) => u.officerId?.officerId === request.stockUser?.officerId
+      )
+
       const signatures = {
         directorSignature: director?.signaturePath || undefined,
         approverSignature: approver?.signaturePath || undefined,
+        requesterSignature: requester?.signaturePath || undefined,
       };
-  
+
       const pdfUrl = generatePDF(request, stockRequestList, signatures);
       setSelectedPdfUrl(pdfUrl);
       setOpenPdfModal(true);
@@ -69,7 +74,7 @@ export default function AllStockRequest() {
       setSelectedPdfUrl(null);
     }
   };
-  
+
 
   const handleClosePreview = () => {
     setOpenPdfModal(false);
