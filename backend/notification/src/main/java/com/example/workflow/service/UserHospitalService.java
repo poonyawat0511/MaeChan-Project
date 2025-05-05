@@ -194,7 +194,7 @@ public class UserHospitalService {
             file.transferTo(destFile);
     
             // 4. Return public URL
-            String publicUrl = "http://localhost:8081/uploads/signatures/" + fileName;
+            String publicUrl = "http://192.168.2.12:8081/uploads/signatures/" + fileName;
             user.setSignaturePath(publicUrl);
             userHospitalRepository.save(user);
     
