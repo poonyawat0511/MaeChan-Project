@@ -221,10 +221,14 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
     return url.toLowerCase().endsWith(".jpg") || url.toLowerCase().endsWith(".jpeg") ? "JPEG" : "PNG";
   }
 
-  if (signatures.approverSignature) {
+  if (
+    signatures.approverSignature &&
+    typeof signatures.approverSignature === "string" &&
+    signatures.approverSignature.trim() !== ""
+  ) {
     const type = getImageTypeFromUrl(signatures.approverSignature);
     doc.addImage(signatures.approverSignature, type, margin + 100, finalY2 + 33, 40, 10);
-  }
+  }  
 
   //line 10
 
@@ -236,10 +240,14 @@ export default function generatePDF(stockRequest: StockRequest, stockRequestList
   }
   thaitext(doc, "ผู้ตรวจสอบ", margin + 100, finalY2 + 60);
 
-  if (signatures.requesterSignature) {
+  if (
+    signatures.requesterSignature &&
+    typeof signatures.requesterSignature === "string" &&
+    signatures.requesterSignature.trim() !== ""
+  ) {
     const type = getImageTypeFromUrl(signatures.requesterSignature);
     doc.addImage(signatures.requesterSignature, type, margin + 5, finalY2 + 33, 40, 10);
-  }
+  }  
   
   thaitext(doc, "ลงชื่อ ___________________________________ ผู้ขออนุมัติ", margin, finalY2 + 40);
   if (stockRequest.stockUser) {
