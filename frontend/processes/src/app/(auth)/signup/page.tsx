@@ -220,6 +220,9 @@ export default function SignUpPage() {
               setFormData({ ...formData, role: e.target.value as Role })
             }
           >
+            <SelectItem key="USER" textValue="USER">
+             ผู้ใช้ทั่วไป
+            </SelectItem>
             <SelectItem key="APPROVER" textValue="APPROVER">
               ผู้ตรวจสอบ
             </SelectItem>

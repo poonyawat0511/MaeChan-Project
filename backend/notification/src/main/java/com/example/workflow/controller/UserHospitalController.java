@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.workflow.dto.UserHospitalDto;
 import com.example.workflow.mapper.UserHospitalMapper;
@@ -84,6 +86,15 @@ public class UserHospitalController {
             @RequestParam String role) {
         UserHospital updated = userHospitalService.changeUserRole(id, role);
         return ResponseEntity.ok(updated);
+    }
+
+    @PostMapping("/{id}/upload-signature")
+    public ResponseEntity<String> uploadSignature(
+            @PathVariable Long id,
+            @RequestParam("signature") MultipartFile file) {
+
+        String path = userHospitalService.uploadUserSignature(id, file);
+        return ResponseEntity.ok(path); // optional: return saved path
     }
 
 }

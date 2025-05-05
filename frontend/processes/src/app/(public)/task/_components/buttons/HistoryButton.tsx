@@ -1,18 +1,20 @@
 "use client";
 import { Button, Tooltip } from "@heroui/react";
-import { ClockIcon } from "@heroicons/react/24/solid";
+import { ClockIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 export default function HistoryButton() {
   return (
-    <Tooltip content="ดูประวัติงานที่เสร็จสิ้น">
+    <Link href="/history" passHref>
       <Button
-        variant="light"
+        as="div"
+        variant="flat"
         size="sm"
-        className="text-gray-600"
-        startContent={<ClockIcon className="h-4 w-4" />}
+        className="rounded-full bg-white border border-gray-200 hover:bg-indigo-50 hover:border-indigo-200 text-gray-700 px-4 py-2 flex items-center gap-2 transition-all shadow-sm"
+        startContent={<ClockIcon className="h-4 w-4 text-indigo-600" />}
       >
-        ประวัติงานที่เสร็จสิ้น
+        <span className="font-medium">ประวัติงาน</span>
       </Button>
-    </Tooltip>
+    </Link>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import BlurModal from "@/components/modals/BlurModal";
+import { ShieldExclamationIcon } from "@heroicons/react/24/outline";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -25,11 +26,22 @@ export default function ConfirmationModal({
       title={title}
       actionLabel="ยืนยัน"
     >
-      <p className="text-red-600 font-medium text-xl">
-        <span className="text-red-600 mr-1">*</span>
-        {message}
-      </p>
-
+      <div className="py-4">
+        <div className="flex flex-col items-center text-center">
+          <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mb-4">
+            <ShieldExclamationIcon className="h-9 w-9 text-amber-500" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-3">
+            โปรดยืนยันการดำเนินการ
+          </h3>
+          <p className="text-gray-600 max-w-md mb-2">
+            {message}
+          </p>
+          <p className="text-xs text-amber-600 font-medium mt-3">
+            การดำเนินการนี้ไม่สามารถย้อนกลับได้
+          </p>
+        </div>
+      </div>
     </BlurModal>
   );
 }

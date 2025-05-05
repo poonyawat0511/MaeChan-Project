@@ -9,6 +9,7 @@ import {
   dashboardSummaryApi,
   dayApi,
   departmentApi,
+  MeApi,
   requestPaginatedApi,
   stockPoApi,
   stockRequestListApi,
@@ -45,6 +46,7 @@ import { StockBudgetListTr } from "../types/stock-budget-list-tr";
 // Function to get stock requests
 import { Page } from "@/utils/types/page";
 import { DashboardSummaryDTO } from "../types/dashboardSummaryDTO";
+import { Me } from "../types/me";
 
 export const getStockRequestsByPageTable = async (
   page = 0,
@@ -376,3 +378,13 @@ export async function getStockRequestBatchList(requestIds: number[]): Promise<St
   );
   return res.data;
 }
+
+export const getMe = async (): Promise<Me[]> => {
+  try {
+    const response = await axiosInstance.get<Me[]>(MeApi);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching Me :", error);
+    throw error;
+  }
+};

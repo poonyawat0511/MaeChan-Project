@@ -10,17 +10,18 @@ export default function RefreshButton({
   loading: boolean;
 }) {
   return (
-    <Tooltip content="Refresh data">
+    <Tooltip content="รีเฟรชข้อมูล">
       <Button
         isIconOnly
         color="default"
-        variant="light"
+        variant="bordered"
         size="sm"
-        className="min-w-unit-10 w-10 h-10 rounded-full"
+        className="min-w-unit-10 w-10 h-10 rounded-full bg-white border-gray-200 shadow-sm hover:border-violet-300 hover:shadow-md transition-all duration-150"
         onPress={onClick}
         isLoading={loading}
+        aria-label="รีเฟรชข้อมูล"
       >
-        {!loading && <ArrowPathIcon className="h-5 w-5" />}
+        {!loading && <ArrowPathIcon className="h-4 w-4 text-gray-500" />}
       </Button>
     </Tooltip>
   );

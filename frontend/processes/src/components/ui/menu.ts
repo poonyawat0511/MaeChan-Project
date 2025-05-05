@@ -4,6 +4,7 @@ import {
     UserIcon,
     CalendarDaysIcon,
     ChartPieIcon,
+    UserCircleIcon,
   } from "@heroicons/react/24/outline";
   
   export interface MenuItem {
@@ -25,5 +26,6 @@ import {
   
   export const recentItems: MenuItem[] = [
     { id: "dashboard", label: "แดชบอร์ด", icon: ChartPieIcon, link: "/dashboard" },
+    { id: "profile", label: "โปรไฟล์", icon: UserCircleIcon, link: "/profile" },
   ];
   

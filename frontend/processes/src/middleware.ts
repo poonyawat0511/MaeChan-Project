@@ -2,68 +2,68 @@ import { NextRequest, NextResponse } from "next/server";
 import { extractUserFromCookie } from "./utils/auth/auth";
 
 export function middleware(request: NextRequest) {
-  const user = extractUserFromCookie(request); // Extract user from JWT cookies
+  const user = extractUserFromCookie(request); // ✅ JWT user from cookie
   const { pathname } = request.nextUrl;
 
-  const publicPaths = ["/signin", "/signup", "/public", "/dashboard"];
+  const publicPaths = ["/", "/signin", "/signup", "/public", "/dashboard", "/profile"];
   const adminOnlyPaths = ["/users", "/days"];
   const approverAndDirectorPaths = ["/all-stock-requests", "/task"];
+  const userOnlyPaths = ["/dashboard", "/profile"];
 
   console.log("Middleware triggered: ", { pathname, user });
 
-  // 1. Redirect to /signin if not authenticated and path is not public
+  // 1. Redirect unauthenticated users away from protected routes
   if (!user && !publicPaths.includes(pathname)) {
-    console.log("Unauthorized access, redirecting to /signin");
+    console.log("Unauthorized access → redirect to /signin");
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 
-  // 2. Redirect authenticated users away from /signin
+  // 2. Authenticated user accessing /signin → redirect based on role
   if (user && pathname === "/signin") {
     if (user.role === "ADMIN") {
       return NextResponse.redirect(new URL("/users", request.url));
-    } else {
+    } else if (["APPROVER", "DIRECTOR"].includes(user.role)) {
       return NextResponse.redirect(new URL("/all-stock-requests", request.url));
+    } else {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
 
-  // 3. Handle logout
+  // 3. Signout route → clear JWT
   if (pathname === "/signout") {
     const response = NextResponse.redirect(new URL("/signin", request.url));
     response.cookies.set("jwt", "", { maxAge: -1 });
     return response;
   }
 
-  // 4. Block users from accessing unauthorized paths
+  // 4. Role-based route access control
   if (user) {
     const role = user.role;
 
-    // ADMIN allowed only /users, /days
-    if (role === "ADMIN" && !adminOnlyPaths.includes(pathname) && !publicPaths.includes(pathname)) {
-      console.log("ADMIN not allowed on", pathname, "→ Redirect to /users");
+    if (role === "ADMIN" && ![...adminOnlyPaths, ...publicPaths].includes(pathname)) {
+      console.log("ADMIN blocked from", pathname);
       return NextResponse.redirect(new URL("/users", request.url));
     }
 
-    // APPROVER or DIRECTOR allowed only /all-stock-requests, /task
     if (
-      (role === "APPROVER" || role === "DIRECTOR") &&
-      !approverAndDirectorPaths.includes(pathname) &&
-      !publicPaths.includes(pathname)
+      ["APPROVER", "DIRECTOR"].includes(role) &&
+      ![...approverAndDirectorPaths, ...publicPaths].includes(pathname)
     ) {
-      console.log(`${role} not allowed on ${pathname} → Redirect to /all-stock-requests`);
+      console.log(`${role} blocked from ${pathname}`);
       return NextResponse.redirect(new URL("/all-stock-requests", request.url));
     }
 
-    // Other roles (or no specific role matching)
-    if (
-      !["ADMIN", "APPROVER", "DIRECTOR"].includes(role) &&
-      !publicPaths.includes(pathname)
-    ) {
-      console.log("Unknown role or access denied → Redirect to /dashboard");
+    if (role === "USER" && !userOnlyPaths.includes(pathname)) {
+      console.log("USER blocked from", pathname);
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+
+    if (!["ADMIN", "APPROVER", "DIRECTOR", "USER"].includes(role)) {
+      console.log("Unknown role → redirect to /dashboard");
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
 
-  // Allow access to public paths or authorized routes
   return NextResponse.next();
 }
 

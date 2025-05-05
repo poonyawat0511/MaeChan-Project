@@ -1,16 +1,17 @@
 "use client";
 import { Button } from "@heroui/react";
-import { XCircleIcon } from "@heroicons/react/24/solid";
+import { XCircleIcon } from "@heroicons/react/24/outline";
 
 export default function RejectButton({ onClick }: { onClick: () => void }) {
   return (
     <Button
-      className="rounded-md bg-red-50 hover:bg-red-100 text-red-600 transition-all"
+      className="rounded-full bg-white border border-red-200 hover:bg-red-50 text-red-500 transition-all shadow-sm px-5 py-2"
       startContent={<XCircleIcon className="h-4 w-4" />}
-      size="sm"
+      size="md"
+      variant="flat"
       onPress={onClick}
     >
-      ไม่อนุมัติ
+      <span className="font-medium">ไม่อนุมัติ</span>
     </Button>
   );
 }

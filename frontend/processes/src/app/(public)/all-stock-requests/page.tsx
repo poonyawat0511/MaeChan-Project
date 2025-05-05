@@ -8,7 +8,7 @@ import SearchInput from "./_components/buttons/SearchInput";
 import RefreshButton from "./_components/buttons/RefreshButton";
 import DownloadCSVButton from "./_components/buttons/DownloadCSVButton";
 import { Button } from "@heroui/button";
-import { Pagination } from "@heroui/react";
+import { Pagination, Spinner } from "@heroui/react";
 import PdfPreviewModal from "./_components/modals/PdfPreviewModal";
 import { useAllStockRequests } from "./hooks/useAllStockRequests";
 import generatePDF from "@/utils/services/generatePDF";
@@ -86,11 +86,18 @@ export default function AllStockRequest() {
   };
 
   if (loading) {
-    return <LoadingScreen message="Loading requests..." />;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="text-center">
+          <Spinner size="lg" color="secondary" className="mb-4" />
+          <p className="text-gray-600 font-medium">กำลังโหลดข้อมูล...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="w-full p-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex overflow-x-auto w-full">
+    <div className="w-full p-4 lg:p-6 bg-gradient-to-br from-violet-50/30 to-slate-50 min-h-screen">
       <StockRequestCard
         total={totalPages * itemsPerPage}
         filtered={requests.length}
@@ -165,7 +172,6 @@ export default function AllStockRequest() {
             )}
           </>
         }
-
       />
 
       <PdfPreviewModal

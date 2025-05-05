@@ -22,6 +22,10 @@ import com.example.workflow.model.Role;
 import com.example.workflow.model.UserHospital;
 import com.example.workflow.repository.UserHospitalRepository;
 import com.example.workflow.dto.ForgotPasswordDto;
+import java.io.File;
+import java.io.IOException;
+
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class UserHospitalService {
@@ -163,4 +167,41 @@ public class UserHospitalService {
         }
     }
 
+    public String uploadUserSignature(Long userId, MultipartFile file) {
+        UserHospital user = userHospitalRepository.findById(userId)
+                .orElseThrow(() -> new UserHospitalNotFoundException(userId));
+    
+        try {
+            // 1. Validate file type
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new IllegalArgumentException("Only image files are allowed.");
+            }
+    
+            // 2. Generate file name
+            String original = file.getOriginalFilename().replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+            String fileName = System.currentTimeMillis() + "_" + original;
+    
+            // ✅ Use absolute path relative to project root
+            String uploadDir = System.getProperty("user.dir") + "/uploads/signatures";
+            File directory = new File(uploadDir);
+            if (!directory.exists() && !directory.mkdirs()) {
+                throw new RuntimeException("Failed to create signature directory");
+            }
+    
+            // 3. Save file
+            File destFile = new File(directory, fileName);
+            file.transferTo(destFile);
+    
+            // 4. Return public URL
+            String publicUrl = "http://localhost:8081/uploads/signatures/" + fileName;
+            user.setSignaturePath(publicUrl);
+            userHospitalRepository.save(user);
+    
+            return user.getSignaturePath();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to upload signature", e);
+        }
+    }    
 }

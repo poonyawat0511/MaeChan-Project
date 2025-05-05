@@ -7,12 +7,16 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/24/solid";
+import { clsx } from "clsx";
+import { motion } from "framer-motion";
 
 interface Props {
   total: number;
   currentPage: number;
   onPageChange: (page: number) => void;
   variant?: "compact" | "default";
+  size?: "md" | "lg";
+  className?: string;
 }
 
 export default function Pagination({
@@ -20,6 +24,8 @@ export default function Pagination({
   currentPage,
   onPageChange,
   variant = "default",
+  size = "md",
+  className = "",
 }: Props) {
   const { range, onNext, onPrevious } = usePagination({
     total,
@@ -30,36 +36,69 @@ export default function Pagination({
     boundaries: 1,
   });
 
+  // Size classes
+  const btnSizeClasses = size === "lg" 
+    ? "w-10 h-10 text-base" 
+    : "w-8 h-8 text-sm";
+  
+  const iconSizeClasses = size === "lg"
+    ? "w-5 h-5"
+    : "w-4 h-4";
+
   return (
-    <ul
-      className={`flex items-center gap-1 ${
-        variant === "compact" ? "mt-2 justify-center" : "mt-3 justify-center"
-      }`}
+    <motion.ul
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={clsx(
+        "flex items-center",
+        size === "lg" ? "gap-2" : "gap-1",
+        variant === "compact" ? "mt-2 justify-center" : "mt-3 justify-center",
+        className
+      )}
     >
       {range.map((page, index) => {
         if (page === PaginationItemType.PREV) {
           return (
-            <li key={`prev-${index}`}>
+            <motion.li 
+              key={`prev-${index}`}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
               <button
                 onClick={onPrevious}
-                className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-full"
+                className={clsx(
+                  btnSizeClasses,
+                  "flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700 border border-gray-300 shadow-sm transition-colors",
+                  "focus:outline-none focus:ring-2 focus:ring-blue-400"
+                )}
+                aria-label="Previous page"
               >
-                <ChevronLeftIcon className="w-3 h-3" />
+                <ChevronLeftIcon className={iconSizeClasses} />
               </button>
-            </li>
+            </motion.li>
           );
         }
 
         if (page === PaginationItemType.NEXT) {
           return (
-            <li key={`next-${index}`}>
+            <motion.li 
+              key={`next-${index}`}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+            >
               <button
                 onClick={onNext}
-                className="w-6 h-6 flex items-center justify-center bg-gray-200 rounded-full"
+                className={clsx(
+                  btnSizeClasses,
+                  "flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700 border border-gray-300 shadow-sm transition-colors",
+                  "focus:outline-none focus:ring-2 focus:ring-blue-400"
+                )}
+                aria-label="Next page"
               >
-                <ChevronRightIcon className="w-3 h-3" />
+                <ChevronRightIcon className={iconSizeClasses} />
               </button>
-            </li>
+            </motion.li>
           );
         }
 
@@ -67,7 +106,11 @@ export default function Pagination({
           return (
             <li
               key={`dots-${index}`}
-              className="w-6 h-6 text-xs text-gray-500 flex items-center justify-center"
+              className={clsx(
+                btnSizeClasses,
+                "text-gray-600 flex items-center justify-center font-bold"
+              )}
+              aria-hidden="true"
             >
               ...
             </li>
@@ -75,20 +118,29 @@ export default function Pagination({
         }
 
         return (
-          <li key={`page-${page}`}>
+          <motion.li 
+            key={`page-${page}`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
             <button
               onClick={() => onPageChange(Number(page))}
-              className={`w-6 h-6 flex items-center justify-center rounded-full text-xs ${
+              className={clsx(
+                btnSizeClasses,
+                "flex items-center justify-center rounded-full border transition-colors shadow-sm",
+                "focus:outline-none focus:ring-2 focus:ring-blue-400",
                 currentPage === page
-                  ? "bg-primary text-white font-bold"
-                  : "bg-gray-100 text-gray-700"
-              }`}
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium border-blue-700"
+                  : "bg-white text-gray-700 hover:bg-gray-100 border-gray-300"
+              )}
+              aria-label={`Page ${page}`}
+              aria-current={currentPage === page ? "page" : undefined}
             >
               {page}
             </button>
-          </li>
+          </motion.li>
         );
       })}
-    </ul>
+    </motion.ul>
   );
 }

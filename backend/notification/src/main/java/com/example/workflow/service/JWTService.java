@@ -21,4 +21,6 @@ public interface JWTService {
     String extractFirstName(String token);
 
     String extractLastName(String token);
+
+    String extractSignaturePath(String token);
 }

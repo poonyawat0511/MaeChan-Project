@@ -53,6 +53,7 @@ public class AuthenticationController {
             response.put("firstName", jwtService.extractFirstName(token));
             response.put("lastName", jwtService.extractLastName(token));
             response.put("id", jwtService.extractStockUserId(token));
+            response.put("signaturePath", jwtService.extractSignaturePath(token));
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -60,7 +61,7 @@ public class AuthenticationController {
         }
     }
 
-    @PostMapping(value = "/signup", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/signup", consumes = { "multipart/form-data" })
     public ResponseEntity<UserHospital> signup(
             @Valid @RequestPart("firstName") String firstName,
             @Valid @RequestPart("lastName") String lastName,
@@ -87,7 +88,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SigninRequest signinRequest, HttpServletResponse response) {
+    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SigninRequest signinRequest,
+            HttpServletResponse response) {
         // Authenticate and generate tokens
         JwtAuthenticationResponse jwtResponse = authenticationService.signin(signinRequest);
 
@@ -112,7 +114,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<JwtAuthenticationResponse> refresh(@RequestBody RefreshTokenRequest refreshTokenRequest, HttpServletResponse response) {
+    public ResponseEntity<JwtAuthenticationResponse> refresh(@RequestBody RefreshTokenRequest refreshTokenRequest,
+            HttpServletResponse response) {
         // Refresh the tokens
         JwtAuthenticationResponse jwtResponse = authenticationService.refreshToken(refreshTokenRequest);
 

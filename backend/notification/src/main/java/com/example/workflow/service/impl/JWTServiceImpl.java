@@ -31,20 +31,23 @@ public class JWTServiceImpl implements JWTService {
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
     }
-
     @Override
     public String generateToken(UserDetails userDetails) {
         UserHospital user = (UserHospital) userDetails;
-
-        Map<String, Object> claims = Map.of(
-            "id", user.getId(),
-            "firstName", user.getFirstName(),
-            "lastName", user.getLastName(),
-            "role", user.getRole().name()
-        );
-
+    
+        Map<String, Object> claims = new java.util.HashMap<>();
+        claims.put("id", user.getId());
+        claims.put("firstName", user.getFirstName());
+        claims.put("lastName", user.getLastName());
+        claims.put("role", user.getRole().name());
+    
+        if (user.getSignaturePath() != null) {
+            claims.put("signaturePath", user.getSignaturePath());
+        }
+    
         return generateTokenWithClaims(claims, user);
     }
+    
 
     @Override
     public String generateRefreshToken(Map<String, Object> extraClaims, UserDetails userDetails) {
@@ -99,5 +102,9 @@ public class JWTServiceImpl implements JWTService {
 
     public String extractRole(String token) {
         return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
+    public String extractSignaturePath(String token) {
+        return extractClaim(token, claims -> claims.get("signaturePath", String.class));
     }
 }

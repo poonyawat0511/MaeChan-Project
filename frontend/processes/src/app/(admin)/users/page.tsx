@@ -10,6 +10,26 @@ import UserHeaderCard from "./_components/cards/UserHeaderCard";
 import UserFooterCard from "./_components/cards/UserFooterCard";
 import UserDeleteModal from "./_components/modals/UserDeleteModal";
 import { useUserPage } from "./hooks/useUserPage";
+import { motion } from "framer-motion";
+import { UsersIcon } from "@heroicons/react/24/outline";
+
+// Animation variants for staggered animations
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { 
+      duration: 0.5,
+      when: "beforeChildren",
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+};
 
 export default function UserPage() {
   const {
@@ -30,12 +50,33 @@ export default function UserPage() {
   } = useUserPage();
 
   if (loading) {
-    return <LoadingScreen message="Loading users..." />;
+    return <LoadingScreen message="กำลังโหลดข้อมูลผู้ใช้..." />;
   }
 
   return (
-    <div className="flex justify-center w-full min-h-screen bg-gray-50 p-4 md:p-6">
-      <Card className="bg-white shadow-md w-full flex flex-col border border-gray-100">
+    <motion.div 
+      className="flex justify-center w-full min-h-screen bg-gradient-to-b from-gray-50 to-white p-4 md:p-6"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <div className="max-w-7xl w-full">
+        <motion.header className="mb-6" variants={itemVariants}>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-3 bg-blue-100 rounded-full">
+              <UsersIcon className="h-8 w-8 text-blue-600" />
+            </div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+              จัดการผู้ใช้งานระบบ
+            </h1>
+          </div>
+          <p className="text-gray-600 text-lg ml-14">
+            ค้นหา เพิ่ม แก้ไข หรือลบข้อมูลผู้ใช้งานระบบได้ที่นี่
+          </p>
+        </motion.header>
+
+        <motion.div variants={itemVariants}>
+          <Card className="bg-white shadow-lg border border-blue-100 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300">
         <UserHeaderCard
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
@@ -44,6 +85,11 @@ export default function UserPage() {
 
         <CardBody className="p-0 overflow-auto flex-grow">
           {users.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
             <EmptyState
               message="ไม่พบผู้ใช้"
               subMessage={
@@ -54,6 +100,7 @@ export default function UserPage() {
               showClearButton={!!searchQuery}
               onClear={() => setSearchQuery("")}
             />
+                </motion.div>
           ) : (
             <UserHospitalTable
               UserHospitals={users}
@@ -71,14 +118,15 @@ export default function UserPage() {
           itemsPerPage={itemsPerPage}
           onPageChange={setCurrentPage}
         />
-
       </Card>
+        </motion.div>
+      </div>
 
       <UserDeleteModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleDelete}
       />
-    </div>
+    </motion.div>
   );
 }
