@@ -9,7 +9,7 @@ import {
   PowerIcon,
 } from "@heroicons/react/24/outline";
 import { axiosInstance, signOutApi } from "@/utils/api/api";
-import { userMenuItems, adminMenuItems, recentItems } from "./menu";
+import { userMenuItems, adminMenuItems, recentItems } from "../../config/menu";
 import { motion } from "framer-motion";
 import ConfirmSignOut from "./_components/modals/ConfirmSignOut";
 

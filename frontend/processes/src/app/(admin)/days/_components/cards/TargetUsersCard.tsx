@@ -1,5 +1,4 @@
 "use client";
-import { UserHospital } from "@/utils/types/user-hospital";
 import {
   Avatar,
   Badge,
@@ -17,6 +16,7 @@ import {
   UserPlusIcon,
 } from "@heroicons/react/24/outline";
 import Pagination from "../paginations/Pagination";
+import { UserHospital } from "@/types/user-hospital";
 
 interface Props {
   users: UserHospital[];

@@ -1,8 +1,8 @@
 "use client";
 import { Button } from "@heroui/react";
 import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
-import { StockRequest } from "@/utils/types/stock-request";
 import { downloadCSV } from "@/utils/services/csv";
+import { StockRequest } from "@/types/stock-request";
 
 export default function DownloadCSVButton({ data }: { data: StockRequest[] }) {
   return (

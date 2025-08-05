@@ -1,4 +1,5 @@
-import { StockBudgetType } from "@/utils/types/stock-budget-type";
+
+import { StockBudgetType } from "@/types/stock-budget-type";
 import {
     Table,
     TableBody,
@@ -25,7 +26,7 @@ export default function StockBudgetTypeTable({ stockBudgetTypeList }: StockBudge
                         <TableColumn
                             key={column.key}
                             width="50%"
-                            className="sticky top-0 bg-white z-10 bg-gray-200"
+                            className="sticky top-0 z-10 bg-gray-200"
                         >
                             {column.label}
                         </TableColumn>

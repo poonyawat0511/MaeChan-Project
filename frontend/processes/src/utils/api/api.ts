@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export const axiosInstance = axios.create({
-  baseURL: "http://192.168.2.12:8081",
+  baseURL,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -45,7 +47,9 @@ export const budgetPaginatedApi = "/stock-budgets/paginated"
 export const budgetTypeApi = "stock-budget-types"
 export const bugetListApi = "stock-budget-list"
 export const budgetListPageApi = "stock-budget-list/paginated"
-export const bugetListTrApi ="stock-buget-list-tr"
+export const bugetListTrApi = "stock-buget-list-tr"
 export const dashboardSummaryApi = "/dashboard-summary"
 export const yearApi = "/dashboard-summary/years"
 export const stockRequestListBatchApi = "/stock-request-list/batch"
+export const signin = "/auth/signin"
+export const forgetPassword = "/auth/forgot-password"

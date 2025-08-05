@@ -5,11 +5,11 @@ import styles from "./styles.module.css";
 import { Input } from "@heroui/input";
 import { Form, Link, Select, SelectItem } from "@heroui/react";
 import liff from "@line/liff";
-import { signUpResponse } from "@/utils/types/signUpResponese";
-import { Role } from "@/utils/types/role";
 import SignatureModal from "./_components/modals/SignatureModal";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import { motion } from "framer-motion";
+import { Role } from "@/types/role";
+import { signUpResponse } from "@/types/signUpResponese";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState<Partial<signUpResponse>>({
@@ -108,7 +108,8 @@ export default function SignUpPage() {
         data.append("signature", signatureFile);
       }
 
-      const response = await fetch("http://192.168.2.12:8081/auth/signup", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup`,
+      {
         method: "POST",
         body: data,
       });

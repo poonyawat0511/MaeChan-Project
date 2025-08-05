@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     getStockDepartments,
     getStockBudgetType,
     getStockBugetsByPageTable,
     getStockBugetsListByPageTable,
 } from "@/utils/services/getApi";
-import { StockDepartment } from "@/utils/types/stock-department";
-import { StockBudgetList } from "@/utils/types/stock-buget-list";
-import { StockBudget } from "@/utils/types/stock-budget";
-import { StockBudgetType } from "@/utils/types/stock-budget-type";
-import { Page } from "@/utils/types/page";
+import { Page } from "@/types/page";
+import { StockBudget } from "@/types/stock-budget";
+import { StockBudgetType } from "@/types/stock-budget-type";
+import { StockBudgetList } from "@/types/stock-buget-list";
+import { StockDepartment } from "@/types/stock-department";
 
 export const useDashboardPage = () => {
     const [loading, setLoading] = useState(true);
@@ -40,7 +40,7 @@ export const useDashboardPage = () => {
         }
     };
 
-    const fetchPaginatedBudgets = async () => {
+    const fetchPaginatedBudgets = useCallback(async () => {
         try {
             const pageData = await getStockBugetsByPageTable(budgetPageIndex, pageSize);
             setBudgets(pageData.content);
@@ -48,9 +48,10 @@ export const useDashboardPage = () => {
         } catch (err) {
             console.error("Error fetching paginated stock budgets", err);
         }
-    };
+    }, [budgetPageIndex]);
 
-    const fetchPaginatedBudgetList = async () => {
+
+    const fetchPaginatedBudgetList = useCallback(async () => {
         try {
             const pageDate = await getStockBugetsListByPageTable(budgetListPageIndex, pageSize);
             setBudgetList(pageDate.content);
@@ -58,12 +59,12 @@ export const useDashboardPage = () => {
         } catch (err) {
             console.error("Error fetching paginated stock budgetlist", err);
         }
-    };
+    }, [budgetListPageIndex]);
 
     useEffect(() => {
         fetchPaginatedBudgets();
         fetchPaginatedBudgetList();
-    }, [budgetPageIndex, budgetListPageIndex]);
+    }, [fetchPaginatedBudgets, fetchPaginatedBudgetList]);
 
     useEffect(() => {
         fetchData();

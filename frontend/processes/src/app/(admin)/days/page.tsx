@@ -10,7 +10,7 @@ import TimeFormModal from "./_components/modals/TimeModalForm";
 import ScheduleManagementCard from "./_components/cards/ScheduleManagementCard";
 import TimeSelectorCard from "./_components/cards/TimeSelectorCard";
 import TargetUsersCard from "./_components/cards/TargetUsersCard";
-import { useDayPage } from "./hooks/useDayPage";
+import { useDayPage } from "../../../hooks/useDay";
 
 export default function DayPage() {
   const {
@@ -111,7 +111,7 @@ export default function DayPage() {
             onRemoveUser={handleRemoveUser}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}
-            totalPages={totalPages} // ✅ แก้ตรงนี้
+            totalPages={totalPages}
             selectedCurrentPage={selectedCurrentPage}
             setSelectedCurrentPage={setSelectedCurrentPage}
             totalSelectedPages={totalSelectedPages}

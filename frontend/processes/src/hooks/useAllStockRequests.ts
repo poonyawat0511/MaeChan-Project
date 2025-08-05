@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getStockRequestBatchList, getStockRequestsByPageTable } from "@/utils/services/getApi";
-import { Page } from "@/utils/types/page";
-import { StockRequest } from "@/utils/types/stock-request";
-import { StockRequestList } from "@/utils/types/stock-request-list";
+import { Page } from "@/types/page";
+import { StockRequest } from "@/types/stock-request";
+import { StockRequestList } from "@/types/stock-request-list";
 
 export const useAllStockRequests = (searchQuery: string) => {
   const [requests, setRequests] = useState<StockRequest[]>([]);

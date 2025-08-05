@@ -1,5 +1,4 @@
 import React from "react";
-import { StockRequest } from "@/utils/types/stock-request";
 import {
   getKeyValue,
   Table,
@@ -12,7 +11,7 @@ import {
   Chip,
 } from "@heroui/react";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
-
+import { StockRequest } from "@/types/stock-request";
 
 interface StockRequestTableProps {
   stockRequests: StockRequest[];

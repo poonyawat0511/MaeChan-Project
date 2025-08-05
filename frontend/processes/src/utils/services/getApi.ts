@@ -1,3 +1,18 @@
+import { DashboardSummaryDTO } from "@/types/dashboardSummaryDTO";
+import { Days } from "@/types/day";
+import { Page } from "@/types/page";
+import { StockBudget } from "@/types/stock-budget";
+import { StockBudgetListTr } from "@/types/stock-budget-list-tr";
+import { StockBudgetType } from "@/types/stock-budget-type";
+import { StockBudgetList } from "@/types/stock-buget-list";
+import { StockDepartment } from "@/types/stock-department";
+import { StockPo } from "@/types/stock-po";
+import { StockRequest } from "@/types/stock-request";
+import { StockRequestList } from "@/types/stock-request-list";
+import { StockWarehouse } from "@/types/stock-warehouse";
+import { Task } from "@/types/task";
+import { Times } from "@/types/time";
+import { UserHospital } from "@/types/user-hospital";
 import {
   axiosInstance,
   budgetApi,
@@ -20,31 +35,16 @@ import {
   userHospitalPaginatedApi,
   warehouseApi,
 } from "../api/api";
-import { StockRequest } from "../types/stock-request";
-import { Task } from "../types/task";
+
 import {
   camundaTaksApiApprover,
   camundaTaksApiDirector,
   requestApi,
   springRequestByTaskApi,
 } from "../api/api";
-import { Days } from "../types/day";
-import { Times } from "../types/time";
-import { Target } from "../types/target";
-import { UserHospital } from "../types/user-hospital";
-import { StockRequestList } from "../types/stock-request-list";
-import { StockPo } from "../types/stock-po";
-import { StockWarehouse } from "../types/stock-warehouse";
 import { getAuthenticatedUser } from "../auth/auth";
-import { StockDepartment } from "../types/stock-department";
-import { StockBudget } from "../types/stock-budget";
-import { StockBudgetList } from "../types/stock-buget-list";
-import { StockBudgetType } from "../types/stock-budget-type";
-import { StockBudgetListTr } from "../types/stock-budget-list-tr";
+import { Target } from "@/types/target";
 
-// Function to get stock requests
-import { Page } from "@/utils/types/page";
-import { DashboardSummaryDTO } from "../types/dashboardSummaryDTO";
 
 export const getStockRequestsByPageTable = async (
   page = 0,

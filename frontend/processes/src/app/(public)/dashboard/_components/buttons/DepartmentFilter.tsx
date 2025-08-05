@@ -5,8 +5,7 @@ import {
   AutocompleteItem,
   Chip,
 } from "@heroui/react";
-import { StockDepartment } from "@/utils/types/stock-department";
-
+import { StockDepartment } from "@/types/stock-department";
 interface DepartmentFilterProps {
   selectedDepartments: string[];
   setSelectedDepartments: (departments: string[]) => void;

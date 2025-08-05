@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { axiosInstance, userHospitalApi } from "@/utils/api/api";
-import { UserHospital } from "@/utils/types/user-hospital";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
-import { Page } from "@/utils/types/page";
-import { useDebounce } from "./useDebounce";
-import { Role } from "@/utils/types/role";
 import { patchUserRole } from "@/utils/api/userHospital";
+import { useDebounce } from "@/config/useDebounce";
+import { Page } from "@/types/page";
+import { Role } from "@/types/role";
+import { UserHospital } from "@/types/user-hospital";
 
 export function useUserPage() {
   const [users, setUsers] = useState<UserHospital[]>([]);
@@ -21,7 +21,7 @@ export function useUserPage() {
 
   const { showAlert } = useAlert();
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get<Page<UserHospital>>(
@@ -36,11 +36,15 @@ export function useUserPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, itemsPerPage, debouncedSearch, showAlert]);
 
   useEffect(() => {
     fetchUsers();
-  }, [currentPage, debouncedSearch]);
+  }, [fetchUsers]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   useEffect(() => {
     setCurrentPage(1);

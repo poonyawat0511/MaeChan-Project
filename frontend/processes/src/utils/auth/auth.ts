@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
-import { UserHospital } from "../types/user-hospital";
+
 import { axiosInstance } from "../api/api";
+import { UserHospital } from "@/types/user-hospital";
 
 // ✅ Get JWT token from cookies (Client Side)
 export const getTokenFromClient = (): string | null => {

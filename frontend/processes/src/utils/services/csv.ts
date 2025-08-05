@@ -1,5 +1,6 @@
-import { Officer } from "../types/officer";
-import { StockRequest } from "../types/stock-request";
+import { Officer } from "@/types/officer";
+import { StockRequest } from "@/types/stock-request";
+
 
 
 export const downloadCSV = (requests: StockRequest[]) => {

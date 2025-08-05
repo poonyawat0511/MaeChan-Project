@@ -1,4 +1,4 @@
-import { Days } from "@/utils/types/day";
+import { Days } from "@/types/day";
 import {
   Card,
   CardHeader,

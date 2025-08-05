@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   axiosInstance,
   dayApi,
@@ -11,12 +11,12 @@ import {
   getUserHospitalByPageTable,
   getNotifyTargetByPageTable,
 } from "@/utils/services/getApi";
-import { Days } from "@/utils/types/day";
-import { Times } from "@/utils/types/time";
-import { UserHospital } from "@/utils/types/user-hospital";
-import { Target } from "@/utils/types/target";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
-import { useDebounce } from "./useDebounce";
+import { useDebounce } from "@/config/useDebounce";
+import { Days } from "@/types/day";
+import { Times } from "@/types/time";
+import { UserHospital } from "@/types/user-hospital";
+import { Target } from "@/types/target";
 
 export function useDayPage() {
   const [days, setDays] = useState<Days[]>([]);
@@ -29,13 +29,11 @@ export function useDayPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 5;
   const [totalPages, setTotalPages] = useState(1);
-
   const [paginatedTargetUsers, setPaginatedTargetUsers] = useState<UserHospital[]>([]);
   const [targetPage, setTargetPage] = useState(1);
   const [targetTotalPages, setTargetTotalPages] = useState(1);
   const [targetSearch, setTargetSearch] = useState("");
   const [debouncedSearch] = useDebounce(userSearchQuery, 500);
-
   const { showAlert } = useAlert();
 
   const fetchData = async () => {
@@ -57,7 +55,7 @@ export function useDayPage() {
     }
   };
 
-  const fetchPaginatedUsers = async () => {
+  const fetchPaginatedUsers = useCallback(async () => {
     try {
       const response = await getUserHospitalByPageTable(currentPage - 1, usersPerPage, debouncedSearch);
       setPaginatedUsers(response.content);
@@ -65,10 +63,9 @@ export function useDayPage() {
     } catch (error) {
       console.error("Error fetching paginated users:", error);
     }
-  };
-  
+  }, [currentPage, usersPerPage, debouncedSearch]);
 
-  const fetchPaginatedTargetUsers = async () => {
+  const fetchPaginatedTargetUsers = useCallback(async () => {
     try {
       const response = await getNotifyTargetByPageTable(targetPage - 1, usersPerPage);
       const users = response.content
@@ -80,7 +77,7 @@ export function useDayPage() {
     } catch (error) {
       console.error("Error fetching paginated target users:", error);
     }
-  };
+  }, [targetPage, usersPerPage]);
 
   useEffect(() => {
     fetchData();
@@ -88,15 +85,16 @@ export function useDayPage() {
 
   useEffect(() => {
     fetchPaginatedUsers();
-  }, [currentPage, debouncedSearch]);  
+  }, [fetchPaginatedUsers]);
 
   useEffect(() => {
     fetchPaginatedTargetUsers();
-  }, [targetPage, targetSearch]);
+  }, [fetchPaginatedTargetUsers]);
+
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [userSearchQuery]);  
+  }, [userSearchQuery]);
 
   const handleToggleActive = async (updatedDay: Days) => {
     try {

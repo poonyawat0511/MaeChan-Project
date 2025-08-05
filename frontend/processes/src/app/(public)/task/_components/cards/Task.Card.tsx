@@ -7,9 +7,9 @@ import {
   Button,
   Chip,
 } from "@heroui/react";
-import { Task } from "@/utils/types/task";
-import { SpringRequest } from "@/utils/types/spring-request";
 import { FolderMinusIcon } from "@heroicons/react/24/outline";
+import { SpringRequest } from "@/types/spring-request";
+import { Task } from "@/types/task";
 
 interface TaskCardProps {
   tasks: Task[];

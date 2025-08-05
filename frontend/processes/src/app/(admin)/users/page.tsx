@@ -9,7 +9,7 @@ import UserHospitalTable from "@/app/(admin)/users/_components/tables/UserHospit
 import UserHeaderCard from "./_components/cards/UserHeaderCard";
 import UserFooterCard from "./_components/cards/UserFooterCard";
 import UserDeleteModal from "./_components/modals/UserDeleteModal";
-import { useUserPage } from "./hooks/useUserPage";
+import { useUserPage } from "../../../hooks/useUserPage";
 
 export default function UserPage() {
   const {

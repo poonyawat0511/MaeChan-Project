@@ -36,7 +36,7 @@ import StockBudgetListTable from "./_components/tables/StockBudgetListTable";
 import StockBudgetTypeTable from "./_components/tables/StockBudgetTypeTable";
 import { motion, AnimatePresence } from "framer-motion";
 import { getDashboardSummary } from "@/utils/services/getApi";
-import { useDashboardPage } from "./hooks/useDashboardPage";
+import { useDashboardPage } from "../../../hooks/useDashboard";
 import { DashboardSummaryDTO } from "@/utils/types/dashboardSummaryDTO";
 import { axiosInstance, yearApi } from "@/utils/api/api";
 

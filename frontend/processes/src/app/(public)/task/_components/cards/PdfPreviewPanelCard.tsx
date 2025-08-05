@@ -7,7 +7,7 @@ import PdfPreview from "@/components/pdf/PdfPreview";
 import ClosePreviewButton from "../buttons/ClosePreviewButton";
 import RejectButton from "../buttons/RejectButton";
 import ApproveButton from "../buttons/ApproveButton";
-import { Task } from "@/utils/types/task";
+import { Task } from "@/types/task";
 
 interface PdfPreviewPanelCardProps {
   selectedTask: Task | null;

@@ -8,8 +8,7 @@ import {
   TableRow,
   Chip,
 } from "@heroui/react";
-
-import { StockBudgetList } from "@/utils/types/stock-buget-list";
+import { StockBudgetList } from "@/types/stock-buget-list";
 
 interface StockBudgetListTableProps {
   stockBudgetList: StockBudgetList[];
@@ -51,7 +50,7 @@ export default function StockBudgetListTable({ stockBudgetList }: StockBudgetLis
       <Table aria-label="Stock Budget List Table" className="w-full min-w-max">
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn key={column.key} className="sticky top-0 bg-white z-10 bg-gray-200">
+            <TableColumn key={column.key} className="sticky top-0 z-10 bg-gray-200">
               {column.label}
             </TableColumn>
           )}

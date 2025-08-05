@@ -10,7 +10,7 @@ import HistoryButton from "./_components/buttons/HistoryButton";
 import ConfirmationModal from "./_components/modals/ConfirmationModal";
 import TaskPanelCard from "./_components/cards/TaskPanelCard";
 import PdfPreviewPanelCard from "./_components/cards/PdfPreviewPanelCard";
-import { useTaskPage } from "./hooks/useTaskPage";
+import { useTaskPage } from "../../../hooks/useTaskPage";
 
 export default function TaskPage() {
   const {

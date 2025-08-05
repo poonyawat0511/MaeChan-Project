@@ -21,9 +21,9 @@ import {
   ExclamationCircleIcon,
   ChevronDownIcon,
 } from "@heroicons/react/24/solid";
-import { Role } from "@/utils/types/role";
-import { UserHospital } from "@/utils/types/user-hospital";
 import SignaturePreviewModal from "../modals/SignaturePreviewModal";
+import { Role } from "@/types/role";
+import { UserHospital } from "@/types/user-hospital";
 
 interface UserHospitalTableProps {
   UserHospitals: UserHospital[];

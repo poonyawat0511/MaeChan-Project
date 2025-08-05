@@ -11,7 +11,7 @@ import {
   Button,
 } from "@heroui/react";
 import { ClockIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Times } from "@/utils/types/time";
+import { Times } from "@/types/time";
 
 interface Props {
   times: Times[];

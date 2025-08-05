@@ -10,13 +10,13 @@ import DownloadCSVButton from "./_components/buttons/DownloadCSVButton";
 import { Button } from "@heroui/button";
 import { Pagination } from "@heroui/react";
 import PdfPreviewModal from "./_components/modals/PdfPreviewModal";
-import { useAllStockRequests } from "./hooks/useAllStockRequests";
+import { useAllStockRequests } from "../../../hooks/useAllStockRequests";
 import generatePDF from "@/utils/services/generatePDF";
 import LoadingScreen from "@/components/loading/loading";
-import { StockRequest } from "@/utils/types/stock-request";
-import { useDebounce } from "./hooks/useDebounce";
-import { UserHospital } from "@/utils/types/user-hospital";
 import { axiosInstance } from "@/utils/api/api";
+import { useDebounce } from "@/config/useDebounce";
+import { StockRequest } from "@/types/stock-request";
+import { UserHospital } from "@/types/user-hospital";
 
 export default function AllStockRequest() {
   const [selectedPdfUrl, setSelectedPdfUrl] = useState<string | null>(null);
@@ -90,7 +90,7 @@ export default function AllStockRequest() {
   }
 
   return (
-    <div className="w-full p-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex overflow-x-auto w-full">
+    <div className="w-full p-4 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex overflow-x-auto">
       <StockRequestCard
         total={totalPages * itemsPerPage}
         filtered={requests.length}

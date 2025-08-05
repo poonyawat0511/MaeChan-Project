@@ -3,9 +3,9 @@ import React from "react";
 import { Chip } from "@heroui/react";
 import { DocumentIcon } from "@heroicons/react/24/solid";
 import CustomCard from "@/components/cards/CustomCard";
-import { Task } from "@/utils/types/task";
-import { SpringRequest } from "@/utils/types/spring-request";
 import TaskCard from "./Task.Card";
+import { SpringRequest } from "@/types/spring-request";
+import { Task } from "@/types/task";
 
 interface TaskPanelCardProps {
   tasks: Task[];

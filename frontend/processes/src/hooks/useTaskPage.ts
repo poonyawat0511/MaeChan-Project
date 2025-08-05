@@ -1,13 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Task } from "@/utils/types/task";
-import { SpringRequest } from "@/utils/types/spring-request";
 import generatePDF from "@/utils/services/generatePDF";
 import { getPaginatedCamundaTasks } from "@/utils/services/getApi";
 import { axiosInstance, camundaTaskSubmit, springRequestByTaskApi } from "@/utils/api/api";
 import { getAuthenticatedUser } from "@/utils/auth/auth";
 import { useAlert } from "@/components/alerts/GlobalAlertProvider";
-import { UserHospital } from "@/utils/types/user-hospital";
+import { SpringRequest } from "@/types/spring-request";
+import { Task } from "@/types/task";
+import { UserHospital } from "@/types/user-hospital";
 
 export const useTaskPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -27,7 +27,7 @@ export const useTaskPage = () => {
 
   const { showAlert } = useAlert();
 
-  // 🔁 Load all user hospitals
+  // Load all user hospitals
   useEffect(() => {
     const fetchUserHospitals = async () => {
       try {
@@ -40,7 +40,7 @@ export const useTaskPage = () => {
     fetchUserHospitals();
   }, []);
 
-  // 🔁 Load tasks and stock requests
+  // Load tasks and stock requests
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -71,7 +71,7 @@ export const useTaskPage = () => {
     fetchData();
   }, [page, size, sortOrder]);
 
-  // ✅ Click a task, generate PDF
+  // Click a task, generate PDF
   const handleTaskClick = async (task: Task) => {
     setSelectedTask(task);
     const spring = springRequests.find((s) => s.camundaTaskId === task.processInstanceId);
