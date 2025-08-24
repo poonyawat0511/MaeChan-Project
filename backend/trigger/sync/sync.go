@@ -62,7 +62,7 @@ type StockRequest struct {
 var syncLock sync.Mutex
 var isSyncing bool
 
-const batchSize = 10000
+const batchSize = 1000
 
 func SyncAll() {
 	syncLock.Lock()
@@ -81,6 +81,21 @@ func SyncAll() {
 		log.Println("[Sync] Unlock completed")
 	}()
 
+	// Sync all tables from legacy DB to new DB
+	SyncOfficers()
+	SyncStockBudgets()
+	SyncStockBudgetLists()
+	SyncStockBudgetListTrs()
+	SyncStockBudgetTypes()
+	SyncStockDepartments()
+	SyncStockItems()
+	SyncStockPos()
+	SyncStockPoDetails()
+	SyncStockPurchaseTypes()
+	SyncStockRequestLists()
+	SyncStockWarehouses()
+
+	// Original sync functions
 	SyncStockRequests()
 	SyncBackFromLegacy()
 	SyncStatusFromNewToLegacy()
