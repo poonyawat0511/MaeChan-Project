@@ -81,6 +81,11 @@ func SyncAll() {
 		log.Println("[Sync] Unlock completed")
 	}()
 
+	// stock_request 2 way sync
+	SyncStockRequests()
+	SyncBackFromLegacy()
+	SyncStatusFromNewToLegacy()
+
 	// Sync all tables from legacy DB to new DB
 	SyncOfficers()
 	SyncStockBudgets()
@@ -94,11 +99,6 @@ func SyncAll() {
 	SyncStockPurchaseTypes()
 	SyncStockRequestLists()
 	SyncStockWarehouses()
-
-	// Original sync functions
-	SyncStockRequests()
-	SyncBackFromLegacy()
-	SyncStatusFromNewToLegacy()
 }
 
 func SyncStockRequests() {
