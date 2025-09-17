@@ -12,9 +12,9 @@ import com.example.workflow.model.StockPo;
 @Repository
 public interface StockPoRepository extends JpaRepository<StockPo, Long> {
 
-    @Query("SELECT p FROM StockPo p WHERE YEAR(p.stockPoDate) = :year")
+    @Query("SELECT p FROM StockPo p WHERE YEAR(p.stockPoDate) = :year AND p.deliverComplete = 'Y'")
     List<StockPo> findByYear(@Param("year") int year);
 
-    @Query("SELECT DISTINCT YEAR(p.stockPoDate) FROM StockPo p WHERE p.stockPoDate IS NOT NULL")
+    @Query("SELECT DISTINCT YEAR(p.stockPoDate) FROM StockPo p WHERE p.stockPoDate IS NOT NULL AND p.deliverComplete = 'Y'")
     List<Integer> findDistinctYears();
 }
