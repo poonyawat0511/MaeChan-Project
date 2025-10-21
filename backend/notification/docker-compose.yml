@@ -1,8 +1,24 @@
-name: maechan-project-backend-21
+name: maechan
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB_NAME}
+    command: [
+      "postgres",
+      "-c", "wal_level=logical",
+      "-c", "max_replication_slots=10",
+      "-c", "max_wal_senders=10"
+    ]
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
   backend:
-    image: osathi/tidloop-window-backend-21:latest
+    image: osathi/mfu-tidloop-backend-21:latest
     ports:
       - "8081:8081"
     environment:
@@ -12,7 +28,7 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD}
 
   frontend:
-    image: osathi/tidloop-window-frontend:latest
+    image: osathi/mfu-tidloop-frontend:latest
     ports:
       - "3000:3000"
 

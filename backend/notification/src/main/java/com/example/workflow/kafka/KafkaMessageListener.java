@@ -24,7 +24,7 @@ public class KafkaMessageListener {
     @Autowired
     private SpringRequestRepository springRequestRepository;
 
-    @KafkaListener(topics = "pgserver1.public.stock_request", groupId = "console-consumer-35724")
+    @KafkaListener(topics = "${KAFKA_TOPIC:dbserver1.public.stock_request}")
     public void handleMessage(String message) {
         System.out.println("ดีบัค Received kafka message: " + message);
         try {
