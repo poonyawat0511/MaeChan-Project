@@ -115,7 +115,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            return "http://192.168.2.12:8081/uploads/signatures/" + fileName;
+            return "http://localhost:8081/uploads/signatures/" + fileName;
         } catch (IOException e) {
             throw new RuntimeException("Failed to store signature file", e);
         }

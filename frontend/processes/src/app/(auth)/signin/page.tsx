@@ -43,7 +43,7 @@ const SignInPage = () => {
     setError("");
 
     try {
-      const response = await fetch("http://192.168.2.12:8081/auth/signin", {
+      const response = await fetch("http://localhost:8081/auth/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -68,7 +68,7 @@ const SignInPage = () => {
     }
 
     try {
-      const response = await fetch("http://192.168.2.12:8081/forgot-password", {
+      const response = await fetch("http://localhost:8081/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
