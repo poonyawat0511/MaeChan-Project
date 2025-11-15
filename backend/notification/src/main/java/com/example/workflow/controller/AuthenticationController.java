@@ -3,7 +3,8 @@ package com.example.workflow.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -24,7 +25,6 @@ import com.example.workflow.model.UserHospital;
 import com.example.workflow.service.AuthenticationService;
 import com.example.workflow.service.JWTService;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +43,7 @@ public class AuthenticationController {
             @CookieValue(name = "jwt", required = false) String token) {
 
         if (token == null || token.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(401).build();
         }
 
         try {
@@ -56,11 +56,11 @@ public class AuthenticationController {
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(401).build();
         }
     }
 
-    @PostMapping(value = "/signup", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/signup", consumes = { "multipart/form-data" })
     public ResponseEntity<UserHospital> signup(
             @Valid @RequestPart("firstName") String firstName,
             @Valid @RequestPart("lastName") String lastName,
@@ -87,72 +87,79 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SigninRequest signinRequest, HttpServletResponse response) {
-        // Authenticate and generate tokens
+    public ResponseEntity<JwtAuthenticationResponse> signin(@RequestBody SigninRequest signinRequest,
+            HttpServletResponse response) {
         JwtAuthenticationResponse jwtResponse = authenticationService.signin(signinRequest);
 
-        // Set JWT token in a cookie
-        Cookie jwtCookie = new Cookie("jwt", jwtResponse.getToken());
-        jwtCookie.setHttpOnly(true); // Prevent client-side script access
-        jwtCookie.setSecure(false); // Use with HTTPS
-        jwtCookie.setPath("/"); // Accessible across the entire application
-        jwtCookie.setMaxAge(24 * 60 * 60); // 24 hours in seconds
-        response.addCookie(jwtCookie);
+        // Use ResponseCookie so we can include SameSite=None (required for cross-site cookies)
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwtResponse.getToken())
+                .httpOnly(true)
+                .secure(true)       // must be true for SameSite=None and HTTPS
+                .sameSite("Lax")   // required for cross-site (frontend <-> api on different origins)
+                .path("/")
+                .maxAge(24 * 60 * 60)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
 
-        // Set refresh token in a cookie (optional)
-        Cookie refreshCookie = new Cookie("refreshToken", jwtResponse.getRefreshToken());
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(false);
-        refreshCookie.setPath("/");
-        refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days in seconds
-        response.addCookie(refreshCookie);
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", jwtResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
-        // Return the response (optional)
         return ResponseEntity.ok(jwtResponse);
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<JwtAuthenticationResponse> refresh(@RequestBody RefreshTokenRequest refreshTokenRequest, HttpServletResponse response) {
-        // Refresh the tokens
+    public ResponseEntity<JwtAuthenticationResponse> refresh(@RequestBody RefreshTokenRequest refreshTokenRequest,
+            HttpServletResponse response) {
+
         JwtAuthenticationResponse jwtResponse = authenticationService.refreshToken(refreshTokenRequest);
 
-        // Set the new JWT token in a cookie
-        Cookie jwtCookie = new Cookie("jwt", jwtResponse.getToken());
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(false);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(24 * 60 * 60); // 24 hours in seconds
-        response.addCookie(jwtCookie);
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", jwtResponse.getToken())
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(24 * 60 * 60)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
 
-        // Set the new refresh token in a cookie (optional)
-        Cookie refreshCookie = new Cookie("refreshToken", jwtResponse.getRefreshToken());
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(false);
-        refreshCookie.setPath("/");
-        refreshCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days in seconds
-        response.addCookie(refreshCookie);
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", jwtResponse.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
-        // Return the response (optional)
         return ResponseEntity.ok(jwtResponse);
     }
 
     @PostMapping("/signout")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
-        // Clear the JWT cookie
-        Cookie jwtCookie = new Cookie("jwt", null);
-        jwtCookie.setHttpOnly(true);
-        jwtCookie.setSecure(false);
-        jwtCookie.setPath("/");
-        jwtCookie.setMaxAge(0); // Delete the cookie
-        response.addCookie(jwtCookie);
+        // Remove cookies by setting Max-Age=0 and same attributes used when creating them
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(0)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
 
-        // Clear the refresh token cookie (optional)
-        Cookie refreshCookie = new Cookie("refreshToken", null);
-        refreshCookie.setHttpOnly(true);
-        refreshCookie.setSecure(false);
-        refreshCookie.setPath("/");
-        refreshCookie.setMaxAge(0); // Delete the cookie
-        response.addCookie(refreshCookie);
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Lax")
+                .path("/")
+                .maxAge(0)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
         return ResponseEntity.ok().build();
     }

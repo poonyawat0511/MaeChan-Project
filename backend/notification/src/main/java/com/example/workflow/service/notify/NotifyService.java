@@ -85,7 +85,7 @@ public class NotifyService {
         //count remaining approver / director task
         int taskCountApprover = 0;
         int taskCountDirector = 0;
-        String apiUrl = "http://localhost:8081/engine-rest/task" ;
+        String apiUrl = "https:mch.seezdev.com/api/engine-rest/task" ;
         try {
                 java.net.URL url = new java.net.URL(apiUrl);
                 java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
@@ -175,7 +175,7 @@ public class NotifyService {
             + " คุณมีงานเอกสารที่ต้องตรวจสอบ " 
             + numTask 
             + " งาน"
-            + " กดลิงค์เพื่อเข้าสู่ระบบ http://192.168.2.12:3000/signin ");
+            + " กดลิงค์เพื่อเข้าสู่ระบบ https:mch.seezdev.com ");
         }
 
                      

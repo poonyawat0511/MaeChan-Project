@@ -1,5 +1,6 @@
 # Use an official OpenJDK runtime as a parent image
-FROM openjdk:21-jdk-slim
+# FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jdk
 # openjdk:21-jdk-slim (Open-source and widely used)
 # eclipse-temurin:21-jdk (from eclip)
 # oracle-jdk:21 (from oracle not free)

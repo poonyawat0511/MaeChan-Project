@@ -108,7 +108,7 @@ export default function SignUpPage() {
         data.append("signature", signatureFile);
       }
 
-      const response = await fetch("http://localhost:8081/auth/signup", {
+      const response = await fetch("/api/auth/signup", {
         method: "POST",
         body: data,
       });
